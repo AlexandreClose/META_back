@@ -13,6 +13,22 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+//Route::middleware('auth:api')->get('/user', function (Request $request) {
+//    return $request->user();
+//});
+
+Route::get('/',function(){
+    return response("",200);
 });
+
+
+Route::get('/index/{quantity?}','IndexController@getAllIndex');
+Route::get('/index/get/{name}/{quantity?}','IndexController@getIndexByName');
+Route::get('/index/data/{name}/{id}','IndexController@getIndexDataByNameAndId');
+Route::get('/index/data/validate','IndexController@getIndexToValidate');
+
+Route::get('/user/{quantity?}','UserController@getAllUsers');
+
+//Routes de test
+Route::get('/user/add/{uuid}','UserController@createUserIfDontExist');
+Route::post('/user/update/','UserController@updateUserWithData');
