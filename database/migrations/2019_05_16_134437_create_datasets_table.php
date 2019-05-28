@@ -24,6 +24,7 @@ class CreateDatasetsTable extends Migration
             $table->string('license',45);
             $table->dateTime('created_date');
             $table->dateTime('updated_date');
+            $table->boolean('realtime');
             $table->boolean('conf_ready')->default(false);
             $table->boolean('upload_ready')->default(false);
             $table->enum('visibility',['admin_only','job_referent','worker','all']);

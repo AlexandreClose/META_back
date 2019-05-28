@@ -27,7 +27,8 @@ class DatasetSeeder extends Seeder
             "updated_date" => Carbon::now()->format('Y-m-d H:i:s'),
             "user" => "Esteban Lhote",
             "validated"=> 0,
-            "visibility" => "all"
+            "visibility" => "all",
+            "realtime" => false
         ]);
 
         DB::table('datasets')->insert([
@@ -45,7 +46,8 @@ class DatasetSeeder extends Seeder
             "updated_date" => Carbon::now()->format('Y-m-d H:i:s'),
             "user" => "Esteban Lhote",
             "validated"=> 0,
-            "visibility" => "all"
+            "visibility" => "all",
+            "realtime" => false
         ]);
     }
 

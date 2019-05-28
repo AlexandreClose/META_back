@@ -34,6 +34,6 @@ public function getIndexToValidate(){
             $dataset = json_decode($dataset);
             array_push($data,$dataset);
         }
-        dd($data);
+        return response($data)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
     }
 }
