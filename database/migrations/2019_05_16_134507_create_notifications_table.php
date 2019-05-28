@@ -18,7 +18,7 @@ class CreateNotificationsTable extends Migration
             $table->boolean('favorited_update');
             $table->boolean('saved_update');
             $table->boolean('activated');
-            $table->json('frequency');
+            $table->string('frequency');
             $table->dateTime('time');
             $table->timestamps();
         });
