@@ -1,0 +1,79 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\dataset;
+use Illuminate\Support\Carbon;
+
+class DatasetController extends Controller
+{
+    function getAllDatasets($quantity = null){
+        $data = [];
+        if(isset($quantity)){
+            $datasets  = dataset::take($quantity)->get();
+        }else{
+            $datasets  = dataset::all();
+        }
+
+        foreach($datasets as $dataset){
+            $dataset = json_decode($dataset);
+            array_push($data,$dataset);
+        }
+        return response($data)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
+    }
+
+    function addOrUpdateDataset(Request $request){
+        $postbody='';
+        // Check for presence of a body in the request
+        if (count($request->json()->all())) {
+            $postbody = $request->json()->all();
+        }
+        else{
+            abort(400);
+        }
+
+        $dataset = null;
+        if(isset($postbody['id'])){
+            $dataset = dataset::where('uuid', '=', $postbody['uuid'])->first();
+        }
+        else{
+            $dataset = new dataset;
+        }
+        if($dataset == null){
+            abort(404);
+        }
+
+        if(!$dataset->validate($postbody)){
+            abort(400);
+        }
+
+        $dataset->name = $postbody["name"];
+        $dataset->validated = isset($postbody["validated"]) ? $postbody["validated"] : false;
+        $dataset->description = $postbody["description"];
+        $dataset->creator = $postbody["creator"];
+        $dataset->contributor = $postbody["contributor"];
+        $dataset->license = isset($postbody["license"]) ? $postbody["license"]: "MIT";
+        $dataset->created_date = isset($postbody["created_date"]) ? $postbody["created_date"] : Carbon::now();
+        $dataset->updated_date = isset($postbody["updated_date"]) ? $postbody["updated_date"] : Carbon::now();
+        $dataset->realtime = isset($postbody["realtime"]) ? $postbody["realtime"] : false;
+        $dataset->conf_ready = isset($dataset->conf_ready) ? $dataset->conf_ready : false;
+        $dataset->upload_ready = isset($dataset->upload_ready) ? $dataset->upload_ready : false;
+        $dataset->open_data = isset($postbody["open_data"]) ? $postbody["open_data"] : false;
+        $dataset->visibility = isset($postbody["visibility"]) ? $postbody["visibility"] : "admin_only";
+        $dataset->user = $postbody["user"];
+        $dataset->producer = $postbody["producer"];
+        $dataset->save();
+
+    }
+
+    public function getDatasetsToValidate(){
+        $data = [];
+        $datasets = dataset::where('validated',false)->orderBy("created_date","desc")->take(5)->get();
+        foreach($datasets as $dataset){
+            $dataset = json_decode($dataset);
+            array_push($data,$dataset);
+        }
+        return response($data)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
+    }
+}

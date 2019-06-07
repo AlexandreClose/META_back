@@ -17,7 +17,7 @@ class CreateSavedCardsTable extends Migration
             $table->integer('analysis_id');
             $table->uuid('user_uuid');
             $table->primary(['analysis_id','user_uuid']);
-            $table->boolean('displayed');
+            $table->boolean('displayed')->nullable();
             $table->integer('position');
             $table->integer('size')->nullable();
             $table->timestamps();

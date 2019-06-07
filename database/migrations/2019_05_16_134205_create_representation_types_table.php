@@ -14,7 +14,9 @@ class CreateRepresentationTypesTable extends Migration
     public function up()
     {
         Schema::create('representation_types', function (Blueprint $table) {
-            $table->string('name',25)->primary();
+            $table->string('name')->primary();
+            $table->string('srcBegin')->unique();
+            $table->string('img')->unique();
             $table->string('description');
             $table->timestamps();
         });

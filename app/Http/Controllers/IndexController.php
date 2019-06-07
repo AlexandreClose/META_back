@@ -26,14 +26,4 @@ public function getIndexDataByNameAndId($name,$id){
     $data = Functions::parseIndexJson($data);
     return response($data)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
 }
-
-public function getIndexToValidate(){
-        $data = [];
-        $datasets = dataset::where('validated',false)->orderBy("created_date","desc")->take(5)->get();
-        foreach($datasets as $dataset){
-            $dataset = json_decode($dataset);
-            array_push($data,$dataset);
-        }
-        return response($data)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
-    }
 }

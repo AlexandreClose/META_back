@@ -15,10 +15,9 @@ class CreateDatasetsTable extends Migration
     {
         Schema::create('datasets', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('name',45);
+            $table->string('name',45)->unique();
             $table->boolean('validated');
-            $table->string('datastore',45);
-            $table->string('description');
+            $table->longText('description');
             $table->string('creator',45);
             $table->string('contributor',45);
             $table->string('license',45);
@@ -27,6 +26,7 @@ class CreateDatasetsTable extends Migration
             $table->boolean('realtime');
             $table->boolean('conf_ready')->default(false);
             $table->boolean('upload_ready')->default(false);
+            $table->boolean('open_data')->default(false);
             $table->enum('visibility',['admin_only','job_referent','worker','all']);
             $table->string('user',45);
             $table->string('producer',45);
