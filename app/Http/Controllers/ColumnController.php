@@ -40,7 +40,7 @@ class ColumnController extends Controller
             }
             $column = new column();
             $column->name = $element["name"];
-            $column->main = false;
+            $column->main = $element["main"];
             $column->data_type_name = $element["datatype"];
             $column->visibility = $element["visibility"];
             $column->dataset_id = $element["datasetId"];
