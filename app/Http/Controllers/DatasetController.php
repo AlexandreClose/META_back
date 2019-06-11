@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\dataset;
 use Illuminate\Support\Carbon;
+use App\representation_type;
+use App\dataset_has_representation;
+use App\theme;
 
 class DatasetController extends Controller
 {
@@ -64,6 +67,53 @@ class DatasetController extends Controller
         $dataset->user = $postbody["user"];
         $dataset->producer = $postbody["producer"];
         $dataset->save();
+
+    }
+
+    public function uploadDataset(Request $request){
+            $description = $request->get('description');
+            $name = $request->get('name');
+            $tags = $request->get('tag');
+            $metier = $request->get('metier');
+            $JSON = $request->get('JSON');
+            $GEOJSON = $request->get('GEOJSON');
+            $visualisations = $request->get('visualisations');
+            $visualisations = json_decode($visualisations);
+            $date = $request->get('date');
+            $creator = $request->get('creator');
+            $contributor = $request->get('contributor');
+            $dataset = new dataset();
+            $dataset->name = $name;
+            $dataset->validated = false;
+            $dataset->description = $description;
+            $dataset->creator = $creator;
+            $dataset->contributor = $contributor;
+            $dataset->license = "Fermée";
+            $dataset->created_date = $date;
+            $dataset->updated_date = Carbon::now();
+            $dataset->realtime = false;
+            $dataset->conf_ready = false;
+            $dataset->upload_ready = false;
+            $dataset->open_data = false;
+            $dataset->visibility= "job_referent";
+            $dataset->user = $creator;
+            $dataset->producer = $creator;
+            $dataset->themeName = $metier;
+            $theme = theme::where('name',$metier)->first();
+            if($theme == null){
+                abort(400);
+            }
+            $dataset->save();
+            $dataset = dataset::where('name',$name)->first();
+            foreach($visualisations as $visualisation){
+                $type = representation_type::where('name',$visualisation)->first();
+                $types = new dataset_has_representation();
+                $types->datasetId = $dataset->id;
+                $types->representationName = $type->name;
+                $types->save();
+            }
+            $file = $request->file('uploadFile');
+            $file->move(storage_path().'/uploads',$name.'.'.$file->getClientOriginalExtension());
 
     }
 

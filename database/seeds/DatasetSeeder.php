@@ -27,6 +27,7 @@ class DatasetSeeder extends Seeder
             "user" => "Esteban Lhote",
             "validated"=> 0,
             "visibility" => "all",
+            "themeName"=>"Finance",
             "realtime" => false
         ]);
 
@@ -44,6 +45,7 @@ class DatasetSeeder extends Seeder
             "updated_date" => Carbon::now()->format('Y-m-d H:i:s'),
             "user" => "Esteban Lhote",
             "validated"=> 0,
+            "themeName"=>"Finance",
             "visibility" => "all",
             "realtime" => false
         ]);
