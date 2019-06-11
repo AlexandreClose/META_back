@@ -31,6 +31,7 @@ Route::get('/index/data/{name}/{id}','IndexController@getIndexDataByNameAndId');
 Route::get('/datasets/data/validate','DatasetController@getDatasetsToValidate');
 Route::get('/datasets/{quantity?}','DatasetController@getAllDatasets');
 Route::post('/datasets/update',"DatasetController@addOrUpdateDataset");
+Route::post('/datasets/upload','DatasetController@uploadDataset');
 
 //Users routes : Mysql
 Route::get('/user/{quantity?}','UserController@getAllUsers');
@@ -43,6 +44,12 @@ Route::get('/representationTypes/{quantity?}','RepresentationTypesController@get
 
 //Columns routes : Mysql
 Route::post('/column/update','ColumnController@createColumn');
+
+//themes routes : Mysql
+Route::get('/theme/{quantity?}','ThemeController@getAllThemes');
+
+//Roles routes : Mysql
+Route::get('/role/{quantity?}','RolesController@getAllRoles');
 
 //Routes de test
 Route::get('/user/add/{uuid}','UserController@createUserIfDontExist');

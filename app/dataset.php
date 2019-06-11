@@ -18,4 +18,9 @@ class dataset extends Model
         //}
         return true;
     }
+
+    public function theme()
+    {
+        return $this->hasOne('App\theme',"name","themeName");
+    }
 }
