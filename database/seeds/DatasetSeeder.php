@@ -28,7 +28,9 @@ class DatasetSeeder extends Seeder
             "validated"=> 0,
             "visibility" => "all",
             "themeName"=>"Finance",
-            "realtime" => false
+            "realtime" => false,
+            "conf_ready" => true,
+            "upload_ready" => true,
         ]);
 
         DB::table('datasets')->insert([
@@ -47,7 +49,9 @@ class DatasetSeeder extends Seeder
             "validated"=> 0,
             "themeName"=>"Finance",
             "visibility" => "all",
-            "realtime" => false
+            "realtime" => false,
+            "conf_ready" => true,
+            "upload_ready" => true,
         ]);
     }
 
