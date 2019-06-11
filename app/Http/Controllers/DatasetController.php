@@ -130,7 +130,7 @@ class DatasetController extends Controller
 
     public function getDatasetsToValidate(){
         $data = [];
-        $datasets = dataset::where('validated',false)->orderBy("created_date","desc")->take(5)->get();
+        $datasets = dataset::where('validated',false)->where('conf_ready',true)->where('upload_ready',true)->orderBy("created_date","desc")->take(5)->get();
         foreach($datasets as $dataset){
             $dataset = json_decode($dataset);
             array_push($data,$dataset);
