@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class role extends Model
+class user_theme extends Model
 {
     //
 }

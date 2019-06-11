@@ -14,7 +14,7 @@ class DatasetController extends Controller
     function getAllDatasets($quantity = null){
         $data = [];
         if(isset($quantity)){
-            $datasets  = dataset::take($quantity)->get();
+            $datasets  = dataset::whereIn('themeName', $user->themes())->take($quantity)->get();
         }else{
             $datasets  = dataset::all();
         }
@@ -26,7 +26,7 @@ class DatasetController extends Controller
         return response($data)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
     }
 
-    function addOrUpdateDataset(Request $request){
+    function UpdateDataset(Request $request){
         $postbody='';
         // Check for presence of a body in the request
         if (count($request->json()->all())) {
@@ -40,32 +40,43 @@ class DatasetController extends Controller
         if(isset($postbody['id'])){
             $dataset = dataset::where('uuid', '=', $postbody['uuid'])->first();
         }
-        else{
-            $dataset = new dataset;
-        }
         if($dataset == null){
-            abort(404);
+            abort(400);
         }
+       
 
         if(!$dataset->validate($postbody)){
             abort(400);
         }
+        $description = $request->get('description');
+        $name = $request->get('name');
+        $tags = $request->get('tag');
+        $metier = $request->get('metier');
+        $JSON = $request->get('JSON');
+        $GEOJSON = $request->get('GEOJSON');
+        $visualisations = $request->get('visualisations');
+        $visualisations = json_decode($visualisations);
+        $date = $request->get('date');
+        $creator = $request->get('creator');
+        $contributor = $request->get('contributor');
+        $visibility = $request->get('visibility');
 
-        $dataset->name = $postbody["name"];
-        $dataset->validated = isset($postbody["validated"]) ? $postbody["validated"] : false;
-        $dataset->description = $postbody["description"];
-        $dataset->creator = $postbody["creator"];
-        $dataset->contributor = $postbody["contributor"];
-        $dataset->license = isset($postbody["license"]) ? $postbody["license"]: "MIT";
-        $dataset->created_date = isset($postbody["created_date"]) ? $postbody["created_date"] : Carbon::now();
-        $dataset->updated_date = isset($postbody["updated_date"]) ? $postbody["updated_date"] : Carbon::now();
-        $dataset->realtime = isset($postbody["realtime"]) ? $postbody["realtime"] : false;
-        $dataset->conf_ready = isset($dataset->conf_ready) ? $dataset->conf_ready : false;
-        $dataset->upload_ready = isset($dataset->upload_ready) ? $dataset->upload_ready : false;
-        $dataset->open_data = isset($postbody["open_data"]) ? $postbody["open_data"] : false;
-        $dataset->visibility = isset($postbody["visibility"]) ? $postbody["visibility"] : "admin_only";
-        $dataset->user = $postbody["user"];
-        $dataset->producer = $postbody["producer"];
+        $dataset->name = $name;
+        $dataset->validated = true;
+        $dataset->description = $description;
+        $dataset->creator = $creator;
+        $dataset->contributor = $contributor;
+        $dataset->created_date = $date;
+        $dataset->updated_date = Carbon::now();
+        $dataset->visibility= $visibility;
+        $dataset->user = $creator;
+        $dataset->producer = $creator;
+        $dataset->themeName = $metier;
+        $theme = theme::where('name', $metier)->first();
+        if($theme == null){
+            abort(400);
+        }
+
         $dataset->save();
 
     }
