@@ -126,4 +126,10 @@ class DatasetController extends Controller
         }
         return response($data)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
     }
+
+    public function getAllAccessibleDatasets(user $user, bool $validate = false){
+
+    }
+
+
 }
