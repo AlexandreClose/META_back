@@ -35,6 +35,7 @@ Route::post('/datasets/upload','DatasetController@uploadDataset');
 
 //Users routes : Mysql
 Route::get('/user/{quantity?}','UserController@getAllUsers');
+Route::get('/user/self','UserController@getConnectedUserData');
 
 //Datatypes routes : Mysql
 Route::get('/datatypes/{quantity?}','DataTypesController@getAllDataTypes');

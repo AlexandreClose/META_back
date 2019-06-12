@@ -28,6 +28,10 @@ class UserController extends Controller
         }
     }
 
+    public function getConnectedUserData(Request $request){
+        return response($request->get('user'))->header('Content-Type', 'application/json')->header('charset', 'utf-8');
+    }
+
     public function updateUserWithData(Request $request){
         $postbody='';
         // Check for presence of a body in the request
