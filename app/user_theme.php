@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class authorized_representation extends Model
+class user_theme extends Model
 {
     //
 }

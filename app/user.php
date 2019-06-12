@@ -34,5 +34,20 @@ class user extends Model
         }
         return true;
     }
+
+    public function themes()
+    {
+        return $this->belongsToMany('App\theme', 'user_theme', 'uuid', 'name');
+    }
+
+    public function roles()
+    {
+        return $this->hasOne('App\role', 'role', 'role');
+    }
+
+    public function analysis()
+    {
+        return $this->hasMany('App\analysis', 'owner_id', 'uuid');
+    }
 }
 
