@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateAnalysisColumnsTable extends Migration
+class CreateSavedCardsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,14 @@ class CreateAnalysisColumnsTable extends Migration
      */
     public function up()
     {
-        Schema::create('analysis_columns', function (Blueprint $table) {
+        Schema::create('saved_cards', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('name');
-            $table->string('color_code');
+            $table->uuid('uuid');
+            $table->tinyInteger('displayed');
+            $table->integer('position');
+            $table->integer('size')->nullable($value->true);
             $table->timestamps();
-            $table->primary(['id', 'name']);
+            $table->primary(['uuid', 'id']);
         });
     }
 
@@ -29,6 +31,6 @@ class CreateAnalysisColumnsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('analysis_columns');
+        Schema::dropIfExists('saved_cards');
     }
 }

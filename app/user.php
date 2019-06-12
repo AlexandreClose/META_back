@@ -49,5 +49,10 @@ class user extends Model
     {
         return $this->hasMany('App\analysis', 'owner_id', 'uuid');
     }
+
+    public function cards()
+    {
+        return $this->hasMany('App\saved_card', 'uuid', 'uuid');
+    }
 }
 
