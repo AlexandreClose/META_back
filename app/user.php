@@ -44,5 +44,10 @@ class user extends Model
     {
         return $this->hasOne('App\role', 'role', 'role');
     }
+
+    public function analysis()
+    {
+        return $this->hasMany('App\analysis', 'owner_id', 'uuid');
+    }
 }
 
