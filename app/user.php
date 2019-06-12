@@ -37,12 +37,12 @@ class user extends Model
 
     public function themes()
     {
-        $this->belongsToMany('app/theme', 'user_theme', 'uuid', 'name');
+        return $this->belongsToMany('App\theme', 'user_theme', 'uuid', 'name');
     }
 
     public function roles()
     {
-        $this->hasOne('app/role', 'role', 'role');
+        return $this->hasOne('App\role', 'role', 'role');
     }
 }
 

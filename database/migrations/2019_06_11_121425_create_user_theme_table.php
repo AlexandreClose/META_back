@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateUserThemesTable extends Migration
+class CreateUserThemeTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,7 +13,7 @@ class CreateUserThemesTable extends Migration
      */
     public function up()
     {
-        Schema::create('user_themes', function (Blueprint $table) {
+        Schema::create('user_theme', function (Blueprint $table) {
             $table->uuid('uuid');
             $table->string('name');
             $table->timestamps();

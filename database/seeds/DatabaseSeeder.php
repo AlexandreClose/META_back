@@ -18,5 +18,6 @@ class DatabaseSeeder extends Seeder
         $this->call(DataTypeSeeder::class);
         $this->call(RepresentationTypesSeeder::class);
         $this->call(ThemeSeeder::class);
+        $this->call(user_theme_seeder::class);
     }
 }

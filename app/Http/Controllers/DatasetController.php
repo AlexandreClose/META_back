@@ -11,10 +11,11 @@ use App\theme;
 
 class DatasetController extends Controller
 {
-    function getAllDatasets($quantity = null){
+    function getAllDatasets(Request $request, $quantity = null, $offset = null){
         $data = [];
+        $user = $request->get('user');
         if(isset($quantity)){
-            $datasets  = dataset::whereIn('themeName', $user->themes())->take($quantity)->get();
+            $datasets  = dataset::whereIn('themeName', $user->themes)->take($quantity)->offset(($offset != null ? $offset : 0))->get();
         }else{
             $datasets  = dataset::all();
         }
