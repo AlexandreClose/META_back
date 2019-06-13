@@ -19,6 +19,7 @@ class CreateColumnsTable extends Migration
             $table->integer('dataset_id');
             $table->string('data_type_name',25);
             $table->boolean('main');
+            $table->string('themeName');
             $table->enum('visibility',['admin_only','job_referent','worker']);
             $table->timestamps();
         });

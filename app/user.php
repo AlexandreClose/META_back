@@ -53,5 +53,8 @@ class user extends Model
     public function datasets(){
         return $this->belongsToMany('App\dataset','auth_users','uuid','id');
     }
+    public function columns(){
+        return $this->belongsToMany('App\column','colauth_users','uuid','id');
+    }
 }
 

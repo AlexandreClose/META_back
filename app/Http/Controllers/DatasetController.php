@@ -9,6 +9,7 @@ use App\representation_type;
 use App\dataset_has_representation;
 use App\theme;
 use App\user;
+use App\column;
 
 class DatasetController extends Controller
 {
@@ -147,6 +148,7 @@ class DatasetController extends Controller
         $themes = $user->themes;
         $role = $user->role;
         $directdatasets = $user->datasets;
+        $directcolumns = $user->columns;
         switch($role){
             case "Administrateur":
             $datasets = dataset::all();
@@ -155,10 +157,25 @@ class DatasetController extends Controller
             case "Référent-Métier":
             $datasets = dataset::whereIn('visibility',['job_referent','worker','all'])->whereIn('themeName',$themes)->get();
             $datasets = $datasets->merge($directdatasets);
+            $columns = column::whereIn('visibility',['job_referent','worker','all'])->whereIn('themeName',$themes)->get();
+            $columns = $columns->merge($directcolumns);
+            $array= [];
+            foreach($columns as $column){
+                array_push($array,$column->dataset);
+            }
+            $datasets->merge($array);
             break;
 
             case "Utilisateur":
             $datasets = dataset::whereIn('visibility',['worker','all'])->whereIn('themeName',$themes)->get();
+            $datasets = $datasets->merge($directdatasets);
+            $columns = column::whereIn('visibility',['worker','all'])->whereIn('themeName',$themes)->get();
+            $columns = $columns->merge($directcolumns);
+            $array= [];
+            foreach($columns as $column){
+                array_push($array,$column->dataset);
+            }
+            $datasets->merge($array);
             break;
 
             default:
