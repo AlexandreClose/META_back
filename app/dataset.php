@@ -23,4 +23,8 @@ class dataset extends Model
     {
         return $this->hasOne('App\theme',"name","themeName");
     }
+
+    public function users(){
+        return $this->belongsToMany('App\user','auth_users','id','uuid');
+    }
 }

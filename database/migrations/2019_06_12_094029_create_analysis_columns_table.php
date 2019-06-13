@@ -14,7 +14,7 @@ class CreateAnalysisColumnsTable extends Migration
     public function up()
     {
         Schema::create('analysis_columns', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->bigInteger('id');
             $table->string('name');
             $table->timestamps();
             $table->primary(['id', 'name']);

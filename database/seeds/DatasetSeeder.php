@@ -48,7 +48,7 @@ class DatasetSeeder extends Seeder
             "user" => "Esteban Lhote",
             "validated"=> 0,
             "themeName"=>"Finance",
-            "visibility" => "all",
+            "visibility" => "admin_only",
             "realtime" => false,
             "conf_ready" => true,
             "upload_ready" => true,

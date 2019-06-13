@@ -28,6 +28,6 @@ class CreateUserThemeTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('user_themes');
+        Schema::dropIfExists('user_theme');
     }
 }

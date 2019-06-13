@@ -27,7 +27,7 @@ class CreateDatasetsTable extends Migration
             $table->boolean('conf_ready')->default(false);
             $table->boolean('upload_ready')->default(false);
             $table->boolean('open_data')->default(false);
-            $table->enum('visibility',['admin_only','job_referent','worker','all']);
+            $table->string('visibility');
             $table->string('user',45);
             $table->string('producer',45);
             $table->string('themeName');

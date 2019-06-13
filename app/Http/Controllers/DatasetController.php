@@ -8,6 +8,7 @@ use Illuminate\Support\Carbon;
 use App\representation_type;
 use App\dataset_has_representation;
 use App\theme;
+use App\user;
 
 class DatasetController extends Controller
 {
@@ -44,7 +45,7 @@ class DatasetController extends Controller
         if($dataset == null){
             abort(400);
         }
-       
+
 
         if(!$dataset->validate($postbody)){
             abort(400);
@@ -139,8 +140,31 @@ class DatasetController extends Controller
         return response($data)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
     }
 
-    public function getAllAccessibleDatasets(user $user, bool $validate = false){
+    public function getAllAccessibleDatasets(Request $request,user $user = null, bool $validate = false){
+        if($user == null){
+            $user = $request->get('user');
+        }
+        $themes = $user->themes;
+        $role = $user->role;
+        $directdatasets = $user->datasets;
+        switch($role){
+            case "Administrateur":
+            $datasets = dataset::all();
+            break;
 
+            case "Référent-Métier":
+            $datasets = dataset::whereIn('visibility',['job_referent','worker','all'])->whereIn('themeName',$themes)->get();
+            $datasets = $datasets->merge($directdatasets);
+            break;
+
+            case "Utilisateur":
+            $datasets = dataset::whereIn('visibility',['worker','all'])->whereIn('themeName',$themes)->get();
+            break;
+
+            default:
+            $datasets = [];
+        }
+        return response($datasets)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
     }
 
 

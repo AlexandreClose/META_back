@@ -14,9 +14,9 @@ class CreateColumnsTable extends Migration
     public function up()
     {
         Schema::create('columns', function (Blueprint $table) {
+            $table->bigIncrements('id');
             $table->string('name');
             $table->integer('dataset_id');
-            $table->primary(['dataset_id','name']);
             $table->string('data_type_name',25);
             $table->boolean('main');
             $table->enum('visibility',['admin_only','job_referent','worker']);

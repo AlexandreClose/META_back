@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateAnalysisThemesTable extends Migration
+class CreateAuthUsersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,12 @@ class CreateAnalysisThemesTable extends Migration
      */
     public function up()
     {
-        Schema::create('analysis_themes', function (Blueprint $table) {
-            $table->string('name');
-            $table->bigInteger('id');
+        //Table de liaison entre datasets et user permettant a un utilisateur précis d'avoir acces a un dataset
+        Schema::create('auth_users', function (Blueprint $table) {
+            $table->uuid('uuid');
+            $table->integer('id');
             $table->timestamps();
-            $table->primary(['name', 'id']);
+            $table->primary(['uuid', 'id']);
         });
     }
 
@@ -28,6 +29,6 @@ class CreateAnalysisThemesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('analysis_themes');
+        Schema::dropIfExists('auth_users');
     }
 }

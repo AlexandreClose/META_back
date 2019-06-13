@@ -49,5 +49,9 @@ class user extends Model
     {
         return $this->hasMany('App\analysis', 'owner_id', 'uuid');
     }
+
+    public function datasets(){
+        return $this->belongsToMany('App\dataset','auth_users','uuid','id');
+    }
 }
 
