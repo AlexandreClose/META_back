@@ -115,6 +115,8 @@ class DatasetController extends Controller
             $dataset->themeName = $metier;
             $theme = theme::where('name',$metier)->first();
             if($theme == null){
+                error_log($theme);
+                error_log($metier);
                 abort(400);
             }
             $dataset->save();
