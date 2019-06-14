@@ -24,5 +24,18 @@ class UserSeeder extends Seeder
             'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
             'updated_at' => Carbon::now()->format('Y-m-d H:i:s')
         ]);
+
+        DB::table('users')->insert([
+            'direction'=>"Transport",
+            'firstname'=>"Josué",
+            'lastname' => "Foucaud",
+            "mail" => "josué.foucaud@metapolis.fr",
+            "phone" => "0558565854",
+            "role" => "Utilisateur",
+            "service"=>"Transport",
+            "uuid"=>"2be8c158-29a7-42b4-a9fb-de9ec266e196",
+            'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
+            'updated_at' => Carbon::now()->format('Y-m-d H:i:s')
+        ]);
     }
 }

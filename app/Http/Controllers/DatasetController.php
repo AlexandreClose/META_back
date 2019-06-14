@@ -85,6 +85,7 @@ class DatasetController extends Controller
     }
 
     public function uploadDataset(Request $request){
+            error_log($request);
             $description = $request->get('description');
             $name = $request->get('name');
             $tags = $request->get('tag');

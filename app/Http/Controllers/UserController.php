@@ -32,6 +32,18 @@ class UserController extends Controller
         return response($request->get('user'))->header('Content-Type', 'application/json')->header('charset', 'utf-8');
     }
 
+    public function getUsersName(Request $request,Int $quantity = null){
+        $users = [];
+        if($quantity == null){
+            $users = user::all('firstname','lastname');
+        }
+        else{
+            $users = user::all('firstname','lastname')->take($quantity);
+        }
+        return response($users)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
+
+    }
+
     public function updateUserWithData(Request $request){
         $postbody='';
         // Check for presence of a body in the request
