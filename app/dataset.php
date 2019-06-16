@@ -27,4 +27,8 @@ class dataset extends Model
     public function users(){
         return $this->belongsToMany('App\user','auth_users','id','uuid');
     }
+
+    public function representations(){
+        return $this->belongsToMany('App\representation_type','dataset_has_representations','datasetId','representationName');
+    }
 }

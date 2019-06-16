@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
         $this->call(RepresentationTypesSeeder::class);
         $this->call(ThemeSeeder::class);
         $this->call(user_theme_seeder::class);
-        $this->call(Auth_seeder::class);
+        //$this->call(Auth_seeder::class);
+        $this->call(DatasetHasRepresentationSeeder::class);
     }
 }

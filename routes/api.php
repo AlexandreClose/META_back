@@ -29,7 +29,8 @@ Route::get('/index/data/{name}/{id}','IndexController@getIndexDataByNameAndId');
 
 //Datasets routes : Mysql
 Route::get('/datasets/data/validate','DatasetController@getDatasetsToValidate');
-Route::get('/datasets/{quantity?}/{offset?}','DatasetController@getAllAccessibleDatasets');
+Route::get('/datasets/all/{quantity?}/{offset?}','DatasetController@getAllDatasets');
+Route::get('/datasets/representations/{id}','DatasetController@getRepresentationsOfDataset');
 Route::post('/datasets/update',"DatasetController@addOrUpdateDataset");
 Route::post('/datasets/upload','DatasetController@uploadDataset');
 

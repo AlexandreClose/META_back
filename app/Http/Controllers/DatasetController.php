@@ -14,18 +14,7 @@ use App\column;
 class DatasetController extends Controller
 {
     function getAllDatasets(Request $request, $quantity = null, $offset = null){
-        $data = [];
-        $user = $request->get('user');
-        if(isset($quantity)){
-            $datasets  = dataset::whereIn('themeName', $user->themes)->take($quantity)->offset(($offset != null ? $offset : 0))->get();
-        }else{
-            $datasets  = dataset::all();
-        }
-
-        foreach($datasets as $dataset){
-            $dataset = json_decode($dataset);
-            array_push($data,$dataset);
-        }
+        $data = DatasetController::getAllAccessibleDatasets($request,$request->get('user'),false);
         return response($data)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
     }
 
@@ -134,13 +123,8 @@ class DatasetController extends Controller
 
     }
 
-    public function getDatasetsToValidate(){
-        $data = [];
-        $datasets = dataset::where('validated',false)->where('conf_ready',true)->where('upload_ready',true)->orderBy("created_date","desc")->take(5)->get();
-        foreach($datasets as $dataset){
-            $dataset = json_decode($dataset);
-            array_push($data,$dataset);
-        }
+    public function getDatasetsToValidate(Request $request){
+        $data = DatasetController::getAllAccessibleDatasets($request,$request->get('user'),true);
         return response($data)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
     }
 
@@ -154,11 +138,21 @@ class DatasetController extends Controller
         $directcolumns = $user->columns;
         switch($role){
             case "Administrateur":
-            $datasets = dataset::all();
+            if($validate){
+                $datasets = dataset::where([['validated','=',false],['conf_ready','=',true],['upload_ready',"=",true]])->orderBy("created_date","desc")->get();
+            }
+            else{
+                $datasets = dataset::where([['validated','=',true],['conf_ready','=',true],['upload_ready',"=",true]])->get();
+            }
             break;
 
             case "Référent-Métier":
-            $datasets = dataset::whereIn('visibility',['job_referent','worker','all'])->whereIn('themeName',$themes)->get();
+            if($validate){
+                $datasets = dataset::where([['validated','=',false],['conf_ready','=',true],['upload_ready',"=",true]])->where([['validated','=',true],['conf_ready','=',true],['upload_ready',"=",true]])->whereIn('visibility',['job_referent','worker','all'])->whereIn('themeName',$themes)->orderBy("created_date","desc")->get();
+            }
+            else{
+
+            $datasets = dataset::whereIn('visibility',['job_referent','worker','all'])->where([['validated','=',true],['conf_ready','=',true],['upload_ready',"=",true]])->whereIn('themeName',$themes)->get();
             $datasets = $datasets->merge($directdatasets);
             $columns = column::whereIn('visibility',['job_referent','worker','all'])->whereIn('themeName',$themes)->get();
             $columns = $columns->merge($directcolumns);
@@ -167,10 +161,17 @@ class DatasetController extends Controller
                 array_push($array,$column->dataset);
             }
             $datasets->merge($array);
+
+        }
+
             break;
 
             case "Utilisateur":
-            $datasets = dataset::whereIn('visibility',['worker','all'])->whereIn('themeName',$themes)->get();
+            if($validate){
+                $datasets = [];
+            }
+            else{
+            $datasets = dataset::whereIn('visibility',['worker','all'])->where([['validated','=',true],['conf_ready','=',true],['upload_ready',"=",true]])->whereIn('themeName',$themes)->get();
             $datasets = $datasets->merge($directdatasets);
             $columns = column::whereIn('visibility',['worker','all'])->whereIn('themeName',$themes)->get();
             $columns = $columns->merge($directcolumns);
@@ -179,12 +180,25 @@ class DatasetController extends Controller
                 array_push($array,$column->dataset);
             }
             $datasets->merge($array);
+
+        }
             break;
 
             default:
             $datasets = [];
         }
-        return response($datasets)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
+        return $datasets;
+    }
+
+    public function getRepresentationsOfDataset($id){
+
+        $dataset = dataset::where('id',$id)->first();
+        if($dataset == null){
+            abort(404);
+        }
+        $representations = $dataset->representations;
+        return response($representations)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
+
     }
 
 
