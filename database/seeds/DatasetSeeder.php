@@ -31,7 +31,9 @@ class DatasetSeeder extends Seeder
             "realtime" => false,
             "conf_ready" => true,
             "upload_ready" => true,
-            "update_frequency" => "Hebdomadaire"
+            "update_frequency" => "Hebdomadaire",
+            "JSON" => true,
+            "GEOJSON" => true,
         ]);
 
         DB::table('datasets')->insert([
@@ -53,7 +55,12 @@ class DatasetSeeder extends Seeder
             "realtime" => false,
             "conf_ready" => true,
             "upload_ready" => true,
+<<<<<<< HEAD
             "update_frequency" => "Annuel"
+=======
+            "JSON" => true,
+            "GEOJSON" => true,
+>>>>>>> b3b9c0d9f63c60b43f8855dd3fe11965a2ae50eb
         ]);
     }
 

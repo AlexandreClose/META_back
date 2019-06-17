@@ -56,5 +56,5 @@ Route::get('/theme/{quantity?}','ThemeController@getAllThemes');
 Route::get('/role/{quantity?}','RolesController@getAllRoles');
 
 //Routes de test
-Route::get('/user/add/{uuid}','UserController@createUserIfDontExist');
-Route::post('/user/update/','UserController@updateUserWithData');
+//Route::get('/user/add/{uuid}','UserController@createUserIfDontExist');
+//Route::post('/user/update/','UserController@updateUserWithData');

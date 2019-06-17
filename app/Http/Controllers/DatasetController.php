@@ -129,6 +129,8 @@ class DatasetController extends Controller
             $contributor = $request->get('contributor');
             $dataset = new dataset();
             $dataset->name = $name;
+            $dataset->JSON = $JSON;
+            $dataset->GEOJSON = $GEOJSON;
             $dataset->validated = false;
             $dataset->description = $description;
             $dataset->creator = $creator;
@@ -144,6 +146,8 @@ class DatasetController extends Controller
             $dataset->user = $creator;
             $dataset->producer = $creator;
             $dataset->themeName = $metier;
+            $file = $request->file('uploadFile');
+            $file->move(storage_path().'/uploads',$name.'.'.$file->getClientOriginalExtension());
             $theme = theme::where('name',$metier)->first();
             if($theme == null){
                 error_log($theme);
@@ -159,8 +163,6 @@ class DatasetController extends Controller
                 $types->representationName = $type->name;
                 $types->save();
             }
-            $file = $request->file('uploadFile');
-            $file->move(storage_path().'/uploads',$name.'.'.$file->getClientOriginalExtension());
 
     }
 
