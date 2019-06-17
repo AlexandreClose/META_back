@@ -31,6 +31,8 @@ class DatasetSeeder extends Seeder
             "realtime" => false,
             "conf_ready" => true,
             "upload_ready" => true,
+            "JSON" => true,
+            "GEOJSON" => true,
         ]);
 
         DB::table('datasets')->insert([
@@ -52,6 +54,8 @@ class DatasetSeeder extends Seeder
             "realtime" => false,
             "conf_ready" => true,
             "upload_ready" => true,
+            "JSON" => true,
+            "GEOJSON" => true,
         ]);
     }
 
