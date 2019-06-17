@@ -148,7 +148,7 @@ class DatasetController extends Controller
 
             case "Référent-Métier":
             if($validate){
-                $datasets = dataset::where([['validated','=',false],['conf_ready','=',true],['upload_ready',"=",true]])->where([['validated','=',true],['conf_ready','=',true],['upload_ready',"=",true]])->whereIn('visibility',['job_referent','worker','all'])->whereIn('themeName',$themes)->orderBy("created_date","desc")->get();
+                $datasets = dataset::where([['validated','=',false],['conf_ready','=',true],['upload_ready',"=",true]])->whereIn('visibility',['job_referent','worker','all'])->whereIn('themeName',$themes)->orderBy("created_date","desc")->get();
             }
             else{
 
