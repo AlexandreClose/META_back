@@ -31,6 +31,7 @@ class CreateDatasetsTable extends Migration
             $table->string('user',45);
             $table->string('producer',45);
             $table->string('themeName');
+            $table->string('update_frequency');
             $table->timestamps();
         });
     }

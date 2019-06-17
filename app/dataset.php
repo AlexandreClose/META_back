@@ -31,4 +31,8 @@ class dataset extends Model
     public function representations(){
         return $this->belongsToMany('App\representation_type','dataset_has_representations','datasetId','representationName');
     }
+
+    public function tags(){
+        return $this->belongsToMany('App\tag', 'dataset_has_tag', 'id', 'name');
+    }
 }

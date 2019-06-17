@@ -30,7 +30,7 @@ class DatasetController extends Controller
 
         $dataset = null;
         if(isset($postbody['id'])){
-            $dataset = dataset::where('uuid', '=', $postbody['uuid'])->first();
+            $dataset = dataset::where('id', '=', $postbody['id'])->first();
         }
         if($dataset == null){
             abort(400);
@@ -40,34 +40,75 @@ class DatasetController extends Controller
         if(!$dataset->validate($postbody)){
             abort(400);
         }
-        $description = $request->get('description');
         $name = $request->get('name');
-        $tags = $request->get('tag');
-        $metier = $request->get('metier');
-        $JSON = $request->get('JSON');
-        $GEOJSON = $request->get('GEOJSON');
-        $visualisations = $request->get('visualisations');
-        $visualisations = json_decode($visualisations);
-        $date = $request->get('date');
+        $description = $request->get('description');
+        $tags = $request->get('tags');
+        $producer = $request->get('producer');
+        $license = $request->get('license');
+        $created_date = $request->get('created_date');
         $creator = $request->get('creator');
         $contributor = $request->get('contributor');
-        $visibility = $request->get('visibility');
+        $frequency = $request->get('frequency');
 
+        $visualisations = $request->get('visualisations');
+        $visualisations = json_decode($visualisations);
+        $visibility = $request->get('visibility');
+        $theme = $request->get('theme');
+        $users = $request->get('users');
+        $JSON = $request->get('JSON');
+        $GEOJSON = $request->get('GEOJSON');
+        
+
+        
         $dataset->name = $name;
-        $dataset->validated = true;
         $dataset->description = $description;
+        foreach($tags as $tag){
+            $_tag = tag::where('name', $tag)->first();
+            if($_tag == null){
+                $_tag = new tag();
+                $_tag->name($tag);
+                $_tag->save();
+            }
+            $dataset_tag = new dataset_has_tag();
+            $dataset_tag->id = $dataset->id;
+            $dataset_tag->name = $_tag->name;
+            $dataset_tag->save();
+        }
+        $dataset->producer = $creator;
+        $dataset->license = $license;
+        $dataset->created_date = $created_date;
         $dataset->creator = $creator;
         $dataset->contributor = $contributor;
-        $dataset->created_date = $date;
-        $dataset->updated_date = Carbon::now();
+        $dataset->update_frequency = $frequency;
+
+        foreach($visualisations as $visualisation){
+            $type = representation_type::where('name',$visualisation)->first();
+            $types = new dataset_has_representation();
+            $types->datasetId = $dataset->id;
+            $types->representationName = $type->name;
+            $types->save();
+        }
         $dataset->visibility= $visibility;
-        $dataset->user = $creator;
-        $dataset->producer = $creator;
-        $dataset->themeName = $metier;
         $theme = theme::where('name', $metier)->first();
         if($theme == null){
+            error_log($theme);
+            error_log($metier);
             abort(400);
         }
+        foreach($users as $user_id){
+            $auth_user = user::where('uuid',$user)->first();
+            if($auth_user == null){
+                next;
+            }
+            $auth_users = new authorized_user();
+            $auth_users->id = $dataset->id;
+            $auth_users->uuid = $auth_user->uuid;
+            $auth_users->save();
+        }
+        $dataset->GEOJSON = $GEOJSON;
+        $dataset->JSON = $JSON; 
+
+        $dataset->validated = true;
 
         $dataset->save();
 
