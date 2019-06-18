@@ -10,13 +10,15 @@ class UserController extends Controller
 {
 
     public function getAllUsers(){
+        $role = $request->get('user')->role;
         if($role != "Administrateur"){
             abort(403);
         }
         $users = user::all();
         return response($users)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
     }
-    public function createUserIfDontExist($uuid){
+    public function createUserIfDontExist(Request $request, $uuid){
+        $role = $request->get('user')->role;
         if($role != "Administrateur"){
             abort(403);
         }
@@ -51,6 +53,7 @@ class UserController extends Controller
     }
 
     public function updateUserWithData(Request $request){
+        $role = $request->get('user')->role;
         if($role != "Administrateur"){
             abort(403);
         }

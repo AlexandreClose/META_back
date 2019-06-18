@@ -19,6 +19,7 @@ class DatasetController extends Controller
     }
 
     function UpdateDataset(Request $request){
+        $role = $request->get('user')->role;
         if($role != "Référent-Métier" && $role != "Administrateur"){
             abort(403);
         }
@@ -118,7 +119,7 @@ class DatasetController extends Controller
     }
 
     public function uploadDataset(Request $request){
-
+        $role = $request->get('user')->role;
         if($role != "Référent-Métier" && $role != "Administrateur"){
             abort(403);
         }
