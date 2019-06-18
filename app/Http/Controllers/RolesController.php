@@ -9,6 +9,6 @@ class RolesController extends Controller
 {
     function getAllRoles(){
         $roles = role::all();
-        dd($roles);
+        return $roles;
     }
 }
