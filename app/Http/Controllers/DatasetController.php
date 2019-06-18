@@ -137,8 +137,8 @@ class DatasetController extends Controller
             $contributor = $request->get('contributor');
             $dataset = new dataset();
             $dataset->name = $name;
-            $dataset->JSON = $JSON;
-            $dataset->GEOJSON = $GEOJSON;
+            $dataset->JSON = (bool)$JSON;
+            $dataset->GEOJSON = (bool)$GEOJSON;
             $dataset->validated = false;
             $dataset->description = $description;
             $dataset->creator = $creator;
