@@ -9,7 +9,7 @@ use function React\Promise\all;
 class UserController extends Controller
 {
 
-    public function getAllUsers(){
+    public function getAllUsers(Request $request){
         $role = $request->get('user')->role;
         if($role != "Administrateur"){
             abort(403);
