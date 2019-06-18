@@ -26,6 +26,13 @@ class IndexController extends Controller
                 $canAccess = true;
             }
         }
+
+        $datasets = DatasetController::getAllAccessibleDatasets($request, $user, true);
+        foreach($datasets as $dataset){
+            if($name === $dataset->name){
+                $canAccess = true;
+            }
+        }
         if(!$canAccess){
             abort(401);
         }
