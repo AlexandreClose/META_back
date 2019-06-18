@@ -25,7 +25,7 @@ Route::get('/',function(){
 //Index routes : Elasticsearch
 Route::get('/index/{quantity?}','IndexController@getAllIndex');
 Route::get('/index/get/{name}/{quantity?}','IndexController@getIndexByName');
-Route::get('/index/data/{name}/{id}','IndexController@getIndexDataByNameAndId');
+
 
 //Datasets routes : Mysql
 Route::get('/datasets/data/validate','DatasetController@getDatasetsToValidate');

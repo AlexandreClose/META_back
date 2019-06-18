@@ -10,10 +10,16 @@ class UserController extends Controller
 {
 
     public function getAllUsers(){
+        if($role != "Administrateur"){
+            abort(403);
+        }
         $users = user::all();
         return response($users)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
     }
     public function createUserIfDontExist($uuid){
+        if($role != "Administrateur"){
+            abort(403);
+        }
         $user = user::where('uuid', '=', $uuid)->first();
         if ($user === null) {
             $user = new user();
@@ -45,6 +51,9 @@ class UserController extends Controller
     }
 
     public function updateUserWithData(Request $request){
+        if($role != "Administrateur"){
+            abort(403);
+        }
         $postbody='';
         // Check for presence of a body in the request
         if (count($request->json()->all())) {
