@@ -71,7 +71,7 @@ class ColumnController extends Controller
             $column->themeName = $element["theme"];
 
             $column->save();
-            $users = json_decode($element['users']);
+            $users = $element['users'];
             $column = column::where('name', $element["name"])->where('dataset_id', $element["datasetId"]);
             foreach($users as $user_id){
                 $auth_user = user::where('uuid',$user)->first();
