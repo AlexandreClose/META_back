@@ -97,7 +97,7 @@ class DatasetController extends Controller
         $dataset->update_frequency = $frequency;
 
         foreach($visualisations as $visualisation){
-            $type = representation_type::where('name',$visualisation)->first();
+            $type = representation_type::where('name', $visualisation)->first();
             $types = new dataset_has_representation();
             $types->datasetId = $dataset->id;
             $types->representationName = $type->name;
@@ -105,8 +105,9 @@ class DatasetController extends Controller
         }
         error_log("second foreach passed");
         $dataset->visibility= $visibility;
-        $theme = theme::where('name', $theme)->first();
-        if($theme == null){
+        $theme_from_base = theme::where('name', $theme)->first();
+        if($theme_from_base == null){
+            error_log($theme_from_base);
             abort(400);
         }
 
