@@ -20,7 +20,7 @@ class DatasetController extends Controller
         return response($data)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
     }
 
-    function UpdateDataset(Request $request){
+    public function UpdateDataset(Request $request){
         $role = $request->get('user')->role;
         if($role != "Référent-Métier" && $role != "Administrateur"){
             abort(403);
