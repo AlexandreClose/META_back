@@ -12,6 +12,8 @@ use App\user;
 use App\authorized_user;
 use App\column;
 use App\dataset_has_tag;
+use App\tag;
+use function GuzzleHttp\json_decode;
 
 class DatasetController extends Controller
 {
@@ -73,11 +75,12 @@ class DatasetController extends Controller
         error_log($tags);
         $dataset->name = $name;
         $dataset->description = $description;
+        $tags = json_decode($tags);
         foreach($tags as $tag){
             $_tag = tag::where('name', $tag)->first();
             if($_tag == null){
                 $_tag = new tag();
-                $_tag->name($tag);
+                $_tag->name = $tag;
                 $_tag->save();
             }
             $dataset_tag = new dataset_has_tag();
@@ -102,15 +105,13 @@ class DatasetController extends Controller
         }
         error_log("second foreach passed");
         $dataset->visibility= $visibility;
-        $theme = theme::where('name', $metier)->first();
+        $theme = theme::where('name', $theme)->first();
         if($theme == null){
-            error_log($theme);
-            error_log($metier);
             abort(400);
         }
 
         foreach($users as $user_id){
-            $auth_user = user::where('uuid',$user)->first();
+            $auth_user = user::where('uuid',$user_id)->first();
             if($auth_user == null){
                 next;
             }
