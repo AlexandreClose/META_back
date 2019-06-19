@@ -47,7 +47,7 @@ Route::get('/datatypes/{quantity?}','DataTypesController@getAllDataTypes');
 Route::get('/representationTypes/{quantity?}','RepresentationTypesController@getAllRepresentationTypes');
 
 //Columns routes : Mysql
-Route::post('/column/update','ColumnController@createColumn');
+Route::post('/column/create','ColumnController@createColumn');
 
 //themes routes : Mysql
 Route::get('/theme/{quantity?}','ThemeController@getAllThemes');
