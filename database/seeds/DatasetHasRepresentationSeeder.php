@@ -24,5 +24,17 @@ class DatasetHasRepresentationSeeder extends Seeder
             'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
             'updated_at' => Carbon::now()->format('Y-m-d H:i:s')
         ]);
+        DB::table('dataset_has_representations')->insert([
+            'datasetId'=>3,
+            'representationName'=>"Graphique en anneau",
+            'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
+            'updated_at' => Carbon::now()->format('Y-m-d H:i:s')
+        ]);
+        DB::table('dataset_has_representations')->insert([
+            'datasetId'=>4,
+            'representationName'=>"Graphique en anneau",
+            'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
+            'updated_at' => Carbon::now()->format('Y-m-d H:i:s')
+        ]);
     }
 }

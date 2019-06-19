@@ -10,6 +10,10 @@ class ColumnController extends Controller
 {
     function createColumn(Request $request){
 
+        $role = $request->get('user')->role;
+        if($role != "Référent-Métier" && $role != "Administrateur"){
+            abort(403);
+        }
         $postbody = "";
 
         if (count($request->json()->all())) {

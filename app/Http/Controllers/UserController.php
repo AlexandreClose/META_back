@@ -9,11 +9,19 @@ use function React\Promise\all;
 class UserController extends Controller
 {
 
-    public function getAllUsers(){
+    public function getAllUsers(Request $request){
+        $role = $request->get('user')->role;
+        if($role != "Administrateur"){
+            abort(403);
+        }
         $users = user::all();
         return response($users)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
     }
-    public function createUserIfDontExist($uuid){
+    public function createUserIfDontExist(Request $request, $uuid){
+        $role = $request->get('user')->role;
+        if($role != "Administrateur"){
+            abort(403);
+        }
         $user = user::where('uuid', '=', $uuid)->first();
         if ($user === null) {
             $user = new user();
@@ -45,6 +53,10 @@ class UserController extends Controller
     }
 
     public function updateUserWithData(Request $request){
+        $role = $request->get('user')->role;
+        if($role != "Administrateur"){
+            abort(403);
+        }
         $postbody='';
         // Check for presence of a body in the request
         if (count($request->json()->all())) {
