@@ -24,6 +24,7 @@ class ColumnController extends Controller
             $postbody = $request->json()->all();
         }
         else{
+            error_log("no body in requests");
             abort(400);
         }
 
@@ -32,18 +33,21 @@ class ColumnController extends Controller
         $columns = [];
 
 
-        foreach($postbody as $element){
+        foreach($postbody['column'] as $element){
             $dataset = dataset::where('id', '=', $element["datasetId"])->first();
             if($dataset === null){
+                error_log("no dataset with that id");
                 abort(404);
             }
 
             if($element["name"] == null || $element["datatype"] == null || $element["visibility"] == null || $element["datasetId"] == null){
+                error_log("missing name, datatype, visibility or datasetId");
                 abort(400);
             }
 
             $verif = column::where('dataset_id', '=', $element["datasetId"])->where('name','=',$element['name'])->get();
-            if(count($verif) >0){
+            if(count($verif) > 0){
+                error_log("column already exists");
                 abort(409);
             }
             $column = new column();
@@ -67,12 +71,12 @@ class ColumnController extends Controller
             $column->themeName = $element["metier"];
 
             $column->save();
-
+            $users = json_decode($element['users']);
             $column = column::where('name', $element["name"])->where('dataset_id', $element["datasetId"]);
-            foreach($element['users'] as $user_id){
+            foreach($users as $user_id){
                 $auth_user = user::where('uuid',$user)->first();
                 if($auth_user == null){
-                    next;
+                    continue;
                 }
                 $auth_users = new colauth_user();
                 $auth_users->id = $column->id;
