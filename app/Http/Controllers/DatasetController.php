@@ -25,19 +25,21 @@ class DatasetController extends Controller
         if($role != "Référent-Métier" && $role != "Administrateur"){
             abort(403);
         }
+        /*
         $postbody='';
         // Check for presence of a body in the request
         if (count($request->json()->all())) {
             $postbody = $request->json()->all();
         }
         else{
+            error_log("")
             error_log("no body in request");
             abort(400);
-        }
+        }*/
 
         $dataset = null;
-        if(isset($postbody['id'])){
-            $dataset = dataset::where('id', '=', $postbody['id'])->first();
+        if($request->get('id') != null){
+            $dataset = dataset::where('id', '=', $request->get('id'))->first();
         }
         if($dataset == null){
             error_log("no dataset with that id");
@@ -51,7 +53,7 @@ class DatasetController extends Controller
         }
         $name = $request->get('name');
         $description = $request->get('description');
-        $tags = $request->get('tags');
+        $tags = $request->get('tag');
         $producer = $request->get('producer');
         $license = $request->get('license');
         $created_date = $request->get('created_date');
