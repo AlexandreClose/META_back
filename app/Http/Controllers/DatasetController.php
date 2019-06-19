@@ -31,6 +31,7 @@ class DatasetController extends Controller
             $postbody = $request->json()->all();
         }
         else{
+            error_log("no body in request");
             abort(400);
         }
 
@@ -39,11 +40,13 @@ class DatasetController extends Controller
             $dataset = dataset::where('id', '=', $postbody['id'])->first();
         }
         if($dataset == null){
+            error_log("no dataset with that id");
             abort(400);
         }
 
 
         if(!$dataset->validate($postbody)){
+            error_log("not validated dataset format");
             abort(400);
         }
         $name = $request->get('name');
