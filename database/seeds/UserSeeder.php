@@ -52,7 +52,7 @@ class UserSeeder extends Seeder
         DB::table('users')->insert([
             'direction'=>"Transport",
             'firstname'=>"Bastien",
-            'lastname' => "Pauble",
+            'lastname' => "Peuble",
             "mail" => "bastien.peuble@metapolis.fr",
             "phone" => "0558565854",
             "role" => "Administrateur",

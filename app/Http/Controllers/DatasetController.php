@@ -68,8 +68,8 @@ class DatasetController extends Controller
         $visibility = $request->get('visibility');
         $theme = $request->get('theme');
         $users = $request->get('users');
-        $JSON = $request->get('JSON');
-        $GEOJSON = $request->get('GEOJSON');
+        $JSON = (bool)$request->get('JSON');
+        $GEOJSON = (bool)$request->get('GEOJSON');
 
 
         error_log($tags);
@@ -114,7 +114,7 @@ class DatasetController extends Controller
         foreach($users as $user_id){
             $auth_user = user::where('uuid',$user_id)->first();
             if($auth_user == null){
-                next;
+                continue;
             }
             $auth_users = new authorized_user();
             $auth_users->id = $dataset->id;
