@@ -33,7 +33,7 @@ class ColumnController extends Controller
         $columns = [];
 
         foreach($postbody as $element){
-            console.log($element['id']);
+            error_log($element['id']);
             $dataset = dataset::where('id', '=', $element["datasetId"])->first();
             if($dataset === null){
                 error_log("no dataset with that id");
