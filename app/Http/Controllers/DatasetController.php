@@ -77,6 +77,7 @@ class DatasetController extends Controller
         foreach($tags as $tag){
             error_log($tag);
             $count = tag::where('name', $tag)->get();
+            error_log(count($count));
             if(count($count) > 0){
                 $_tag = new tag();
                 $_tag->name = $tag;
