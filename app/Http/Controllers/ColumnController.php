@@ -53,7 +53,7 @@ class ColumnController extends Controller
             $column = new column();
             $column->name = $element["name"];
             $column->main = $element["main"];
-            $datatype = data_type::where('name', element['datatype']);
+            $datatype = data_type::where('name', $element['datatype']);
             if($datatype == null){
                 error_log($datatype);
                 error_log(element['datatype']);
