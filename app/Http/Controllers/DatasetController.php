@@ -110,7 +110,7 @@ class DatasetController extends Controller
             error_log($theme_from_base);
             abort(400);
         }
-
+        $users = json_decode($users);
         foreach($users as $user_id){
             $auth_user = user::where('uuid',$user_id)->first();
             if($auth_user == null){
