@@ -80,7 +80,7 @@ class DatasetController extends Controller
             $dataset_tag->name = $_tag->name;
             $dataset_tag->save();
         }
-        $dataset->producer = $creator;
+        $dataset->producer = $producer;
         $dataset->license = $license;
         $dataset->created_date = $created_date;
         $dataset->creator = $creator;
