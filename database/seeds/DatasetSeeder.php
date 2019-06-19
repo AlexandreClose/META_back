@@ -107,6 +107,29 @@ class DatasetSeeder extends Seeder
             "JSON" => true,
             "GEOJSON" => true,
         ]);
+        DB::table('datasets')->insert([
+            'contributor'=>"Esteban Lhote",
+            'created_at'=> Carbon::now()->format('Y-m-d H:i:s'),
+            'created_date' => Carbon::now()->format('Y-m-d H:i:s'),
+            'creator' => "Esteban Lhote",
+            'description' => "Comptage routier",
+            'id' => 5,
+            'license' => "MIT",
+            "name" => "cfg_point_mesure",
+            "producer" => "Esteban Lhote",
+            "updated_at" => Carbon::now()->format('Y-m-d H:i:s'),
+            "updated_date" => Carbon::now()->format('Y-m-d H:i:s'),
+            "user" => "Esteban Lhote",
+            "validated"=> 1,
+            "themeName"=>"Transport",
+            "visibility" => "all",
+            "realtime" => false,
+            "conf_ready" => true,
+            "upload_ready" => true,
+            "update_frequency" => "Annuel",
+            "JSON" => true,
+            "GEOJSON" => true,
+        ]);
     }
 
 }
