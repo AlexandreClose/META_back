@@ -46,11 +46,11 @@ class DatasetController extends Controller
             abort(400);
         }
 
-
+        /*
         if(!$dataset->validate($postbody)){
             error_log("not validated dataset format");
             abort(400);
-        }
+        }*/
         $name = $request->get('name');
         $description = $request->get('description');
         $tags = $request->get('tag');
