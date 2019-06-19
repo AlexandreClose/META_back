@@ -44,14 +44,35 @@ class ColumnController extends Controller
             $column->data_type_name = $element["datatype"];
             $column->visibility = $element["visibility"];
             $column->dataset_id = $element["datasetId"];
+            $theme = theme::where('name', $element["metier"])->first();
+            if($theme == null){
+                error_log($theme);
+                error_log($metier);
+                abort(400);
+            }
+            $column->themeName = $element["metier"];
 
-            array_push($columns,$column);
+            $column->save();
+
+            $column = column::where('name', $element["name"])->where('dataset_id', $element["datasetId"]);
+            foreach($element['users'] as $user_id){
+                $auth_user = user::where('uuid',$user)->first();
+                if($auth_user == null){
+                    next;
+                }
+                $auth_users = new colauth_user();
+                $auth_users->id = $column->id;
+                $auth_users->uuid = $auth_user->uuid;
+                $auth_users->save();
+            }
+            //array_push($columns,$column);
 
 
         }
+        /*
         foreach($columns as $item){
             $item->save();
-        }
+        }*/
 
 
 
