@@ -31,7 +31,7 @@ class ColumnController extends Controller
 
 
         $columns = [];
-        error_log($postbody[0]);
+        error_log(implode('|||', $postbody[0]));
         foreach($postbody as $element){
             $dataset = dataset::where('id', '=', $element["datasetId"])->first();
             if($dataset === null){
