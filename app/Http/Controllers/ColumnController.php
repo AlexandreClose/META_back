@@ -62,10 +62,10 @@ class ColumnController extends Controller
             $column->data_type_name = $element["datatype"];
             $column->visibility = $element["visibility"];
             $column->dataset_id = $element["datasetId"];
-            $theme = theme::where('name', $element["metier"])->first();
+            $theme = theme::where('name', $element["theme"])->first();
             if($theme == null){
                 error_log($theme);
-                error_log($element["metier"]);
+                error_log($element["theme"]);
                 abort(400);
             }
             $column->themeName = $element["metier"];
