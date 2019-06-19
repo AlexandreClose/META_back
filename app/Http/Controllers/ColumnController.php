@@ -68,7 +68,7 @@ class ColumnController extends Controller
                 error_log($element["theme"]);
                 abort(400);
             }
-            $column->themeName = $element["metier"];
+            $column->themeName = $element["theme"];
 
             $column->save();
             $users = json_decode($element['users']);
