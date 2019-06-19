@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\column;
 use App\dataset;
 use App\theme;
-use App\datatype;
+use App\data_type;
 use App\user;
 use App\colauth_user;
 
@@ -33,7 +33,7 @@ class ColumnController extends Controller
         $columns = [];
 
         foreach($postbody as $element){
-            error_log($element['id']);
+            error_log($element['datasetId']);
             $dataset = dataset::where('id', '=', $element["datasetId"])->first();
             if($dataset === null){
                 error_log("no dataset with that id");
@@ -53,7 +53,7 @@ class ColumnController extends Controller
             $column = new column();
             $column->name = $element["name"];
             $column->main = $element["main"];
-            $datatype = datatype::where('name', element['datatype']);
+            $datatype = data_type::where('name', element['datatype']);
             if($datatype == null){
                 error_log($datatype);
                 error_log(element['datatype']);
