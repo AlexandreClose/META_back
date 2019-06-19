@@ -9,7 +9,9 @@ use App\representation_type;
 use App\dataset_has_representation;
 use App\theme;
 use App\user;
+use App\authorized_user;
 use App\column;
+use App\dataset_has_tag;
 
 class DatasetController extends Controller
 {
@@ -22,7 +24,7 @@ class DatasetController extends Controller
         $role = $request->get('user')->role;
         if($role != "Référent-Métier" && $role != "Administrateur"){
             abort(403);
-        }
+        } 
         $postbody='';
         // Check for presence of a body in the request
         if (count($request->json()->all())) {
@@ -61,9 +63,9 @@ class DatasetController extends Controller
         $users = $request->get('users');
         $JSON = $request->get('JSON');
         $GEOJSON = $request->get('GEOJSON');
+        
 
-
-
+        
         $dataset->name = $name;
         $dataset->description = $description;
         foreach($tags as $tag){
@@ -99,6 +101,7 @@ class DatasetController extends Controller
             error_log($metier);
             abort(400);
         }
+        
         foreach($users as $user_id){
             $auth_user = user::where('uuid',$user)->first();
             if($auth_user == null){
@@ -110,7 +113,7 @@ class DatasetController extends Controller
             $auth_users->save();
         }
         $dataset->GEOJSON = $GEOJSON;
-        $dataset->JSON = $JSON;
+        $dataset->JSON = $JSON; 
 
         $dataset->validated = true;
 
@@ -119,11 +122,7 @@ class DatasetController extends Controller
     }
 
     public function uploadDataset(Request $request){
-        $role = $request->get('user')->role;
-        if($role != "Référent-Métier" && $role != "Administrateur"){
-            abort(403);
-        }
-
+            error_log($request);
             $description = $request->get('description');
             $name = $request->get('name');
             $tags = $request->get('tag');
@@ -137,8 +136,8 @@ class DatasetController extends Controller
             $contributor = $request->get('contributor');
             $dataset = new dataset();
             $dataset->name = $name;
-            $dataset->JSON = (bool)$JSON;
-            $dataset->GEOJSON = (bool)$GEOJSON;
+            $dataset->JSON = $JSON;
+            $dataset->GEOJSON = $GEOJSON;
             $dataset->validated = false;
             $dataset->description = $description;
             $dataset->creator = $creator;
@@ -179,7 +178,7 @@ class DatasetController extends Controller
         return response($data)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
     }
 
-    public static function getAllAccessibleDatasets(Request $request,user $user = null, bool $validate = false){
+    public function getAllAccessibleDatasets(Request $request,user $user = null, bool $validate = false){
         if($user == null){
             $user = $request->get('user');
         }

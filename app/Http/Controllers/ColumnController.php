@@ -5,6 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\column;
 use App\dataset;
+use App\theme;
+use App\datatype;
+use App\user;
+use App\colauth_user;
 
 class ColumnController extends Controller
 {
@@ -45,13 +49,19 @@ class ColumnController extends Controller
             $column = new column();
             $column->name = $element["name"];
             $column->main = $element["main"];
+            $datatype = datatype::where('name', element['datatype']);
+            if($datatype == null){
+                error_log($datatype);
+                error_log(element['datatype']);
+                abort(400);
+            }
             $column->data_type_name = $element["datatype"];
             $column->visibility = $element["visibility"];
             $column->dataset_id = $element["datasetId"];
             $theme = theme::where('name', $element["metier"])->first();
             if($theme == null){
                 error_log($theme);
-                error_log($metier);
+                error_log($element["metier"]);
                 abort(400);
             }
             $column->themeName = $element["metier"];
