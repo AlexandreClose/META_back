@@ -70,7 +70,7 @@ class DatasetController extends Controller
         $GEOJSON = $request->get('GEOJSON');
 
 
-
+        error_log($tags);
         $dataset->name = $name;
         $dataset->description = $description;
         foreach($tags as $tag){
@@ -85,6 +85,7 @@ class DatasetController extends Controller
             $dataset_tag->name = $_tag->name;
             $dataset_tag->save();
         }
+        error_log("first foreach passed");
         $dataset->producer = $producer;
         $dataset->license = $license;
         $dataset->created_date = $created_date;
@@ -99,6 +100,7 @@ class DatasetController extends Controller
             $types->representationName = $type->name;
             $types->save();
         }
+        error_log("second foreach passed");
         $dataset->visibility= $visibility;
         $theme = theme::where('name', $metier)->first();
         if($theme == null){
@@ -117,6 +119,7 @@ class DatasetController extends Controller
             $auth_users->uuid = $auth_user->uuid;
             $auth_users->save();
         }
+        error_log("last foreach passed");
         $dataset->GEOJSON = $GEOJSON;
         $dataset->JSON = $JSON;
 
