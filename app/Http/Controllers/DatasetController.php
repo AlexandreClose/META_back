@@ -71,13 +71,11 @@ class DatasetController extends Controller
         $JSON = (bool)$request->get('JSON');
         $GEOJSON = (bool)$request->get('GEOJSON');
 
-
-        error_log($tags);
         $dataset->name = $name;
         $dataset->description = $description;
         $tags = json_decode($tags);
         foreach($tags as $tag){
-            error_log($tag[0]);
+            error_log($tag);
             $_tag = tag::where('name', $tag[0])->first();
             if($_tag == null){
                 $_tag = new tag();
