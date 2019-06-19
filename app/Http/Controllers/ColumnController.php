@@ -31,9 +31,8 @@ class ColumnController extends Controller
 
 
         $columns = [];
-
+        error_log($postbody[0]);
         foreach($postbody as $element){
-            error_log($element['datasetId']);
             $dataset = dataset::where('id', '=', $element["datasetId"])->first();
             if($dataset === null){
                 error_log("no dataset with that id");
@@ -45,7 +44,7 @@ class ColumnController extends Controller
                 abort(400);
             }
 
-            $verif = column::where('dataset_id', '=', $element["datasetId"])->where('name','=',$element['name'])->get();
+            $verif = column::where('dataset_id', '=', $element["datasetId"])->where('name','=', $element['name'])->get();
             if(count($verif) > 0){
                 error_log("column already exists");
                 abort(409);
