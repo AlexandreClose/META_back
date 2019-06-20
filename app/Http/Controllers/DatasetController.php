@@ -202,60 +202,53 @@ class DatasetController extends Controller
         $directcolumns = $user->columns;
         switch($role){
             case "Administrateur":
-            if($validate){
-                $datasets = dataset::where([['validated','=',false],['conf_ready','=',true],['upload_ready',"=",true]])->orderBy("created_date","desc")->get();
-            }
-            else{
-                $datasets = dataset::where([['validated','=',true],['conf_ready','=',true],['upload_ready',"=",true]])->get();
-            }
-            break;
-
+                if($validate){
+                    $datasets = dataset::where([['validated','=',false],['conf_ready','=',true],['upload_ready',"=",true]])->orderBy("created_date","desc")->get();
+                }
+                else{
+                    $datasets = dataset::where([['validated','=',true],['conf_ready','=',true],['upload_ready',"=",true]])->get();
+                }
+                break;
             case "Référent-Métier":
-            if($validate){
-                $datasets = dataset::where([['validated','=',false],['conf_ready','=',true],['upload_ready',"=",true]])->whereIn('visibility',['job_referent','worker','all'])->whereIn('themeName',$themes)->orderBy("created_date","desc")->get();
-            }
-            else{
-
-            $datasets = dataset::whereIn('visibility',['job_referent','worker','all'])->where([['validated','=',true],['conf_ready','=',true],['upload_ready',"=",true]])->whereIn('themeName',$themes)->get();
-            $datasets = $datasets->merge($directdatasets);
-            $columns = column::whereIn('visibility',['job_referent','worker','all'])->whereIn('themeName',$themes)->get();
-            $columns = $columns->merge($directcolumns);
-            $array= [];
-            foreach($columns as $column){
-                array_push($array,$column->dataset);
-            }
-            $datasets->merge($array);
-
-        }
-
-            break;
-
+                if($validate){
+                    $datasets = dataset::where([['validated','=',false],['conf_ready','=',true],['upload_ready',"=",true]])->whereIn('visibility',['job_referent','worker','all'])->whereIn('themeName',$themes)->orderBy("created_date","desc")->get();
+                }
+                else{
+                    $datasets = dataset::whereIn('visibility',['job_referent','worker','all'])->where([['validated','=',true],['conf_ready','=',true],['upload_ready',"=",true]])->whereIn('themeName',$themes)->get();
+                    $datasets = $datasets->merge($directdatasets);
+                    $columns = column::whereIn('visibility',['job_referent','worker','all'])->whereIn('themeName',$themes)->get();
+                    $columns = $columns->merge($directcolumns);
+                    $array= [];
+                    foreach($columns as $column){
+                        array_push($array,$column->dataset);
+                    }
+                    $datasets->merge($array);
+                }
+                break;
             case "Utilisateur":
-            if($validate){
-                $datasets = [];
-            }
-            else{
-            $datasets = dataset::whereIn('visibility',['worker','all'])->where([['validated','=',true],['conf_ready','=',true],['upload_ready',"=",true]])->whereIn('themeName',$themes)->get();
-            $datasets = $datasets->merge($directdatasets);
-            $columns = column::whereIn('visibility',['worker','all'])->whereIn('themeName',$themes)->get();
-            $columns = $columns->merge($directcolumns);
-            $array= [];
-            foreach($columns as $column){
-                array_push($array,$column->dataset);
-            }
-            $datasets->merge($array);
-
-        }
-            break;
-
+                if($validate){
+                    $datasets = [];
+                }
+                else{
+                    $datasets = dataset::whereIn('visibility',['worker','all'])->where([['validated','=',true],['conf_ready','=',true],['upload_ready',"=",true]])->whereIn('themeName',$themes)->get();
+                    $datasets = $datasets->merge($directdatasets);
+                    $columns = column::whereIn('visibility',['worker','all'])->whereIn('themeName',$themes)->get();
+                    $columns = $columns->merge($directcolumns);
+                    $array= [];
+                    foreach($columns as $column){
+                        array_push($array,$column->dataset);
+                    }
+                    $datasets->merge($array);
+                }
+                break;
             default:
-            $datasets = [];
+                $datasets = [];
+                break;
         }
         return $datasets;
     }
 
     public function getRepresentationsOfDataset($id){
-
         $dataset = dataset::where('id',$id)->first();
         if($dataset == null){
             abort(404);
@@ -265,5 +258,42 @@ class DatasetController extends Controller
 
     }
 
+    public function getColumnFromDataset(Request $request){
+        $dataset = $request->get('datasetId');
+        $dataset = dataset::where('id', $dataset)->first();
+        $columns = getAllAccessibleColumnsFromADataset($request, $dataset);
+        return response($columns)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
+
+    }
+
+    public static function getAllAccessibleColumnsFromADataset(Request $request, dataset $dataset){
+        $user = $request->get('user');
+        $themes = $user->theme;
+        switch($role){
+            case "Administrateur":
+                $columns = column::where('dataset_id', $dataset->id);
+                break;
+            case "Référent-Métier":
+                $columns = column::where('dataset_id', $dataset->id)->whereIn('visibility',['job_referent','worker'])->whereIn('themeName',$theme)->get();
+                $columns->merge(column::where('dataset_id', $dataset->id)->wherIn('visibility', ['all', null]));
+                break;
+            case "Utilisateur":
+                $columns = column::where('dataset_id', $dataset->id)->where('visibility', 'worker')->whereIn('themeName',$theme)->get();
+                $columns->merge(column::where('dataset_id', $dataset->id)->wherIn('visibility', ['all', null]));
+                break;
+            default:
+                $datasets = [];
+                break;
+            }
+        $array = [];
+        $directcolumns = $user->columns;
+        foreach($directcolumns as $dc){
+            if($dc->dataset_id == $dataset->id){
+                array_push($array, $dc);
+            }
+        }
+        $columns->merge($array);
+        return $column;
+    }
 
 }
