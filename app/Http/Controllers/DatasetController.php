@@ -214,9 +214,11 @@ class DatasetController extends Controller
                     $datasets = dataset::where([['validated','=',false],['conf_ready','=',true],['upload_ready',"=",true]])->whereIn('visibility',['job_referent','worker','all'])->whereIn('themeName',$themes)->orderBy("created_date","desc")->get();
                 }
                 else{
-                    $datasets = dataset::whereIn('visibility',['job_referent','worker','all'])->where([['validated','=',true],['conf_ready','=',true],['upload_ready',"=",true]])->whereIn('themeName',$themes)->get();
+                    $datasets = dataset::whereIn('visibility',['job_referent','worker'])->where([['validated','=',true],['conf_ready','=',true],['upload_ready',"=",true]])->whereIn('themeName',$themes)->get();
+                    $datasets = $datasets->merge(dataset::where('visibility', 'all')->where([['validated','=',true],['conf_ready','=',true],['upload_ready',"=",true]])->get());
                     $datasets = $datasets->merge($directdatasets);
-                    $columns = column::whereIn('visibility',['job_referent','worker','all'])->whereIn('themeName',$themes)->get();
+                    $columns = column::whereIn('visibility',['job_referent','worker'])->whereIn('themeName',$themes)->get();
+                    $columns = $columns->merge(column::whereIn('visibility', ['all', null])->get());
                     $columns = $columns->merge($directcolumns);
                     $array= [];
                     foreach($columns as $column){
@@ -227,12 +229,14 @@ class DatasetController extends Controller
                 break;
             case "Utilisateur":
                 if($validate){
-                    $datasets = [];
+                    return $datasets;
                 }
                 else{
-                    $datasets = dataset::whereIn('visibility',['worker','all'])->where([['validated','=',true],['conf_ready','=',true],['upload_ready',"=",true]])->whereIn('themeName',$themes)->get();
+                    $datasets = dataset::whereIn('visibility', 'worker')->where([['validated','=',true],['conf_ready','=',true],['upload_ready',"=",true]])->whereIn('themeName',$themes)->get();
+                    $datasets = $datasets->merge(dataset::where('visibility', 'all')->where([['validated','=',true],['conf_ready','=',true],['upload_ready',"=",true]])->get());
                     $datasets = $datasets->merge($directdatasets);
-                    $columns = column::whereIn('visibility',['worker','all'])->whereIn('themeName',$themes)->get();
+                    $columns = column::whereIn('visibility','worker')->whereIn('themeName',$themes)->get();
+                    $columns = $columns->merge(column::whereIn('visibility', ['all', null])->get());
                     $columns = $columns->merge($directcolumns);
                     $array= [];
                     foreach($columns as $column){
@@ -243,9 +247,10 @@ class DatasetController extends Controller
                 break;
             default:
                 $datasets = [];
-                break;
-        }
+                return $datasets;
+            }
         return $datasets;
+
     }
 
     public function getRepresentationsOfDataset($id){
@@ -275,11 +280,11 @@ class DatasetController extends Controller
                 break;
             case "Référent-Métier":
                 $columns = column::where('dataset_id', $dataset->id)->whereIn('visibility',['job_referent','worker'])->whereIn('themeName',$theme)->get();
-                $columns->merge(column::where('dataset_id', $dataset->id)->wherIn('visibility', ['all', null]));
+                $columns->merge(column::where('dataset_id', $dataset->id)->whereIn('visibility', ['all', null]));
                 break;
             case "Utilisateur":
                 $columns = column::where('dataset_id', $dataset->id)->where('visibility', 'worker')->whereIn('themeName',$theme)->get();
-                $columns->merge(column::where('dataset_id', $dataset->id)->wherIn('visibility', ['all', null]));
+                $columns->merge(column::where('dataset_id', $dataset->id)->whereIn('visibility', ['all', null]));
                 break;
             default:
                 $datasets = [];
