@@ -77,10 +77,12 @@ class DatasetController extends Controller
         foreach($tags as $tag){
             $_tag = tag::where('name', $tag)->first();
             if($_tag == null){
+                error_log("Créer un nouveau tag");
                 $_tag = new tag();
                 $_tag->name = $tag;
                 $_tag->save();
             }
+            error_log("Créer la relation entre ".$dataset->name." et ".$_tag->name);
             $dataset_tag = new dataset_has_tag();
             $dataset_tag->id = $dataset->id;
             $dataset_tag->name = $_tag->name;
