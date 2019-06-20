@@ -83,10 +83,12 @@ class DatasetController extends Controller
                 $_tag->save();
             }
             error_log("Créer la relation entre ".$dataset->name." et ".$_tag->name);
-            $dataset_tag = new dataset_has_tag();
-            $dataset_tag->id = $dataset->id;
-            $dataset_tag->name = $_tag->name;
-            $dataset_tag->save();
+            if((dataset_has_tag::where('id', $dataset->id)->where('name', $_tag->name) == null)){
+                $dataset_tag = new dataset_has_tag();
+                $dataset_tag->id = $dataset->id;
+                $dataset_tag->name = $_tag->name;
+                $dataset_tag->save();
+            }
         }
         error_log("first foreach passed");
         $dataset->producer = $producer;
@@ -98,10 +100,12 @@ class DatasetController extends Controller
 
         foreach($visualisations as $visualisation){
             $type = representation_type::where('name', $visualisation)->first();
-            $types = new dataset_has_representation();
-            $types->datasetId = $dataset->id;
-            $types->representationName = $type->name;
-            $types->save();
+            if((dataset_has_representation::where('representationName', $type->name)->where('datasetId', $dataset->id)->first()) == null){
+                $types = new dataset_has_representation();
+                $types->datasetId = $dataset->id;
+                $types->representationName = $type->name;
+                $types->save();
+            }
         }
         error_log("second foreach passed");
         $dataset->visibility= $visibility;
@@ -113,7 +117,7 @@ class DatasetController extends Controller
         $users = json_decode($users);
         foreach($users as $user_id){
             $auth_user = user::where('uuid',$user_id)->first();
-            if($auth_user == null){
+            if($auth_user == null || ((authorized__user::where('uuid', $auth_user->uuid)->where('id', $dataset->id)->first()) == null)            ){
                 continue;
             }
             $auth_users = new authorized_user();
