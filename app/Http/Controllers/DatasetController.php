@@ -75,15 +75,8 @@ class DatasetController extends Controller
         $dataset->description = $description;
         $tags = json_decode($tags);
         foreach($tags as $tag){
-            try{
-                $count = tag::where('name', $tag)->get();
-                error_log(count($count));
-                error_log($count[0]);
-            }
-            catch(Exception $err){
-                error_log($err);
-            }
-            if(count($count) > 0){
+            $_tag = tag::where('name', $tag)->first();
+            if($_tag == null){
                 $_tag = new tag();
                 $_tag->name = $tag;
                 $_tag->save();
