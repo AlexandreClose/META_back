@@ -278,7 +278,7 @@ class DatasetController extends Controller
         $themes = $user->theme;
         switch($role){
             case "Administrateur":
-                $columns = column::where('dataset_id', $dataset->id);
+                $columns = column::where('dataset_id', $dataset->id)->get();
                 break;
             case "Référent-Métier":
                 $columns = column::where('dataset_id', $dataset->id)->whereIn('visibility',['job_referent','worker'])->whereIn('themeName',$themes)->get();
