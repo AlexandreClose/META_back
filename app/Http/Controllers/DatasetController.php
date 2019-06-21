@@ -167,9 +167,9 @@ class DatasetController extends Controller
             $dataset->user = $creator;
             $dataset->producer = $creator;
             $dataset->themeName = $metier;
-            $dataset->databaseName = Str::slug($name);
+            $dataset->databaseName = str_replace("-","_",Str::slug($name));
             $file = $request->file('uploadFile');
-            $file->move(storage_path().'/uploads',$databaseName.'.'.$file->getClientOriginalExtension());
+            $file->move(storage_path().'/uploads',$$dataset->databaseName.'.'.$file->getClientOriginalExtension());
             $theme = theme::where('name',$metier)->first();
 
             if($theme == null){
