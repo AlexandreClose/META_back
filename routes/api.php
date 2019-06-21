@@ -24,7 +24,7 @@ Route::get('/',function(){
 
 //Index routes : Elasticsearch
 Route::get('/index/{quantity?}','IndexController@getAllIndex');
-Route::get('/index/get/{name}/{quantity?}','IndexController@getIndexByName');
+Route::get('/index/get/{name}/{quantity?}/{offset?}','IndexController@getIndexByName');
 
 
 //Datasets routes : Mysql
@@ -38,7 +38,7 @@ Route::get('/dataset/{id}/columns', "DatasetController@getAllColumnFromDataset")
 
 //Users routes : Mysql
 Route::get('/user/{quantity?}','UserController@getAllUsers');
-Route::get('/self','UserController@getConnectedUserData');
+Route::get('self','UserController@getConnectedUserData');
 Route::get('/users/name/{quantity?}','UserController@getUsersName');
 
 //Datatypes routes : Mysql
