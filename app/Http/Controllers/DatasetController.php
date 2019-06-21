@@ -9,7 +9,7 @@ use App\representation_type;
 use App\dataset_has_representation;
 use App\theme;
 use App\user;
-use App\authorized_user;
+use App\auth_users;
 use App\column;
 use App\dataset_has_tag;
 use App\tag;
@@ -120,7 +120,7 @@ class DatasetController extends Controller
             if($auth_user == null || ((authorized__user::where('uuid', $auth_user->uuid)->where('id', $dataset->id)->first()) == null)            ){
                 continue;
             }
-            $auth_users = new authorized_user();
+            $auth_users = new auth_users();
             $auth_users->id = $dataset->id;
             $auth_users->uuid = $auth_user->uuid;
             $auth_users->save();
