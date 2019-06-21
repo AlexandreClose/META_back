@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\column;
 use App\dataset;
 use App\theme;
-use App\datatype;
+use App\data_type;
 use App\user;
 use App\colauth_user;
 
@@ -31,9 +31,7 @@ class ColumnController extends Controller
 
 
         $columns = [];
-
-        error_log($postbody);
-        foreach($postbody['column'] as $element){
+        foreach($postbody as $element){
             $dataset = dataset::where('id', '=', $element["datasetId"])->first();
             if($dataset === null){
                 error_log("no dataset with that id");
@@ -45,7 +43,7 @@ class ColumnController extends Controller
                 abort(400);
             }
 
-            $verif = column::where('dataset_id', '=', $element["datasetId"])->where('name','=',$element['name'])->get();
+            $verif = column::where('dataset_id', '=', $element["datasetId"])->where('name','=', $element['name'])->get();
             if(count($verif) > 0){
                 error_log("column already exists");
                 abort(409);
@@ -53,7 +51,7 @@ class ColumnController extends Controller
             $column = new column();
             $column->name = $element["name"];
             $column->main = $element["main"];
-            $datatype = datatype::where('name', element['datatype']);
+            $datatype = data_type::where('name', $element['datatype']);
             if($datatype == null){
                 error_log($datatype);
                 error_log(element['datatype']);
@@ -62,16 +60,16 @@ class ColumnController extends Controller
             $column->data_type_name = $element["datatype"];
             $column->visibility = $element["visibility"];
             $column->dataset_id = $element["datasetId"];
-            $theme = theme::where('name', $element["metier"])->first();
-            if($theme == null){
+            $theme = theme::where('name', $element["theme"])->first();
+            if($theme == null && $element['theme'] != null){
                 error_log($theme);
-                error_log($element["metier"]);
+                error_log($element["theme"]);
                 abort(400);
             }
-            $column->themeName = $element["metier"];
+            $column->themeName = $element["theme"];
 
             $column->save();
-            $users = json_decode($element['users']);
+            $users = $element['users'];
             $column = column::where('name', $element["name"])->where('dataset_id', $element["datasetId"]);
             foreach($users as $user_id){
                 $auth_user = user::where('uuid',$user)->first();

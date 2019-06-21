@@ -35,4 +35,8 @@ class dataset extends Model
     public function tags(){
         return $this->belongsToMany('App\tag', 'dataset_has_tag', 'id', 'name');
     }
+
+    public function columns(){
+        return $this->hasMany('App\column', 'dataset_id', 'id');
+    }
 }

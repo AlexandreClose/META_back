@@ -33,6 +33,7 @@ Route::get('/datasets/all/{quantity?}/{offset?}','DatasetController@getAllDatase
 Route::get('/datasets/representations/{id}','DatasetController@getRepresentationsOfDataset');
 Route::post('/datasets/update',"DatasetController@updateDataset");
 Route::post('/datasets/upload','DatasetController@uploadDataset');
+Route::get('/dataset/{id}/columns', "DatasetController@getAllColumnFromDataset");
 
 
 //Users routes : Mysql
@@ -47,7 +48,7 @@ Route::get('/datatypes/{quantity?}','DataTypesController@getAllDataTypes');
 Route::get('/representationTypes/{quantity?}','RepresentationTypesController@getAllRepresentationTypes');
 
 //Columns routes : Mysql
-Route::post('/column/update','ColumnController@createColumn');
+Route::post('/column/create','ColumnController@createColumn');
 
 //themes routes : Mysql
 Route::get('/theme/{quantity?}','ThemeController@getAllThemes');
