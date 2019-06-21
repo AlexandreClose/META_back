@@ -117,7 +117,7 @@ class DatasetController extends Controller
         $users = json_decode($users);
         foreach($users as $user_id){
             $auth_user = user::where('uuid',$user_id)->first();
-            if($auth_user == null || ((authorized__user::where('uuid', $auth_user->uuid)->where('id', $dataset->id)->first()) == null)            ){
+            if($auth_user == null || ((auth_users::where('uuid', $auth_user->uuid)->where('id', $dataset->id)->first()) == null)            ){
                 continue;
             }
             $auth_users = new auth_users();
