@@ -34,6 +34,7 @@ class DatasetSeeder extends Seeder
             "update_frequency" => "Hebdomadaire",
             "JSON" => true,
             "GEOJSON" => false,
+            "databaseName"=>"feux_tricolores",
         ]);
 
         DB::table('datasets')->insert([
@@ -58,6 +59,7 @@ class DatasetSeeder extends Seeder
             "update_frequency" => "Annuel",
             "JSON" => true,
             "GEOJSON" => false,
+            "databaseName"=>"personne-mobilite-reduite",
         ]);
 
         DB::table('datasets')->insert([
@@ -82,6 +84,7 @@ class DatasetSeeder extends Seeder
             "update_frequency" => "Annuel",
             "JSON" => true,
             "GEOJSON" => true,
+            "databaseName"=>"orthophotoplan-2017",
         ]);
 
         DB::table('datasets')->insert([
@@ -106,6 +109,7 @@ class DatasetSeeder extends Seeder
             "update_frequency" => "Annuel",
             "JSON" => true,
             "GEOJSON" => true,
+            "databaseName"=>"cimetiere-blagnac",
         ]);
         DB::table('datasets')->insert([
             'contributor'=>"Esteban Lhote",
@@ -129,6 +133,7 @@ class DatasetSeeder extends Seeder
             "update_frequency" => "Annuel",
             "JSON" => true,
             "GEOJSON" => true,
+            "databaseName"=>"cfg_point_mesure",
         ]);
     }
 
