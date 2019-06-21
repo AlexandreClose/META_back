@@ -8,7 +8,7 @@ use App\dataset;
 use App\theme;
 use App\data_type;
 use App\user;
-use App\colauth_user;
+use App\colauth_users;
 
 class ColumnController extends Controller
 {
@@ -76,7 +76,7 @@ class ColumnController extends Controller
                 if($auth_user == null){
                     continue;
                 }
-                $auth_users = new colauth_user();
+                $auth_users = new colauth_users();
                 $auth_users->id = $column->id;
                 $auth_users->uuid = $auth_user->uuid;
                 $auth_users->save();
