@@ -38,8 +38,8 @@ class ColumnController extends Controller
                 abort(404);
             }
 
-            if($element["name"] == null || $element["datatype"] == null || $element["visibility"] == null || $element["datasetId"] == null){
-                error_log("missing name, datatype, visibility or datasetId");
+            if($element["name"] == null || $element["datatype"] == null|| $element["datasetId"] == null){
+                error_log("missing name, datatype or datasetId");
                 abort(400);
             }
 
