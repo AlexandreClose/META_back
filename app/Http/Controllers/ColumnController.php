@@ -70,10 +70,9 @@ class ColumnController extends Controller
 
             $column->save();
             $users = $element['users'];
-            $column = column::where('name', $element["name"])->where('dataset_id', $element["datasetId"]);
+            $column = column::where('name', $element["name"])->where('dataset_id', $element["datasetId"])->first();
             foreach($users as $user_id){
                 $auth_user = user::where('uuid',$user_id)->first();
-                error_log("adding user ".$auth_user->uuid." to ".$column->name);
                 if($auth_user == null){
                     continue;
                 }
