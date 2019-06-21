@@ -43,7 +43,7 @@ class UserController extends Controller
     public function getUsersName(Request $request,Int $quantity = null){
         $users = [];
         if($quantity == null){
-            $users = user::all('firstname','lastname');
+            $users = user::all('uuid','firstname','lastname');
         }
         else{
             $users = user::all('uuid','firstname','lastname')->take($quantity);
