@@ -72,7 +72,7 @@ class ColumnController extends Controller
             $users = $element['users'];
             $column = column::where('name', $element["name"])->where('dataset_id', $element["datasetId"]);
             foreach($users as $user_id){
-                $auth_user = user::where('uuid',$user)->first();
+                $auth_user = user::where('uuid',$user_id)->first();
                 if($auth_user == null){
                     continue;
                 }
