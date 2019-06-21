@@ -9,7 +9,7 @@ use App\representation_type;
 use App\dataset_has_representation;
 use App\theme;
 use App\user;
-use App\authorized_user;
+use App\auth_users;
 use App\column;
 use App\dataset_has_tag;
 use App\tag;
@@ -83,7 +83,7 @@ class DatasetController extends Controller
                 $_tag->save();
             }
             error_log("Créer la relation entre ".$dataset->name." et ".$_tag->name);
-            if((dataset_has_tag::where('id', $dataset->id)->where('name', $_tag->name) == null)){
+            if((dataset_has_tag::where('id', $dataset->id)->where('name', $_tag->name)->first() == null)){
                 $dataset_tag = new dataset_has_tag();
                 $dataset_tag->id = $dataset->id;
                 $dataset_tag->name = $_tag->name;
@@ -117,10 +117,10 @@ class DatasetController extends Controller
         $users = json_decode($users);
         foreach($users as $user_id){
             $auth_user = user::where('uuid',$user_id)->first();
-            if($auth_user == null || ((authorized__user::where('uuid', $auth_user->uuid)->where('id', $dataset->id)->first()) == null)            ){
+            if($auth_user == null || ((auth_users::where('uuid', $auth_user->uuid)->where('id', $dataset->id)->first()) != null)            ){
                 continue;
             }
-            $auth_users = new authorized_user();
+            $auth_users = new auth_users();
             $auth_users->id = $dataset->id;
             $auth_users->uuid = $auth_user->uuid;
             $auth_users->save();
