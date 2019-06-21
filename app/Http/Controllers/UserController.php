@@ -46,7 +46,7 @@ class UserController extends Controller
             $users = user::all('firstname','lastname');
         }
         else{
-            $users = user::all('firstname','lastname')->take($quantity);
+            $users = user::all('uuid','firstname','lastname')->take($quantity);
         }
         return response($users)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
 
