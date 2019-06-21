@@ -265,31 +265,31 @@ class DatasetController extends Controller
 
     }
 
-    public function getColumnFromDataset(Request $request){
-        $dataset = $request->get('datasetId');
-        $dataset = dataset::where('id', $dataset)->first();
-        $columns = getAllAccessibleColumnsFromADataset($request, $dataset);
+    public function getAllColumnFromDataset(Request $request,$id){
+        $dataset = dataset::where('id', $id)->first();
+        $columns = DatasetController::getAllAccessibleColumnsFromADataset($request, $dataset);
         return response($columns)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
 
     }
 
     public static function getAllAccessibleColumnsFromADataset(Request $request, dataset $dataset){
         $user = $request->get('user');
+        $role = $user->roles->role;
         $themes = $user->theme;
         switch($role){
             case "Administrateur":
                 $columns = column::where('dataset_id', $dataset->id);
                 break;
             case "Référent-Métier":
-                $columns = column::where('dataset_id', $dataset->id)->whereIn('visibility',['job_referent','worker'])->whereIn('themeName',$theme)->get();
+                $columns = column::where('dataset_id', $dataset->id)->whereIn('visibility',['job_referent','worker'])->whereIn('themeName',$themes)->get();
                 $columns->merge(column::where('dataset_id', $dataset->id)->whereIn('visibility', ['all', null]));
                 break;
             case "Utilisateur":
-                $columns = column::where('dataset_id', $dataset->id)->where('visibility', 'worker')->whereIn('themeName',$theme)->get();
+                $columns = column::where('dataset_id', $dataset->id)->where('visibility', 'worker')->where('themeName',$themes)->get();
                 $columns->merge(column::where('dataset_id', $dataset->id)->whereIn('visibility', ['all', null]));
                 break;
             default:
-                $datasets = [];
+                $columns = [];
                 break;
             }
         $array = [];
@@ -299,8 +299,8 @@ class DatasetController extends Controller
                 array_push($array, $dc);
             }
         }
-        $columns->merge($array);
-        return $column;
+        $columns = $columns->merge($array);
+        return $columns;
     }
 
 }
