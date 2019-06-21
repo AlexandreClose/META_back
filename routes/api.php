@@ -59,6 +59,7 @@ Route::get('/role/{quantity?}','RolesController@getAllRoles');
 //Tags routes : Mysql
 Route::get('/tag/{quantity?}', 'TagsController@getAllTags');
 
+
 //Routes de test
 //Route::get('/user/add/{uuid}','UserController@createUserIfDontExist');
 Route::post('/user/update/','UserController@updateUserWithData');
