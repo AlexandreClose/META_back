@@ -39,7 +39,7 @@ class IndexController extends Controller
             abort(403);
         }
 
-        $columns = DatasetController::getAllAccessibleColumnsFromADataset($request, id);
+        $columns = DatasetController::getAllAccessibleColumnsFromADataset($request, $id);
         $columnFilter = [];
         foreach($columns as $column){
             array_push($columnFilter, $column->name);
