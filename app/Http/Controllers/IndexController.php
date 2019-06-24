@@ -44,7 +44,6 @@ class IndexController extends Controller
         foreach($columns as $column){
             array_push($columnFilter, $column->name);
         }
-        error_log($columnFilter);
         $data = Elasticsearch::search(['index' => $name, '_source' => $columnFilter,'size' => $quantity,"from"=>$offset]);
         $data = Functions::parseIndexJson($data);
         return response($data)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
