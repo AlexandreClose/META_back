@@ -32,6 +32,7 @@ class IndexController extends Controller
         $datasets = DatasetController::getAllAccessibleDatasets($request, $user, true);
         foreach($datasets as $dataset){
             if($name === $dataset->databaseName){
+                $datasetId = $dataset->id;
                 $canAccess = true;
             }
         }
