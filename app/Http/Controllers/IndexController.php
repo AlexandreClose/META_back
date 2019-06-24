@@ -34,7 +34,7 @@ class IndexController extends Controller
             }
         }
         if(!$canAccess){
-            abort(401);
+            abort(403);
         }
         $data = Elasticsearch::search(['index' => $name, 'size' => $quantity,"from"=>$offset]);
         $data = Functions::parseIndexJson($data);
