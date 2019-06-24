@@ -14,6 +14,7 @@ use App\column;
 use App\dataset_has_tag;
 use App\tag;
 use App\user_saved_dataset;
+use Illuminate\Support\Facades\DB;
 use function GuzzleHttp\json_decode;
 
 class DatasetController extends Controller
