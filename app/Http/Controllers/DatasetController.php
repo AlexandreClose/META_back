@@ -13,6 +13,7 @@ use App\auth_users;
 use App\column;
 use App\dataset_has_tag;
 use App\tag;
+use App\user_saved_dataset;
 use function GuzzleHttp\json_decode;
 
 class DatasetController extends Controller
@@ -305,9 +306,35 @@ class DatasetController extends Controller
     }
 
 
-    public function saveDataset(Request $request, $id){
+    public static function saveAndFavoriteDataset(user $user, dataset $dataset, $favorite = false){
+        
+        $saved_ds =  user_saved_dataset::where('uuid', $user->uuid)->where('id', $dataset->id);
+        if($saved_ds == null) {
+            $saved_ds = new user_saved_dataset();
+            $saved_ds->id = $dataset->id;
+            $saved_ds->uuid = $user->uuid;
+            $saved_ds->favorited = $favorite;
+            $saved_ds->save();    
+        }
+    }
+
+    public function saveDataset(Request $request, $id) {
         $dataset = dataset::where('id', $id)->first();
         $user = $request->get('user');
+        DatasetController::saveAndFavoriteDataset($user, $dataset);
+    }
+
+    public function favoriteDataset(Request $request, $id){
+        $dataset = dataset::where('id', $id)->first();
+        $user = $request->get('user');
+        DatasetController::saveAndFavoriteDataset($user, $dataset, true);
+    }
+
+    public function unsaveDataset(Request $request, $id){
+        $dataset = dataset::where('id', $id)->first();
+        $user = $request->get('user');
+        $saved_ds =  user_saved_dataset::where('uuid', $user->uuid)->where('id', $dataset->id);
+        $saved_ds->delete();
     }
 
 }
