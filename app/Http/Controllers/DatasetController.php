@@ -231,6 +231,7 @@ class DatasetController extends Controller
                 break;
             case "Utilisateur":
                 if($validate){
+                    $datasets = [];
                     return $datasets;
                 }
                 else{
