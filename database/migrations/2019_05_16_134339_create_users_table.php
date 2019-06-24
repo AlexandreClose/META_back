@@ -22,6 +22,8 @@ class CreateUsersTable extends Migration
             $table->string('direction',45);
             $table->string('mail',45);
             $table->string('phone')->nullable();
+            $table->string('token')->nullable();
+            $table->dateTime('token_expirate')->nullable();
             $table->timestamps();
         });
     }
