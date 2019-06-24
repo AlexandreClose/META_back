@@ -439,8 +439,9 @@ class DatasetController extends Controller
         $dataset = dataset::where('id', $id)->first();
         $user = $request->get('user');
         $saved_ds =  user_saved_dataset::where('uuid', $user->uuid)->where('id', $dataset->id)->first();
-        error_log($saved_ds);
-        $saved_ds->delete();
+        if($saved_ds != null){
+            $saved_ds->delete();
+        }
     }
 
     public function getAllAccessibleSavedDatasets(Request $request){

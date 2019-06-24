@@ -36,7 +36,7 @@ Route::post('/datasets/upload','DatasetController@uploadDataset');
 Route::get('/dataset/{id}/columns', "DatasetController@getAllColumnFromDataset");
 Route::get('/dataset/{id}/save', "DatasetController@saveDataset");
 Route::get('/dataset/{id}/favorite', "DatasetController@favoriteDataset");
-Route::get('/dataset/{id}/unsave', "DatasetController@saveDataset");
+Route::get('/dataset/{id}/unsave', "DatasetController@unsaveDataset");
 Route::get('/dataset/{id}/unfavorite', "DatasetController@unsaveDataset");
 Route::get('/datasets/favorite', "DatasetController@getAllAccessibleFavoriteDatasets");
 Route::get('/datasets/saved', "DatasetController@getAllAccessibleSavedDatasets");
