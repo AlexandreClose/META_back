@@ -41,7 +41,7 @@ class IndexController extends Controller
         }
 
         $columns = DatasetController::getAllAccessibleColumnsFromADataset($request, dataset::where('id', $datasetId)->first());
-        dd($columns);
+        error_log(dd($columns));
         $columnFilter = [];
         foreach($columns as $column){
             array_push($columnFilter, $column->name);
