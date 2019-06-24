@@ -418,7 +418,7 @@ class DatasetController extends Controller
             $saved_ds = new user_saved_dataset();
             $saved_ds->id = $dataset->id;
             $saved_ds->uuid = $user->uuid;
-            $saved_ds->favorited = $favorite;
+            $saved_ds->favorite = $favorite;
             $saved_ds->save();    
         }
     }
