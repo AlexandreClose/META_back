@@ -36,7 +36,7 @@ class IndexController extends Controller
             }
         }
         if(!$canAccess){
-            abort(401);
+            abort(403);
         }
 
         $columns = DatasetController::getAllAccessibleColumnsFromADataset($request, id);
