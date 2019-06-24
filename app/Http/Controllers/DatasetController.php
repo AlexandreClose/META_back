@@ -303,4 +303,10 @@ class DatasetController extends Controller
         return $columns;
     }
 
+
+    public function saveDataset(Request $request, $id){
+        $dataset = dataset::where('id', $id)->first();
+        $user = $request->get('user');
+    }
+
 }

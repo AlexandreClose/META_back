@@ -61,7 +61,7 @@ class ColumnController extends Controller
             $column->visibility = $element["visibility"];
             $column->dataset_id = $element["datasetId"];
             $theme = theme::where('name', $element["theme"])->first();
-            if($theme == null && $element['theme'] != null){
+            if($theme == null && ($element['theme'] != null || $element['theme'] != "")){
                 error_log($theme);
                 error_log($element["theme"]);
                 abort(400);
