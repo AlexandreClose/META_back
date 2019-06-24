@@ -17,15 +17,15 @@ class Functions
 
     static function parseIndexJson($data){
         foreach ($data["hits"]["hits"]  as $key => $array){
-            foreach($data["hits"]["hits"][$key]["_source"] as $str_to_change)
+            foreach($data["hits"]["hits"][$key]["_source"] as $key2 => $array2)
             {
-                $str_to_change["message"] = Functions::unicode2html($data["hits"]["hits"][$key]["_source"]["message"] );
-                $str_to_change["message"] = str_replace('\\', '', $data["hits"]["hits"][$key]["_source"]["message"]);
-                $str_to_change["_source"] = str_replace("\\\"", '"', $data["hits"]["hits"][$key]["_source"]);
-                $str_to_change["message"]  = substr($data["hits"]["hits"][$key]["_source"]["message"] , 1);
-                $str_to_change["message"]  = substr_replace($data["hits"]["hits"][$key]["_source"]["message"]  ,"", -1);
-                $data["hits"]["hits"][$key]["_source"]["message"] = html_entity_decode($data["hits"]["hits"][$key]["_source"]["message"]);
-                $data["hits"]["hits"][$key]["_source"]["message"] = json_decode($data["hits"]["hits"][$key]["_source"]["message"]);
+                $str_to_change = Functions::unicode2html($str_to_change );
+                $str_to_change = str_replace('\\', '', $str_to_change);
+                $str_to_change = str_replace("\\\"", '"', $str_to_change);
+                $str_to_change = substr($str_to_change , 1);
+                $str_to_change = substr_replace($str_to_change  ,"", -1);
+                $str_to_change = html_entity_decode($str_to_change);
+                $str_to_change = json_decode($str_to_change);
             }
             
         }
