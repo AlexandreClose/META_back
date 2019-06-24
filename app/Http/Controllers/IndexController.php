@@ -21,8 +21,10 @@ class IndexController extends Controller
         $user = $request->get('user');
         $datasets = DatasetController::getAllAccessibleDatasets($request, $user, false);
         $canAccess = false;
+        $datasetId;
         foreach($datasets as $dataset){
             if($name === $dataset->databaseName){
+                $datasetId = $dataset->id;
                 $canAccess = true;
             }
         }
@@ -36,7 +38,13 @@ class IndexController extends Controller
         if(!$canAccess){
             abort(401);
         }
-        $data = Elasticsearch::search(['index' => $name, 'size' => $quantity,"from"=>$offset]);
+
+        $columns = DatasetController::getAllAccessibleColumnsFromADataset($request, id);
+        $columnFilter = [];
+        foreach($columns as $column){
+            array_push($columnFilter, $column->name);
+        }
+        $data = Elasticsearch::search(['index' => $name, '_source' => $columnFilter,'size' => $quantity,"from"=>$offset]);
         $data = Functions::parseIndexJson($data);
         return response($data)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
     }
