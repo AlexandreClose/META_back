@@ -22,14 +22,14 @@ class IndexController extends Controller
         $datasets = DatasetController::getAllAccessibleDatasets($request, $user, false);
         $canAccess = false;
         foreach($datasets as $dataset){
-            if($name === $dataset->name){
+            if($name === $dataset->databaseName){
                 $canAccess = true;
             }
         }
 
         $datasets = DatasetController::getAllAccessibleDatasets($request, $user, true);
         foreach($datasets as $dataset){
-            if($name === $dataset->name){
+            if($name === $dataset->databaseName){
                 $canAccess = true;
             }
         }
