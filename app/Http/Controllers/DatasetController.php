@@ -417,10 +417,10 @@ class DatasetController extends Controller
         if($saved_ds == null) {
             $saved_ds = new user_saved_dataset();
             $saved_ds->id = $dataset->id;
-            $saved_ds->uuid = $user->uuid;
-            $saved_ds->favorite = $favorite;
-            $saved_ds->save();    
+            $saved_ds->uuid = $user->uuid;   
         }
+        $saved_ds->favorite = $favorite;
+        $saved_ds->save(); 
     }
 
     public function saveDataset(Request $request, $id) {
