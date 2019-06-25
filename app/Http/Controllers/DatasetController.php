@@ -139,7 +139,6 @@ class DatasetController extends Controller
     }
 
     public function uploadDataset(Request $request){
-            error_log($request);
             $description = $request->get('description');
             $name = $request->get('name');
             $tags = $request->get('tag');
@@ -172,7 +171,7 @@ class DatasetController extends Controller
             $dataset->themeName = $metier;
             $dataset->databaseName = str_replace("-","_",Str::slug($name));
             $file = $request->file('uploadFile');
-            error_log($dataset->databaseName);
+            error_log($name);
             $file->move(storage_path().'/uploads',$dataset->databaseName.'.'.$file->getClientOriginalExtension());
             $theme = theme::where('name',$metier)->first();
 
