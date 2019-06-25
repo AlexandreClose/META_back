@@ -58,7 +58,7 @@ class ColumnController extends Controller
                 abort(400);
             }
             $column->data_type_name = $element["datatype"];
-            $column->visibility = $element["visibility"];
+            $column->visibility = $element["visibility"] == "" ? null : $element['visibility'];
             $column->dataset_id = $element["datasetId"];
             $theme = theme::where('name', $element["theme"])->first();
             if($theme == null && ($element['theme'] != null || $element['theme'] != "")){
