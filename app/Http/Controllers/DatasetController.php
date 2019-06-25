@@ -16,7 +16,7 @@ use App\tag;
 use App\user_saved_dataset;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
-use function GuzzleHttp\json_decode;
+use GuzzleHttp;
 
 class DatasetController extends Controller
 {
@@ -133,6 +133,11 @@ class DatasetController extends Controller
         $dataset->JSON = $JSON;
 
         $dataset->validated = true;
+
+
+
+        $client = new GuzzleHttp\Client();
+        $res = $client->post('212.129.57.50:9200/'.$dataset->databaseName.'/_settings', "{'Content-Type', 'application/json'}", '{"index.max_result_window": 5000000}');
 
         $dataset->save();
 
