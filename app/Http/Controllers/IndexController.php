@@ -42,10 +42,12 @@ class IndexController extends Controller
 
         $columns = DatasetController::getAllAccessibleColumnsFromADataset($request, dataset::where('id', $datasetId)->first());
         $columnFilter = [];
+        /*
         foreach($columns as $column){
             array_push($columnFilter, $column->name);
         }
         error_log(dd($columnFilter));
+        */
         $data = Elasticsearch::search(['index' => $name, '_source' => $columnFilter,'size' => $quantity,"from"=>$offset]);
         //error_log(dd($data));
         //$data = Functions::parseIndexJson($data);
