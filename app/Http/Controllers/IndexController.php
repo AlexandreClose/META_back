@@ -49,7 +49,7 @@ class IndexController extends Controller
         }
         //dd($columnFilter);
         
-        $data = Elasticsearch::search(['index' => $name,'size' => $quantity,"from"=>$offset]);
+        $data = Elasticsearch::search(['index' => $name, '_source' => $columnFilter, 'size' => $quantity,"from"=>$offset]);
         //error_log(dd($data));
         //$data = Functions::parseIndexJson($data);
         return response($data)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
