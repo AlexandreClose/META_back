@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Elasticsearch;
 use App\Http\Functions;
 use App\dataset;
+use Illuminate\Support\Str;
 
 class IndexController extends Controller
 {
@@ -46,7 +47,7 @@ class IndexController extends Controller
         foreach($columns as $column){
             array_push($columnFilter, $column->name);
         }
-        error_log(implode('s', $columnFilter));
+        dd($columnFilter);
         
         $data = Elasticsearch::search(['index' => $name,'size' => $quantity,"from"=>$offset]);
         //error_log(dd($data));
