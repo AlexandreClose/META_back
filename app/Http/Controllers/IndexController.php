@@ -47,10 +47,10 @@ class IndexController extends Controller
         foreach($columns as $column){
             array_push($columnFilter, $column->name);
         }
-        dd($columnFilter);
+        //dd($columnFilter);
         
         $data = Elasticsearch::search(['index' => $name,'size' => $quantity,"from"=>$offset]);
-        //error_log(dd($data));
+        error_log(dd($data));
         //$data = Functions::parseIndexJson($data);
         return response($data)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
     }
