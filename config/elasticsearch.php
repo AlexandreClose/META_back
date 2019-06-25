@@ -41,7 +41,7 @@ return [
 
             'hosts' => [
                 [
-                    'host'       => env('ELASTICSEARCH_HOST', '212.129.57.50'),
+                    'host'       => env('ELASTICSEARCH_HOST', 'elasticsearch'),
                     'port'       => env('ELASTICSEARCH_PORT', 9200),
                     'scheme'     => env('ELASTICSEARCH_SCHEME', null),
                     'user'       => env('ELASTICSEARCH_USER', null),
