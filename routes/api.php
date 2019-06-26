@@ -24,7 +24,7 @@ Route::get('/',function(){
 
 //Index routes : Elasticsearch
 Route::get('/index/{quantity?}','IndexController@getAllIndex');
-Route::get('/index/get/{name}/{quantity?}/{offset?}/{date_col?}/{startdate?}/{enddate?}','IndexController@getIndexByName');
+Route::get('/index/get/{name}/{quantity?}/{offset?}','IndexController@getIndexByName');
 
 
 //Datasets routes : Mysql
