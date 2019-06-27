@@ -17,7 +17,7 @@ class IndexController extends Controller
         return response($indexes)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
     }
 
-    public function getIndexByName(Request $request, $name, $quantity = 5,$offset = 0)
+    public function getIndexByName(Request $request, $name, $quantity = 5,$offset = 0, $date_col = null, $start_date = null, $end_date = null)
     {
         $user = $request->get('user');
         $datasets = DatasetController::getAllAccessibleDatasets($request, $user, false);
@@ -42,13 +42,19 @@ class IndexController extends Controller
         }
 
         $columns = DatasetController::getAllAccessibleColumnsFromADataset($request, dataset::where('id', $datasetId)->first());
-        $columnFilter = [];
+        $columnFilter = []; 
         
         foreach($columns as $column){
             array_push($columnFilter, $column->name);
         }
         //dd($columnFilter);
-        
+        $body = [];
+        if($date_col != null && $start_date != null){
+            $body = ['query' => ['bool' => ['filter' => ['range ' => [$date_col => ['gte' => $start_date, 'lte' => $start_date]]]]]];
+        } elseif ($date_col != null && $start_date != null && $end_date != null) {
+            $body = ['query' => ['range ' => [$date_col => ['gte' => $start_date, 'lte' => $end_date]]]];
+        }
+        //  dd(json_encode($body));
         $data = Elasticsearch::search(['index' => $name, '_source' => $columnFilter, 'size' => $quantity,"from"=>$offset]);
         //error_log(dd($data));
         //$data = Functions::parseIndexJson($data);
