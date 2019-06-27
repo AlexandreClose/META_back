@@ -49,13 +49,13 @@ class IndexController extends Controller
         }
         //dd($columnFilter);
         $body = [];
-        if($date_col != null && $start_date != null){
-            $body = ['query' => ['bool' => ['filter' => ['range ' => [$date_col => ['gte' => $start_date, 'lte' => $start_date]]]]]];
+        if($date_col != null && $start_date != null && $end_date == null){
+            $body = ['query' => ['match' => [$date_col => $start_date]]];
         } elseif ($date_col != null && $start_date != null && $end_date != null) {
-            $body = ['query' => ['range ' => [$date_col => ['gte' => $start_date, 'lte' => $end_date]]]];
+            $body = ['query' => ['range' => [$date_col => ['gte' => $start_date, 'lte' => $end_date, 'format' => "yyyy-MM-dd"]]]];
         }
-        //  dd(json_encode($body));
-        $data = Elasticsearch::search(['index' => $name, '_source' => $columnFilter, 'size' => $quantity,"from"=>$offset]);
+        //dd(json_encode($body));
+        $data = Elasticsearch::search(['index' => $name, '_source' => $columnFilter, 'size' => $quantity,"from"=>$offset, "body"=>$body]);
         //error_log(dd($data));
         //$data = Functions::parseIndexJson($data);
         return response($data)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
