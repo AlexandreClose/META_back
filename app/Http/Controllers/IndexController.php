@@ -17,6 +17,54 @@ class IndexController extends Controller
         return response($indexes)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
     }
 
+    public function getAllDateFieldsFromAnIndexFromItsName(Request $request, $name)
+    {
+        $user = $request->get('user');
+        $datasets = DatasetController::getAllAccessibleDatasets($request, $user, false);
+        $canAccess = false;
+        $datasetId;
+        foreach($datasets as $dataset){
+            if($name === $dataset->databaseName){
+                $datasetId = $dataset->id;
+                $canAccess = true;
+            }
+        }
+
+        $datasets = DatasetController::getAllAccessibleDatasets($request, $user, true);
+        foreach($datasets as $dataset){
+            if($name === $dataset->databaseName){
+                $datasetId = $dataset->id;
+                $canAccess = true;
+            }
+        }
+        if(!$canAccess){
+            abort(403);
+        }
+
+        $data = [
+            'index' => $name
+        ];
+        $return = Elasticsearch::indices()->getMapping($data);
+
+        //dd($return);
+        $date_fields = [];
+        foreach ($return[$name]['mappings']['doc']['properties'] as $field => $field_data) {
+            //dd($field_data['type']);
+            if(array_key_exists('type', $field_data) && $field_data['type'] == "date"){
+                array_push($date_fields, $field);
+            }
+            if($field == "properties"){
+                foreach ($field_data["properties"] as $inner_field => $inner_field_data) {
+                    if(array_key_exists('type', $inner_field_data) && $inner_field_data['type'] == "date"){
+                        array_push($date_fields, "properties".".".$inner_field);
+                    }
+                }
+            }
+        }
+        dd($date_fields);
+        return $return;
+    }
+
     public function getIndexByName(Request $request, $name, $quantity = 5,$offset = 0, $date_col = null, $start_date = null, $end_date = null)
     {
         $user = $request->get('user');
