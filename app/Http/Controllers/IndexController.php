@@ -50,9 +50,9 @@ class IndexController extends Controller
         //dd($columnFilter);
         $body = [];
         if($date_col != null && $start_date != null && $end_date == null){
-            $body = ['query' => ['match' => [$date_col => $start_date]]];
+            $body = ['query' => ['range' => [$date_col => ['gte' => $start_date, 'lte' => $start_date]]]];
         } elseif ($date_col != null && $start_date != null && $end_date != null) {
-            $body = ['query' => ['range' => [$date_col => ['gte' => $start_date, 'lte' => $end_date, 'format' => "yyyy-MM-dd"]]]];
+            $body = ['query' => ['range' => [$date_col => ['gte' => $start_date, 'lte' => $end_date]]]];
         }
         //dd(json_encode($body));
         $data = Elasticsearch::search(['index' => $name, '_source' => $columnFilter, 'size' => $quantity,"from"=>$offset, "body"=>$body]);
