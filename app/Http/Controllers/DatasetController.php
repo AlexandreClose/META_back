@@ -93,8 +93,8 @@ class DatasetController extends Controller
         $dataset->JSON = $JSON;
         $dataset->validated = true;
         $result = $dataset->save();
-        
-        $dataset = dataset::where('id', $request->get('id'));
+
+        $dataset = dataset::where('id', $request->get('id'))->first();
         
         $tags = json_decode($tags);
         foreach($tags as $tag){
@@ -142,7 +142,7 @@ class DatasetController extends Controller
 
 
         $client = new GuzzleHttp\Client(['base_uri' => '212.129.57.50:9200']);
-        $url = '/'.$name.'/_settings';
+        $url = '/'.$dataset->databaseName.'/_settings';
         $res = $client->request('PUT', $url, ['json' => ["index.max_result_window" => 5000000]]);
     }
 
@@ -190,11 +190,13 @@ class DatasetController extends Controller
             $dataset->save();
             $dataset = dataset::where('name',$name)->first();
             foreach($visualisations as $visualisation){
-                $type = representation_type::where('name',$visualisation)->first();
-                $types = new dataset_has_representation();
-                $types->datasetId = $dataset->id;
-                $types->representationName = $type->name;
-                $types->save();
+                $type = representation_type::where('name', $visualisation)->first();
+                if((dataset_has_representation::where('representationName', $type->name)->where('datasetId', $request->get('id'))->first()) == null){
+                    $types = new dataset_has_representation();
+                    $types->datasetId = $request->get('id');
+                    $types->representationName = $type->name;
+                    $types->save();
+                }
             }
 
     }

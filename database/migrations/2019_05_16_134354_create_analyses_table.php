@@ -15,13 +15,13 @@ class CreateAnalysesTable extends Migration
     {
         Schema::create('analyses', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('name',45);
+            $table->string('name',45)->unique();
             $table->string('representation_type',25);
             $table->boolean('shared');
-            $table->uuid('owner_uuid');
+            $table->uuid('owner_id');
             $table->mediumText('description');
-            $table->string('comment');
-            $table->enum('visibility',['admin_only','job_referent','worker','all']);
+            $table->string('visibility');
+            $table->string('theme_name');
             $table->timestamps();
         });
     }

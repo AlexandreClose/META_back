@@ -28,6 +28,8 @@ Route::get('/index/date/{name}', 'IndexController@getAllDateFieldsFromAnIndexFro
 Route::get('/index/get/{name}/{quantity?}/{offset?}/{date_col?}/{start_date?}/{end_date?}','IndexController@getIndexByName');
 Route::get('/index/file/{name}', 'IndexController@getIndexFile');
 
+//Analyse routes : Mysql
+Route::get('/analyse/save', 'Analysecontroller@saveAnalyse');
 
 //Datasets routes : Mysql
 Route::get('/datasets/data/validate','DatasetController@getDatasetsToValidate');

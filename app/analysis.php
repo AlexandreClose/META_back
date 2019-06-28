@@ -11,9 +11,9 @@ class analysis extends Model
         return $this->belongsTo('App\representation_type', 'representation_type', 'name');
     }   
 
-    public function themes()
+    public function theme()
     {
-        return $this->belongsToMany('App\theme', 'analysis_theme', 'id', 'name');
+        return $this->belongsTo('App\theme', 'theme_name', 'name');
     }
 
     public function owner()
@@ -23,6 +23,6 @@ class analysis extends Model
 
     public function columns()
     {
-        return $this->belongsToMany('App\column', 'analysis_column', 'id', 'name');
+        return $this->belongsToMany('App\column', 'analysis_column', 'id_column', 'id_analysis');
     }
 }
