@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Elasticsearch;
 use App\Http\Functions;
 use App\dataset;
+use App\user;
 use Illuminate\Support\Str;
 
 class IndexController extends Controller
@@ -65,7 +66,7 @@ class IndexController extends Controller
         return $return;
     }
 
-    public function getIndexByName(Request $request, $name, $quantity = 5,$offset = 0, $date_col = null, $start_date = null, $end_date = null)
+    public static function getIndexByNameQuantityAndOffset(Request $request, $name, $quantity = 5,$offset = 0, $date_col = null, $start_date = null, $end_date = null)
     {
         $user = $request->get('user');
         $datasets = DatasetController::getAllAccessibleDatasets($request, $user, false);
@@ -91,7 +92,7 @@ class IndexController extends Controller
 
         $columns = DatasetController::getAllAccessibleColumnsFromADataset($request, dataset::where('id', $datasetId)->first());
         $columnFilter = []; 
-        
+                
         foreach($columns as $column){
             array_push($columnFilter, $column->name);
         }
@@ -102,10 +103,28 @@ class IndexController extends Controller
         } elseif ($date_col != null && $start_date != null && $end_date != null) {
             $body = ['query' => ['range' => [$date_col => ['gte' => $start_date, 'lte' => $end_date]]]];
         }
-        //dd(json_encode($body));
+        //dd(json_encode($columnFilter));
         $data = Elasticsearch::search(['index' => $name, '_source' => $columnFilter, 'size' => $quantity,"from"=>$offset, "body"=>$body]);
         //error_log(dd($data));
         //$data = Functions::parseIndexJson($data);
+        return $data;
+    }
+
+    public function getIndexByName(Request $request, $name, $quantity = 5,$offset = 0, $date_col = null, $start_date = null, $end_date = null)
+    {
+        $data = IndexController::getIndexByNameQuantityAndOffset($request, $name, $quantity, $offset, $date_col, $start_date, $end_date);
         return response($data)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
+    }
+
+    public function getIndexFile(Request $request, $name){
+        $data = IndexController::getIndexByNameQuantityAndOffset($request, $name, 1);
+        $lineCnt = $data['hits']['total'];
+        $file = fopen($name.".json", "w");
+        $iterCount = $lineCnt / 1000;
+        for($i = 0; i < $iterCount ; $i++){
+            $data = IndexController::getIndexByNameQuantityAndOffset($request, $name, 1000, i*1000);
+            fwrite($file, $data);
+        }
+        fclose($file);
     }
 }

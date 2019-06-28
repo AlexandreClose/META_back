@@ -137,8 +137,8 @@ class DatasetController extends Controller
 
 
         $client = new GuzzleHttp\Client(['base_uri' => '212.129.57.50:9200']);
-        $res = $client->put($dataset->databaseName.'/_settings', ['json' =>'{"index.max_result_window": 5000000}']);
-        error_log($res->getStatusCode().' : '.$res->getReasonPhrase());
+        $url = '/'.$name.'/_settings';
+        $res = $client->request('PUT', $url, ['json' => ["index.max_result_window" => 5000000]]);
         $dataset->save();
 
     }
