@@ -66,16 +66,36 @@ class DatasetController extends Controller
         $contributor = $request->get('contributor');
         $frequency = $request->get('frequency');
 
-        $visualisations = $request->get('visualisations');
-        $visualisations = json_decode($visualisations);
+        
         $visibility = $request->get('visibility');
         $theme = $request->get('theme');
-        $users = $request->get('users');
         $JSON = (bool)$request->get('JSON');
         $GEOJSON = (bool)$request->get('GEOJSON');
 
         $dataset->name = $name;
         $dataset->description = $description;
+        
+        $dataset->producer = $producer;
+        $dataset->license = $license;
+        $dataset->created_date = $created_date;
+        $dataset->creator = $creator;
+        $dataset->contributor = $contributor;
+        $dataset->update_frequency = $frequency;
+
+        $dataset->visibility= $visibility;
+        $theme_from_base = theme::where('name', $theme)->first();
+        if($theme_from_base == null){
+            error_log($theme_from_base);
+            abort(400);
+        }
+        
+        $dataset->GEOJSON = $GEOJSON;
+        $dataset->JSON = $JSON;
+        $dataset->validated = true;
+        $result = $dataset->save();
+        
+        $dataset = dataset::where('id', $request->get('id'));
+        
         $tags = json_decode($tags);
         foreach($tags as $tag){
             $_tag = tag::where('name', $tag)->first();
@@ -94,53 +114,36 @@ class DatasetController extends Controller
             }
         }
         error_log("first foreach passed");
-        $dataset->producer = $producer;
-        $dataset->license = $license;
-        $dataset->created_date = $created_date;
-        $dataset->creator = $creator;
-        $dataset->contributor = $contributor;
-        $dataset->update_frequency = $frequency;
-
+        $visualisations = $request->get('visualisations');
+        $visualisations = json_decode($visualisations);
         foreach($visualisations as $visualisation){
             $type = representation_type::where('name', $visualisation)->first();
-            if((dataset_has_representation::where('representationName', $type->name)->where('datasetId', $dataset->id)->first()) == null){
+            if((dataset_has_representation::where('representationName', $type->name)->where('datasetId', $request->get('id'))->first()) == null){
                 $types = new dataset_has_representation();
-                $types->datasetId = $dataset->id;
+                $types->datasetId = $request->get('id');
                 $types->representationName = $type->name;
                 $types->save();
             }
         }
         error_log("second foreach passed");
-        $dataset->visibility= $visibility;
-        $theme_from_base = theme::where('name', $theme)->first();
-        if($theme_from_base == null){
-            error_log($theme_from_base);
-            abort(400);
-        }
+        $users = $request->get('users');
         $users = json_decode($users);
         foreach($users as $user_id){
             $auth_user = user::where('uuid',$user_id)->first();
-            if($auth_user == null || ((auth_users::where('uuid', $auth_user->uuid)->where('id', $dataset->id)->first()) != null)            ){
+            if($auth_user == null || ((auth_users::where('uuid', $auth_user->uuid)->where('id', $request->get('id'))->first()) != null)            ){
                 continue;
             }
             $auth_users = new auth_users();
-            $auth_users->id = $dataset->id;
+            $auth_users->id = $request->get('id');
             $auth_users->uuid = $auth_user->uuid;
             $auth_users->save();
         }
         error_log("last foreach passed");
-        $dataset->GEOJSON = $GEOJSON;
-        $dataset->JSON = $JSON;
-
-        $dataset->validated = true;
-
 
 
         $client = new GuzzleHttp\Client(['base_uri' => '212.129.57.50:9200']);
         $url = '/'.$name.'/_settings';
         $res = $client->request('PUT', $url, ['json' => ["index.max_result_window" => 5000000]]);
-        $dataset->save();
-
     }
 
     public function uploadDataset(Request $request){

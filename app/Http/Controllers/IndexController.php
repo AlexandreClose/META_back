@@ -98,13 +98,15 @@ class IndexController extends Controller
         }
         //dd($columnFilter);
         $body = [];
-        if($date_col != null && $start_date != null && $end_date == null){
-            $body = ['query' => ['range' => [$date_col => ['gte' => $start_date, 'lte' => $start_date]]]];
+        if($date_col != null && $start_date == null && $end_date == null){
+            $body = ['sort' => [[$date_col => ['order' => 'desc']]]];
+        } elseif($date_col != null && $start_date != null && $end_date == null){
+            $body = ['sort' => [$date_col => ['order' => 'desc']],'query' => ['range' => [$date_col => ['gte' => $start_date, 'lte' => $start_date]]]];
         } elseif ($date_col != null && $start_date != null && $end_date != null) {
-            $body = ['query' => ['range' => [$date_col => ['gte' => $start_date, 'lte' => $end_date]]]];
+            $body = ['sort' => [$date_col => ['order' => 'desc']],'query' => ['range' => [$date_col => ['gte' => $start_date, 'lte' => $end_date]]]];
         }
-        //dd(json_encode($columnFilter));
-        $data = Elasticsearch::search(['index' => $name, '_source' => $columnFilter, 'size' => $quantity,"from"=>$offset, "body"=>$body]);
+        //dd(json_encode([[$date_col => ['order' => 'desc']]]));
+        $data = Elasticsearch::search(['index' => $name, '_source' => $columnFilter, 'size' => $quantity,"from"=>$offset,"body"=>$body]);
         //error_log(dd($data));
         //$data = Functions::parseIndexJson($data);
         return $data;
