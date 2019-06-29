@@ -30,6 +30,7 @@ Route::get('/index/file/{name}', 'IndexController@getIndexFile');
 
 //Analyse routes : Mysql
 Route::get('/analyse/save', 'Analysecontroller@saveAnalyse');
+Route::get('/analyse/get/{id}', 'AnalyseController@getAnalysisFromId');
 
 //Datasets routes : Mysql
 Route::get('/datasets/data/validate','DatasetController@getDatasetsToValidate');

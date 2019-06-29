@@ -7,6 +7,7 @@ use App\analysis;
 use App\representation_type;
 use App\theme;
 use App\analyse_column;
+use App\DatasetController;
 
 class AnalyseController extends Controller
 {
@@ -49,5 +50,19 @@ class AnalyseController extends Controller
             $analysis_column->usage = $analysis_column_data['usage'];
             $analysis_column->save();
         }
+    }
+
+    public function getAnalysisById(Request $request, $id){
+        $user = $request->get('user');
+        $datasets = DatasetController::getAllAccessibleDatasets($request, $user, false);
+        $canAccess = false;
+        
+        $analysis = analysis::where('id', $id);
+        foreach($analysis->columns as $column){
+            if(!array_search(dataset::where('id', $column->dataset_id), $datasets)){
+                abort(403);
+            }
+        }
+        return response($analysis)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
     }
 }
