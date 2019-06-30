@@ -119,4 +119,19 @@ class IndexController extends Controller
         $data = IndexController::getIndexByNameQuantityAndOffset($request, $name, $quantity, $offset, $date_col, $start_date, $end_date);
         return response($data)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
     }
+
+    public function getIndexFile(Request $request, $name){
+        $data = IndexController::getIndexByNameQuantityAndOffset($request, $name, 1);
+        $lineCnt = $data['hits']['total'];
+        $file = fopen($databaseName.".json", "w");
+        $iterCount = $lineCnt / 1000;
+        for($i = 0; i < $iterCount ; $i++){
+            $data = IndexController::getIndexByNameQuantityAndOffset($request, $name, 1000, i*1000);
+            fwrite($file, $data);
+        }
+        fclose($file);
+        $file->move(public_path().'/downloads',$dataset->databaseName.'.json');
+        $data = "api.local/downloads/".$dataset->databaseName.'.json';
+        return response($data)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
+    }
 }
