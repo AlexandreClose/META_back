@@ -16,7 +16,7 @@ class CreateDatasetsTable extends Migration
         Schema::create('datasets', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('name')->unique();
-            $table->string('databaseName')->unique();
+            $table->string('databaseName', 48)->unique();
             $table->boolean('validated');
             $table->longText('description');
             $table->string('creator',45);
