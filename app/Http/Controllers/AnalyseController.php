@@ -34,7 +34,7 @@ class AnalyseController extends Controller
         
         $analyse = analysis::where('name')->first();
 
-        return $analyse;
+        return response($analyse)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
     }
 
     public function createAnalysisColumn(Request $request, $id){
@@ -63,6 +63,22 @@ class AnalyseController extends Controller
                 abort(403);
             }
         }
+        return response($analysis)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
+    }
+
+    public function getAllAccessibleAnalysis($request){
+        $user = $request->get('user');
+        $datasets = DatasetController::getAllAccessibleDatasets($request, $user, false);
+        $analysis = $user->analysis();
+
+        foreach($analysis as $key=>$analyse){
+            foreach($analysis->columns as $column){
+                if(!array_search(dataset::where('id', $column->dataset_id), $datasets)){
+                    unset($analysis[$key]);
+                }
+            }
+        }
+        
         return response($analysis)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
     }
 }

@@ -17,7 +17,7 @@ use Illuminate\Http\Request;
 //    return $request->user();
 //});
 
-Route::get('/',function(){
+Route::get('/',function(){      
     return response("",200);
 });
 
@@ -31,6 +31,7 @@ Route::get('/index/file/{name}', 'IndexController@getIndexFile');
 //Analyse routes : Mysql
 Route::get('/analyse/save', 'Analysecontroller@saveAnalyse');
 Route::get('/analyse/get/{id}', 'AnalyseController@getAnalysisFromId');
+Route::get('/analyse/all', 'AnalyseController@getAllAccessibleAnalysis');
 
 //Datasets routes : Mysql
 Route::get('/datasets/data/validate','DatasetController@getDatasetsToValidate');
