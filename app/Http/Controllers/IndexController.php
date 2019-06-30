@@ -62,7 +62,7 @@ class IndexController extends Controller
                 }
             }
         }
-        dd($date_fields);
+        //dd($date_fields);
         return $return;
     }
 
