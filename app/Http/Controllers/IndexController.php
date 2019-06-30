@@ -63,7 +63,7 @@ class IndexController extends Controller
             }
         }
         //dd($date_fields);
-        return $return;
+        return $date_fields;
     }
 
     public static function getIndexByNameQuantityAndOffset(Request $request, $name, $quantity = 5,$offset = 0, $date_col = null, $start_date = null, $end_date = null)
