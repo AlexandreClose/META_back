@@ -101,7 +101,7 @@ class IndexController extends Controller
         //dd($columnFilter);
         $body = [];
         if($date_col != null && $start_date == null && $end_date == null){
-            $body = ['sort' => [[$date_col => ['order' => 'asc']]]];
+            $body = ['sort' => [[$date_col => ['order' => 'desc']]]];
         } elseif($date_col != null && $start_date != null && $end_date == null){
             $body = ['sort' => [$date_col => ['order' => 'desc']],'query' => ['range' => [$date_col => ['gte' => $start_date, 'lte' => $start_date]]]];
         } elseif ($date_col != null && $start_date != null && $end_date != null) {
