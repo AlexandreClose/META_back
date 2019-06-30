@@ -76,6 +76,7 @@ class IndexController extends Controller
             if($name === $dataset->databaseName){
                 $datasetId = $dataset->id;
                 $canAccess = true;
+                break;
             }
         }
 
@@ -84,6 +85,7 @@ class IndexController extends Controller
             if($name === $dataset->databaseName){
                 $datasetId = $dataset->id;
                 $canAccess = true;
+                break;
             }
         }
         if(!$canAccess){
@@ -99,7 +101,7 @@ class IndexController extends Controller
         //dd($columnFilter);
         $body = [];
         if($date_col != null && $start_date == null && $end_date == null){
-            $body = ['sort' => [[$date_col => ['order' => 'desc']]]];
+            $body = ['sort' => [[$date_col => ['order' => 'asc']]]];
         } elseif($date_col != null && $start_date != null && $end_date == null){
             $body = ['sort' => [$date_col => ['order' => 'desc']],'query' => ['range' => [$date_col => ['gte' => $start_date, 'lte' => $start_date]]]];
         } elseif ($date_col != null && $start_date != null && $end_date != null) {
@@ -116,17 +118,5 @@ class IndexController extends Controller
     {
         $data = IndexController::getIndexByNameQuantityAndOffset($request, $name, $quantity, $offset, $date_col, $start_date, $end_date);
         return response($data)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
-    }
-
-    public function getIndexFile(Request $request, $name){
-        $data = IndexController::getIndexByNameQuantityAndOffset($request, $name, 1);
-        $lineCnt = $data['hits']['total'];
-        $file = fopen($name.".json", "w");
-        $iterCount = $lineCnt / 1000;
-        for($i = 0; i < $iterCount ; $i++){
-            $data = IndexController::getIndexByNameQuantityAndOffset($request, $name, 1000, i*1000);
-            fwrite($file, $data);
-        }
-        fclose($file);
     }
 }
