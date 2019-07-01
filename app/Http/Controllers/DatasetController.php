@@ -189,6 +189,7 @@ class DatasetController extends Controller
             }
             $dataset->save();
             $dataset = dataset::where('name',$name)->first();
+            /*
             foreach($visualisations as $visualisation){
                 $type = representation_type::where('name', $visualisation)->first();
                 if((dataset_has_representation::where('representationName', $type->name)->where('datasetId', $dataset->id)->first()) == null){
@@ -197,7 +198,7 @@ class DatasetController extends Controller
                     $types->representationName = $type->name;
                     $types->save();
                 }
-            }
+            }*/
 
     }
 
