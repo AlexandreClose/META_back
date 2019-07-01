@@ -12,7 +12,7 @@ class tag_seeder extends Seeder
     public function run()
     {
         DB::table('tags')->insert([
-            'name'=>"voxmenteur",
+            'name'=>"Candélabres",
             'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
             'updated_at' => Carbon::now()->format('Y-m-d H:i:s')
             ]);

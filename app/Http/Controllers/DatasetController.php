@@ -191,7 +191,7 @@ class DatasetController extends Controller
             $dataset = dataset::where('name',$name)->first();
             foreach($visualisations as $visualisation){
                 $type = representation_type::where('name', $visualisation)->first();
-                if((dataset_has_representation::where('representationName', $type->name)->where('datasetId', $request->get('id'))->first()) == null){
+                if((dataset_has_representation::where('representationName', $type->name)->where('datasetId', $dataset->get('id'))->first()) == null){
                     $types = new dataset_has_representation();
                     $types->datasetId = $request->get('id');
                     $types->representationName = $type->name;
