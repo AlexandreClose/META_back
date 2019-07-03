@@ -212,6 +212,7 @@ class DatasetController extends Controller
             $user = $request->get('user');
         }
         $themes = $user->themes;
+        error_log($themes[0]);
         $role = $user->role;
         $directdatasets = $user->datasets;
         $directcolumns = $user->columns;

@@ -134,4 +134,23 @@ class IndexController extends Controller
         $data = "api.local/downloads/".$dataset->databaseName.'.json';
         return response($data)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
     }
+
+    public function getIndexFromCoordinatesInShape(Request $request){
+        $filter_dataset = $request->get('filter_dataset');
+        $filter_field = $request->get('filter_field');
+
+        $filter_id_field = $request->get('filter_id_field');
+        $filter_id = $request->get('filter_id');
+
+        $filtered_dataset = $request->get('filtered_dataset');
+        $filtered_column = $request->get('filtered_column');
+    
+        //Fetch the geoshape data to be used as a filter
+        $body = ['query' => ['match' => [$filter_id_field => $filter_id]]];
+
+        $data = Elasticsearch::search(['index' => $filter_dataset, '_source' => [$filter_id_field, $filter_field], 'size' => 1,"from"=>0,"body"=>$body]);
+
+        dd($data);
+    }
+
 }
