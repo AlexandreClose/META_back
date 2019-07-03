@@ -150,7 +150,7 @@ class IndexController extends Controller
 
         $data = Elasticsearch::search(['index' => $filter_dataset, '_source' => [$filter_id_field, $filter_field], 'size' => 1,"from"=>0,"body"=>$body]);
 
-        $filter = $data['hits']['hits'][$filter_field];
+        $filter = $data['hits']['hits'][0][$filter_field];
         dd($filter);
     }
 
