@@ -143,15 +143,20 @@ class IndexController extends Controller
         $filter_id = $request->get('filter_id');
 
         $filtered_dataset = $request->get('filtered_dataset');
-        $filtered_column = $request->get('filtered_column');
+        $filtered_field = $request->get('filtered_field');
     
         //Fetch the geoshape data to be used as a filter
         $body = ['query' => ['match' => [$filter_id_field => $filter_id]]];
 
-        $data = Elasticsearch::search(['index' => $filter_dataset, '_source' => [$filter_id_field, $filter_field], 'size' => 1,"from"=>0,"body"=>$body]);
+        $data = Elasticsearch::search(['index' => $filter_dataset, '_source' => [$filter_id_field, $filter_field], 'size' => 1,'from'=>0,'body'=>$body]);
 
-        $filter = $data['hits']['hits'][0]['_source'][$filter_field];
-        dd($filter);
+        $filter_data = $data['hits']['hits'][0]['_source'][$filter_field];
+
+        $filter = ["query" => ["bool" => ["filter" => ["geo_shape" => [$filtered_field => ["shape" => $filter_data, "relation" => "within"]]]]]];
+
+        $filtered_data = Elasticsearch::search(['index' => $filtered_dataset, 'size' => 1, 'from' => 0, 'body' => $filter]);
+
+        return response($filtered_data)->header('Content-Type', "application/json")->header('charset', 'utf-8');
     }
 
 }
