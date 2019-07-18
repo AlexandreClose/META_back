@@ -7,6 +7,16 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Log;
 
 
+/**
+ * @property mixed uuid
+ * @property mixed role
+ * @property mixed firstname
+ * @property mixed lastname
+ * @property mixed service
+ * @property mixed direction
+ * @property mixed mail
+ * @property mixed phone
+ */
 class user extends Model
 {
     protected $primaryKey = 'uuid';
@@ -20,7 +30,7 @@ class user extends Model
         'service' => 'required|min:3',
         'direction' => 'required|min:3',
         'mail' =>'required|email',
-        'phone'=>'min:10|max:10'
+        'phone'=>'digits:10|numeric'
     );
 
     public function validate($data)

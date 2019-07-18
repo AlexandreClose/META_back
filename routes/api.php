@@ -53,6 +53,7 @@ Route::get('/datasets/saved', "DatasetController@getAllAccessibleSavedDatasets")
 Route::get('/user/{quantity?}','UserController@getAllUsers');
 Route::get('self','UserController@getConnectedUserData');
 Route::get('/users/name/{quantity?}','UserController@getUsersName');
+Route::post('/user/create','UserController@addUser');
 
 //Datatypes routes : Mysql
 Route::get('/datatypes/{quantity?}','DataTypesController@getAllDataTypes');

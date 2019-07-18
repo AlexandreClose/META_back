@@ -9,17 +9,20 @@ use function React\Promise\all;
 class UserController extends Controller
 {
 
-    public function getAllUsers(Request $request){
+    public function getAllUsers(Request $request)
+    {
         $role = $request->get('user')->role;
-        if($role != "Administrateur"){
+        if ($role != "Administrateur") {
             abort(403);
         }
         $users = user::all();
         return response($users)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
     }
-    public function createUserIfDontExist(Request $request, $uuid){
+
+    public function createUserIfDontExist(Request $request, $uuid)
+    {
         $role = $request->get('user')->role;
-        if($role != "Administrateur"){
+        if ($role != "Administrateur") {
             abort(403);
         }
         $user = user::where('uuid', '=', $uuid)->first();
@@ -36,41 +39,42 @@ class UserController extends Controller
         }
     }
 
-    public function getConnectedUserData(Request $request){
+    public function getConnectedUserData(Request $request)
+    {
         return response($request->get('user'))->header('Content-Type', 'application/json')->header('charset', 'utf-8');
     }
 
-    public function getUsersName(Request $request,Int $quantity = null){
+    public function getUsersName(Request $request, Int $quantity = null)
+    {
         $users = [];
-        if($quantity == null){
-            $users = user::all('uuid','firstname','lastname');
-        }
-        else{
-            $users = user::all('uuid','firstname','lastname')->take($quantity);
+        if ($quantity == null) {
+            $users = user::all('uuid', 'firstname', 'lastname');
+        } else {
+            $users = user::all('uuid', 'firstname', 'lastname')->take($quantity);
         }
         return response($users)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
 
     }
 
-    public function updateUserWithData(Request $request){
+    public function updateUserWithData(Request $request)
+    {
         $role = $request->get('user')->role;
-        if($role != "Administrateur"){
+        if ($role != "Administrateur") {
             abort(403);
         }
-        $postbody='';
+        $postbody = '';
         // Check for presence of a body in the request
         if (count($request->json()->all())) {
             $postbody = $request->json()->all();
-        }
-        else{
+        } else {
             abort(400);
         }
         $user = user::where('uuid', '=', $postbody['uuid'])->first();
-        if($user == null){
+        if ($user == null) {
             abort(404);
         }
 
-        if(!$user->validate($postbody)){
+        if (!$user->validate($postbody)) {
             abort(400);
         }
 
@@ -84,9 +88,35 @@ class UserController extends Controller
         $user->phone = $postbody["phone"];
         $user->save();
 
-        return response("success",200);
+        return response("success", 200);
 
 
+    }
 
+    public function addUser(Request $request)
+    {
+        $role = $request->get('user')->role;
+        if ($role != "Administrateur") {
+            abort(403);
+        }
+
+        $user = new user();
+        $postbody = $request->all();
+        if (!$user->validate($postbody)) {
+            abort(400);
+        }
+
+        $user->uuid = $request->get("uuid");
+        $user->role = $request->get("role");
+        $user->firstname = $request->get("firstname");
+        $user->lastname = $request->get("lastname");
+        $user->service = $request->get("service");
+        $user->direction = $request->get("direction");
+        $user->mail = $request->get("mail");
+        $user->phone = $request->get("phone");
+
+        $user->save();
+
+        return response("", 200);
     }
 }
