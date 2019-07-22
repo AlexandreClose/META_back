@@ -158,6 +158,7 @@ class DatasetController extends Controller
             $date = $request->get('date');
             $creator = $request->get('creator');
             $contributor = $request->get('contributor');
+            $utils = $request->get('utils');
             $dataset = new dataset();
             $dataset->name = $name;
             $dataset->JSON = (bool)$JSON;
@@ -176,6 +177,7 @@ class DatasetController extends Controller
             $dataset->visibility= "job_referent";
             $dataset->user = $creator;
             $dataset->producer = $creator;
+            $dataset->utils = $utils;
             $dataset->themeName = $metier;
             $dataset->databaseName = str_replace("-","_",Str::slug($name));
             $file = $request->file('uploadFile');
