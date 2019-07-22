@@ -72,5 +72,10 @@ class user extends Model
     public function columns(){
         return $this->belongsToMany('App\column','colauth_users','uuid','id');
     }
+
+    public function cards()
+    {
+        return $this->hasMany('App\saved_card', 'uuid', 'uuid');
+    }
 }
 
