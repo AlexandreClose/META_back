@@ -51,12 +51,12 @@ class UserAuth
             abort(403);
         }
 
-            $user = user::where('uuid',$value)->first();
+            $user = user::where('tid',$value)->first();
             if($user == null){
                 abort(403);
             }
             else{
-                $user->token = $value;
+                $user->token = $token;
                 $request->merge(['user' => $user]);
 
             }
