@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\theme;
 use App\user;
+use App\user_theme;
+use Exception;
 use Illuminate\Http\Request;
 use function React\Promise\all;
 
@@ -69,13 +72,15 @@ class UserController extends Controller
         } else {
             abort(400);
         }
-        $user = user::where('uuid', '=', $postbody['uuid'])->first();
+
+        $user = new  user();
+        $user::where('uuid', '=', $postbody['uuid'])->first();
         if ($user == null) {
             abort(404);
         }
 
         if (!$user->validate($postbody)) {
-            abort(400);
+            abort(413);
         }
 
         //TODO: Ajouter la verification du role dans la table role
@@ -106,17 +111,64 @@ class UserController extends Controller
             abort(400);
         }
 
-        $user->uuid = $request->get("uuid");
-        $user->role = $request->get("role");
-        $user->firstname = $request->get("firstname");
-        $user->lastname = $request->get("lastname");
-        $user->service = $request->get("service");
-        $user->direction = $request->get("direction");
-        $user->mail = $request->get("mail");
-        $user->phone = $request->get("phone");
+        $user->uuid = $postbody["uuid"];
+        $user->role = $postbody["role"];
+        $user->firstname = $postbody["firstname"];
+        $user->lastname = $postbody["lastname"];
+        $user->service = $postbody["service"];
+        $user->direction = $postbody["direction"];
+        $user->mail = $postbody["mail"];
+        $user->phone = $postbody["phone"];
 
         $user->save();
 
         return response("", 200);
+    }
+
+    public function addUserTheme(Request $request)
+    {
+        $role = $request->get('user')->role;
+        if ($role != "Administrateur") {
+            abort(403);
+        }
+
+        $userTheme = new user_theme();
+        $postbody = $request->all();
+        if (!$userTheme->validate($postbody)) {
+            abort(400);
+        }
+
+        if (!(user::find($request->get("uuid")) and theme::find($request->get("name")))) {
+            abort(404);
+        }
+
+        try {
+            $userTheme->uuid = $postbody['uuid'];
+            $userTheme->name = $postbody['name'];
+            $userTheme->save();
+        } catch (Exception $e) {
+            if (!($e->getCode() === 0)) {
+                abort(400);
+            }
+        }
+
+        return response('', 200);
+    }
+
+    public function deleteUserTheme(Request $request)
+    {
+        $role = $request->get('user')->role;
+        if ($role != "Administrateur") {
+            abort(403);
+        }
+
+        if (user_theme::where('name', '=', $request->get('name'))
+            ->where('uuid', '=', $request->get('uuid'))->get() == '[]') {
+            abort(400);
+        }
+        user_theme::where('name', '=', $request->get('name'))
+            ->where('uuid', '=', $request->get('uuid'))->delete();
+
+        return response('', 200);
     }
 }

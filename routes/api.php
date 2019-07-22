@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -54,6 +55,8 @@ Route::get('/user/{quantity?}','UserController@getAllUsers');
 Route::get('self','UserController@getConnectedUserData');
 Route::get('/users/name/{quantity?}','UserController@getUsersName');
 Route::post('/user/create','UserController@addUser');
+Route::post('/user/theme','UserController@addUserTheme');
+Route::delete('/user/theme','UserController@deleteUserTheme');
 
 //Datatypes routes : Mysql
 Route::get('/datatypes/{quantity?}','DataTypesController@getAllDataTypes');
@@ -66,6 +69,8 @@ Route::post('/column/create','ColumnController@createColumn');
 
 //themes routes : Mysql
 Route::get('/theme/{quantity?}','ThemeController@getAllThemes');
+Route::post('/theme','ThemeController@addTheme');
+Route::delete('/theme','ThemeController@deleteTheme');
 
 //Roles routes : Mysql
 Route::get('/role/{quantity?}','RolesController@getAllRoles');
