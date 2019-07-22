@@ -74,10 +74,14 @@ Route::get('/role/{quantity?}','RolesController@getAllRoles');
 Route::get('/tag/{quantity?}', 'TagsController@getAllTags');
 
 //Directions routes : Mysql
-Route::get('/direction/{quantity?}', 'DirectionsController@getAllDirections');
+Route::post('/direction', 'DirectionController@addDirection');
+Route::delete('/direction', 'DirectionController@delDirection');
+Route::get('/direction/{quantity?}', 'DirectionController@getAllDirections');
 
 //Services routes : Mysql
-Route::get('/service/{quantity?}', 'ServicesController@getAllServices');
+Route::post('/service', 'ServiceController@addService');
+Route::delete('/service', 'ServiceController@delService');
+Route::get('/service/{quantity?}', 'ServiceController@getAllServices');
 
 //Routes de test
 //Route::get('/user/add/{uuid}','UserController@createUserIfDontExist');
