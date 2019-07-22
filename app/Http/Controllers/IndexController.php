@@ -66,6 +66,50 @@ class IndexController extends Controller
         return $date_fields;
     }
 
+    public function getAllFieldFromIndexByName(Request $request, $name)
+    {
+        $user = $request->get('user');
+        $datasets = DatasetController::getAllAccessibleDatasets($request, $user, false);
+        $canAccess = false;
+        $datasetId;
+        foreach($datasets as $dataset){
+            if($name === $dataset->databaseName){
+                $datasetId = $dataset->id;
+                $canAccess = true;
+            }
+        }
+
+        $datasets = DatasetController::getAllAccessibleDatasets($request, $user, true);
+        foreach($datasets as $dataset){
+            if($name === $dataset->databaseName){
+                $datasetId = $dataset->id;
+                $canAccess = true;
+            }
+        }
+        if(!$canAccess){
+            abort(403);
+        }
+
+        $data = [
+            'index' => $name
+        ];
+        $return = Elasticsearch::indices()->getMapping($data);
+
+        //dd($return);
+        $fields = [];
+        foreach ($return[$name]['mappings']['doc']['properties'] as $field => $field_data) {
+            //dd($field_data['type']);
+            array_push($fields, $field);
+            if($field == "properties"){
+                foreach ($field_data["properties"] as $inner_field => $inner_field_data) {
+                    array_push($fields, "properties".".".$inner_field);
+                }
+            }
+        }
+        //dd($date_fields);
+        return $fields;
+    }
+
     public static function getIndexByNameQuantityAndOffset(Request $request, $name, $quantity = 5,$offset = 0, $date_col = null, $start_date = null, $end_date = null)
     {
         $user = $request->get('user');
@@ -158,5 +202,7 @@ class IndexController extends Controller
 
         return response($filtered_data)->header('Content-Type', "application/json")->header('charset', 'utf-8');
     }
+
+
 
 }
