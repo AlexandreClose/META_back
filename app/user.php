@@ -30,7 +30,8 @@ class user extends Model
         'service' => 'required|min:3',
         'direction' => 'required|min:3',
         'mail' =>'required|email',
-        'phone'=>'digits:10|numeric'
+        'phone'=>'digits:10|numeric',
+        'tid'=>'required|min:3'
     );
 
     public function validate($data)

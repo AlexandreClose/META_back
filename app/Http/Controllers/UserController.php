@@ -3,6 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\user;
+use App\service;
+use App\role;
+use App\direction;
 use Illuminate\Http\Request;
 use function React\Promise\all;
 
@@ -30,6 +33,7 @@ class UserController extends Controller
             $user = new user();
             $user->uuid = $uuid;
             $user->role = "Désactivé";
+            $user->tid = "";
             $user->firstname = "";
             $user->lastname = "";
             $user->service = "";
@@ -78,14 +82,26 @@ class UserController extends Controller
             abort(400);
         }
 
-        //TODO: Ajouter la verification du role dans la table role
+        $role = role::where('role',$postbody["role"])->first();
+        if($role == null){
+            abort(400);
+        }
         $user->role = $postbody["role"];
         $user->firstname = $postbody["firstname"];
         $user->lastname = $postbody["lastname"];
+        $service = service::where('service',$postbody["service"])->first();
+        if($service == null){
+            abort(400);
+        }
         $user->service = $postbody["service"];
+        $direction = direction::where('direction',$postbody["direction"])->first();
+        if($direction == null){
+            abort(400);
+        }
         $user->direction = $postbody["direction"];
         $user->mail = $postbody["mail"];
         $user->phone = $postbody["phone"];
+        $user->tid = $postbody["tid"];
         $user->save();
 
         return response("success", 200);
@@ -107,13 +123,27 @@ class UserController extends Controller
         }
 
         $user->uuid = $request->get("uuid");
+        
+        $role = role::where('role',$request->get("role"))->first();
+        if($role == null){
+            abort(400);
+        }
         $user->role = $request->get("role");
         $user->firstname = $request->get("firstname");
         $user->lastname = $request->get("lastname");
+        $service = service::where('service',$request->get("service"))->first();
+        if($service == null){
+            abort(400);
+        }
         $user->service = $request->get("service");
+        $direction = direction::where('direction',$request->get("direction"))->first();
+        if($direction == null){
+            abort(400);
+        }
         $user->direction = $request->get("direction");
         $user->mail = $request->get("mail");
         $user->phone = $request->get("phone");
+        $user->tid = $request->get("tid");
 
         $user->save();
 

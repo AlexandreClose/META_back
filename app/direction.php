@@ -4,8 +4,8 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class role extends Model
+class direction extends Model
 {
-    protected $primaryKey = 'role';
+    protected $primaryKey = 'direction';
     public $incrementing = false;
 }

@@ -73,6 +73,11 @@ Route::get('/role/{quantity?}','RolesController@getAllRoles');
 //Tags routes : Mysql
 Route::get('/tag/{quantity?}', 'TagsController@getAllTags');
 
+//Directions routes : Mysql
+Route::get('/direction/{quantity?}', 'DirectionsController@getAllDirections');
+
+//Services routes : Mysql
+Route::get('/service/{quantity?}', 'ServicesController@getAllServices');
 
 //Routes de test
 //Route::get('/user/add/{uuid}','UserController@createUserIfDontExist');
