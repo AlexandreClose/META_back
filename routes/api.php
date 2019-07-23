@@ -1,7 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,16 +16,18 @@ use Illuminate\Support\Facades\Route;
 //    return $request->user();
 //});
 
-Route::get('/',function(){      
-    return response("",200);
+use Illuminate\Support\Facades\Route;
+
+Route::get('/', function () {
+    return response("", 200);
 });
 
 
 //Index routes : Elasticsearch
-Route::get('/index/{quantity?}','IndexController@getAllIndex');
+Route::get('/index/{quantity?}', 'IndexController@getAllIndex');
 Route::get('/index/date/{name}', 'IndexController@getAllDateFieldsFromAnIndexFromItsName');
 Route::get('/index/fields/{name}', 'IndexController@getAllFieldFromIndexByName');
-Route::get('/index/get/{name}/{quantity?}/{offset?}/{date_col?}/{start_date?}/{end_date?}','IndexController@getIndexByName');
+Route::get('/index/get/{name}/{quantity?}/{offset?}/{date_col?}/{start_date?}/{end_date?}', 'IndexController@getIndexByName');
 Route::get('/index/file/{name}', 'IndexController@getIndexFile');
 Route::post('/index/geo', 'IndexController@getIndexFromCoordinatesInShape');
 
@@ -37,11 +37,11 @@ Route::get('/analyse/get/{id}', 'AnalyseController@getAnalysisFromId');
 Route::get('/analyse/all', 'AnalyseController@getAllAccessibleAnalysis');
 
 //Datasets routes : Mysql
-Route::get('/datasets/data/validate','DatasetController@getDatasetsToValidate');
-Route::get('/datasets/all/{quantity?}/{offset?}','DatasetController@getAllDatasets');
-Route::get('/datasets/representations/{id}','DatasetController@getRepresentationsOfDataset');
-Route::post('/datasets/update',"DatasetController@updateDataset");
-Route::post('/datasets/upload','DatasetController@uploadDataset');
+Route::get('/datasets/data/validate', 'DatasetController@getDatasetsToValidate');
+Route::get('/datasets/all/{quantity?}/{offset?}', 'DatasetController@getAllDatasets');
+Route::get('/datasets/representations/{id}', 'DatasetController@getRepresentationsOfDataset');
+Route::post('/datasets/update', "DatasetController@updateDataset");
+Route::post('/datasets/upload', 'DatasetController@uploadDataset');
 Route::get('/dataset/{id}/columns', "DatasetController@getAllColumnFromDataset");
 Route::get('/dataset/{id}/save', "DatasetController@saveDataset");
 Route::get('/dataset/{id}/favorite', "DatasetController@favoriteDataset");
@@ -49,32 +49,33 @@ Route::get('/dataset/{id}/unsave', "DatasetController@unsaveDataset");
 Route::get('/dataset/{id}/unfavorite', "DatasetController@unsaveDataset");
 Route::get('/datasets/favorite', "DatasetController@getAllAccessibleFavoriteDatasets");
 Route::get('/datasets/saved', "DatasetController@getAllAccessibleSavedDatasets");
+Route::get('/datasets/util/{tinyInt}', "DatasetController@getUtil");
 
 
 //Users routes : Mysql
-Route::get('/user/{quantity?}','UserController@getAllUsers');
-Route::get('self','UserController@getConnectedUserData');
-Route::get('/users/name/{quantity?}','UserController@getUsersName');
-Route::post('/user/create','UserController@addUser');
-Route::post('/user/theme','UserController@addUserTheme');
-Route::delete('/user/theme','UserController@deleteUserTheme');
+Route::get('/user/{quantity?}', 'UserController@getAllUsers');
+Route::get('self', 'UserController@getConnectedUserData');
+Route::get('/users/name/{quantity?}', 'UserController@getUsersName');
+Route::post('/user/create', 'UserController@addUser');
+Route::post('/user/theme', 'UserController@addUserTheme');
+Route::delete('/user/theme', 'UserController@deleteUserTheme');
 
 //Datatypes routes : Mysql
-Route::get('/datatypes/{quantity?}','DataTypesController@getAllDataTypes');
+Route::get('/datatypes/{quantity?}', 'DataTypesController@getAllDataTypes');
 
 //Representation types routes : Mysql
-Route::get('/representationTypes/{quantity?}','RepresentationTypesController@getAllRepresentationTypes');
+Route::get('/representationTypes/{quantity?}', 'RepresentationTypesController@getAllRepresentationTypes');
 
 //Columns routes : Mysql
-Route::post('/column/create','ColumnController@createColumn');
+Route::post('/column/create', 'ColumnController@createColumn');
 
 //themes routes : Mysql
-Route::get('/theme/{quantity?}','ThemeController@getAllThemes');
-Route::post('/theme','ThemeController@addTheme');
-Route::delete('/theme','ThemeController@deleteTheme');
+Route::get('/theme/{quantity?}', 'ThemeController@getAllThemes');
+Route::post('/theme', 'ThemeController@addTheme');
+Route::delete('/theme', 'ThemeController@deleteTheme');
 
 //Roles routes : Mysql
-Route::get('/role/{quantity?}','RolesController@getAllRoles');
+Route::get('/role/{quantity?}', 'RolesController@getAllRoles');
 
 //Tags routes : Mysql
 Route::get('/tag/{quantity?}', 'TagsController@getAllTags');
@@ -91,4 +92,4 @@ Route::get('/service/{quantity?}', 'ServiceController@getAllServices');
 
 //Routes de test
 //Route::get('/user/add/{uuid}','UserController@createUserIfDontExist');
-Route::post('/user/update/','UserController@updateUserWithData');
+Route::post('/user/update/', 'UserController@updateUserWithData');
