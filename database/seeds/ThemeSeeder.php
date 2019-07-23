@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class ThemeSeeder extends Seeder
 {
@@ -33,6 +34,12 @@ class ThemeSeeder extends Seeder
         DB::table('themes')->insert([
             'name'=>"Voirie",
             'description'=>"Metier de la voirie dans Toulouse",
+            'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
+            'updated_at' => Carbon::now()->format('Y-m-d H:i:s')
+        ]);
+        DB::table('themes')->insert([
+            'name'=>"Default",
+            'description'=>"N/A",
             'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
             'updated_at' => Carbon::now()->format('Y-m-d H:i:s')
         ]);
