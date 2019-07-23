@@ -36,4 +36,21 @@ class DirectionController extends Controller
         }
         $direction->delete();
     }
+
+    public function updateDirection(Request $request){
+        $role = $request->get('user')->role;
+        if($role != "Administrateur") {
+            abort(403);
+        }
+        $name = $request->get('direction');
+        $newName = $request->get('newName');
+        $desc = $request->get('desc');
+        $direction = direction::where('direction', $name);
+        if($direction == null){
+            abort(403);
+        }
+        $direction->direction = $newName != null ? $newName : $name;
+        $direction->description = $desc != null ? $desc : $direction->description;
+        $direction->save();
+    }
 }
