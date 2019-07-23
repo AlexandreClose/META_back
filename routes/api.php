@@ -82,11 +82,13 @@ Route::get('/tag/{quantity?}', 'TagsController@getAllTags');
 //Directions routes : Mysql
 Route::post('/direction', 'DirectionController@addDirection');
 Route::delete('/direction', 'DirectionController@delDirection');
+Route::put('/direction', 'ServiceDirection@updateDirection');
 Route::get('/direction/{quantity?}', 'DirectionController@getAllDirections');
 
 //Services routes : Mysql
 Route::post('/service', 'ServiceController@addService');
 Route::delete('/service', 'ServiceController@delService');
+Route::put('/service', 'ServiceController@updateService');
 Route::get('/service/{quantity?}', 'ServiceController@getAllServices');
 
 //Routes de test

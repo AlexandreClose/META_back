@@ -36,4 +36,21 @@ class ServiceController extends Controller
         }
         $service->delete();
     }
+
+    public function updateService(Request $request){
+        $role = $request->get('user')->role;
+        if($role != "Administrateur") {
+            abort(403);
+        }
+        $name = $request->get('service');
+        $newName = $request->get('newName');
+        $desc = $request->get('desc');
+        $service = service::where('service', $name);
+        if($service == null){
+            abort(403);
+        }
+        $service->service = $newName != null ? $newName : $name;
+        $service->description = $desc != null ? $desc : $service->description;
+        $service->save();
+    }
 }
