@@ -7,7 +7,7 @@ use App\direction;
 
 class DirectionController extends Controller
 {
-    public function getAllDirection(){
+    public function getAllDirections(){
         return direction::all();
     }
 
