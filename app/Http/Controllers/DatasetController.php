@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use http\Env\Response;
 use Illuminate\Http\Request;
 use App\dataset;
 use Illuminate\Support\Carbon;
@@ -394,14 +395,19 @@ class DatasetController extends Controller
     public static function getAllAccessibleColumnsFromADataset(Request $request, dataset $dataset)
     {
         $user = $request->get('user');
-        $role = $user->roles->role;
-        $themes = $user->theme;
+        $role = $user->role;
+        $themes = [];
+
+        foreach ($user['themes'] as $t) {
+            array_push($themes, $t['name']);
+        }
+
         switch ($role) {
             case "Administrateur":
                 $columns = column::where('dataset_id', $dataset->id)->get();
                 break;
             case "Référent-Métier":
-                $columns = column::where('dataset_id', $dataset->id)->whereIn('visibility', ['job_referent', 'worker'])->whereIn('themeName', $themes)->get();
+                $columns = column::where('dataset_id', $dataset->id)->whereIn('themeName', $themes)->whereIn('visibility', ['job_referent', 'worker'])->get();
                 $columns->merge(column::where('dataset_id', $dataset->id)->whereIn('visibility', ['all', null]));
                 break;
             case "Utilisateur":
