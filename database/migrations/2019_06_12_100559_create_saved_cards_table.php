@@ -14,11 +14,11 @@ class CreateSavedCardsTable extends Migration
     public function up()
     {
         Schema::create('saved_cards', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->bigInteger('id');
             $table->uuid('uuid');
             $table->tinyInteger('displayed');
             $table->integer('position');
-            $table->integer('size')->nullable($value->true);
+            $table->integer('size')->nullable(true);
             $table->timestamps();
             $table->primary(['uuid', 'id']);
         });
