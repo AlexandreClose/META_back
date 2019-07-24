@@ -8,7 +8,11 @@ use App\direction;
 class DirectionController extends Controller
 {
     public function getAllDirections(){
-        $directions = direction::all()->withCount('user');
+        $directions = DB::table('directions')
+            ->join('users', 'users.direction', 'directions.direction')
+            ->select('directions.*, count(users.uuid) as user_count')
+            ->groupBy('directions.direction')
+            ->get();
         return $direction;
     }
 
