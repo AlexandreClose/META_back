@@ -8,7 +8,8 @@ use App\direction;
 class DirectionController extends Controller
 {
     public function getAllDirections(){
-        return direction::all();
+        $directions = direction::all()->withCount('user');
+        return $direction;
     }
 
     public function addDirection($request){

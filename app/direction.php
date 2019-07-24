@@ -8,4 +8,8 @@ class direction extends Model
 {
     protected $primaryKey = 'direction';
     public $incrementing = false;
+
+    public function users(){
+        $this->hasMany('App\user', 'direction', 'direction');
+    }
 }
