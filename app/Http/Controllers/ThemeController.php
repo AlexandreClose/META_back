@@ -13,9 +13,9 @@ class ThemeController extends Controller
     function getAllThemes($quantity = null)
     {
         $themes = DB::table('themes')
-            ->join('user_theme', 'user_theme.name', 'themes.name')
+            ->leftJoin('user_theme', 'user_theme.name', '=', 'themes.name')
             ->select('themes.name', 'themes.description', DB::raw('count(user_theme.uuid) as user_count'))
-            ->groupBy('themes.name')
+            ->groupBy('themes.theme')
             ->get();
         return response($themes)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
     }
