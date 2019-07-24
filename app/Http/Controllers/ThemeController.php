@@ -6,6 +6,7 @@ use App\theme;
 use App\user;
 use App\user_theme;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ThemeController extends Controller
 {
