@@ -73,7 +73,8 @@ Route::post('/column/create', 'ColumnController@createColumn');
 //themes routes : Mysql
 Route::get('/theme', 'ThemeController@getAllThemes');
 Route::post('/theme', 'ThemeController@addTheme');
-Route::delete('/theme', 'ThemeController@deleteTheme');
+//Route::delete('/theme', 'ThemeController@deleteTheme');
+Route::put('/theme', 'ThemeController@updateTheme');
 
 //Roles routes : Mysql
 Route::get('/role', 'RolesController@getAllRoles');

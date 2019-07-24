@@ -55,4 +55,21 @@ class ThemeController extends Controller
 
         return response('',200);
     }
+
+    public function updateTheme(Request $request){
+        $role = $request->get('user')->role;
+        if($role != "Administrateur") {
+            abort(403);
+        }
+        $name = $request->get('theme');
+        $newName = $request->get('newName');
+        $desc = $request->get('desc');
+        $theme = theme::where('theme', $name);
+        if($theme == null){
+            abort(403);
+        }
+        $theme->theme = $newName != null ? $newName : $name;
+        $theme->description = $desc != null ? $desc : $theme->description;
+        $theme->save();
+    }
 }
