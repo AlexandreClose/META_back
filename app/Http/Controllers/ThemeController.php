@@ -11,17 +11,12 @@ class ThemeController extends Controller
 {
     function getAllThemes($quantity = null)
     {
-        $data = [];
-        if ($quantity == null) {
-            $themes = theme::all();
-        } else {
-            $themes = theme::take($quantity)->get();
-        }
-        foreach ($themes as $theme) {
-            $theme = json_decode($theme);
-            array_push($data, $theme);
-        }
-        return response($data)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
+        $themes = DB::table('themes')
+            ->join('user_theme', 'user_theme.theme', 'themes.theme')
+            ->select('themes.theme', 'themes.description', DB::raw('count(user_theme.uuid) as user_count'))
+            ->groupBy('themes.theme')
+            ->get();
+        return response($themes)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
     }
 
     function addTheme(Request $request)

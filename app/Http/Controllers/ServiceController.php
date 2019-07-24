@@ -2,13 +2,19 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\service;
 
 class ServiceController extends Controller
 {
     public function getAllServices(){
-        return service::all();
+        $services = DB::table('services')
+            ->join('users', 'users.service', 'services.service')
+            ->select('services.service', 'services.description', DB::raw('count(users.uuid) as user_count'))
+            ->groupBy('services.service')
+            ->get();
+        return $services;
     }
 
     public function addService($request){
