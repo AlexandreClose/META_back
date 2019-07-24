@@ -15,7 +15,7 @@ class ThemeController extends Controller
         $themes = DB::table('themes')
             ->leftJoin('user_theme', 'user_theme.name', '=', 'themes.name')
             ->select('themes.name', 'themes.description', DB::raw('count(user_theme.uuid) as user_count'))
-            ->groupBy('themes.theme')
+            ->groupBy('themes.name')
             ->get();
         return response($themes)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
     }
