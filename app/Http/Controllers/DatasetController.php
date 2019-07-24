@@ -143,50 +143,50 @@ class DatasetController extends Controller
         }
         error_log("last foreach passed");
 
-
+        /*
         $client = new GuzzleHttp\Client(['base_uri' => '212.129.57.50:9200']);
         $url = '/' . $dataset->databaseName . '/_settings';
         $res = $client->request('PUT', $url, ['json' => ["index.max_result_window" => 5000000]]);
+        */
     }
 
-    public function uploadDataset(Request $request)
-    {
-        $description = $request->get('description');
-        $name = $request->get('name');
-        $tags = $request->get('tag');
-        $metier = $request->get('metier');
-        $JSON = $request->get('JSON');
-        $GEOJSON = $request->get('GEOJSON');
-        $visualisations = $request->get('visualisations');
-        $visualisations = json_decode($visualisations);
-        $date = $request->get('date');
-        $creator = $request->get('creator');
-        $contributor = $request->get('contributor');
-        $util = $request->get('utils');
-        $dataset = new dataset();
-        $dataset->name = $name;
-        $dataset->JSON = (bool)$JSON;
-        $dataset->GEOJSON = (bool)$GEOJSON;
-        $dataset->validated = false;
-        $dataset->description = $description;
-        $dataset->creator = $creator;
-        $dataset->contributor = $contributor;
-        $dataset->license = "Fermée";
-        $dataset->created_date = $date;
-        $dataset->updated_date = Carbon::now();
-        $dataset->realtime = false;
-        $dataset->conf_ready = false;
-        $dataset->upload_ready = false;
-        $dataset->open_data = false;
-        $dataset->visibility = "job_referent";
-        $dataset->user = $creator;
-        $dataset->producer = $creator;
-        $dataset->util = $util;
-        $dataset->themeName = $metier;
-        $dataset->databaseName = str_replace("-", "_", Str::slug($name));
-        $file = $request->file('uploadFile');
-        $file->move(storage_path() . '/uploads', $dataset->databaseName . '.' . $file->getClientOriginalExtension());
-        $theme = theme::where('name', $metier)->first();
+    public function uploadDataset(Request $request){
+            $description = $request->get('description');
+            $name = $request->get('name');
+            $tags = $request->get('tag');
+            $metier = $request->get('metier');
+            $JSON = $request->get('JSON');
+            $GEOJSON = $request->get('GEOJSON');
+            $util = $request->get('utils');
+            $visualisations = $request->get('visualisations');
+            $visualisations = json_decode($visualisations);
+            $date = $request->get('date');
+            $creator = $request->get('creator');
+            $contributor = $request->get('contributor');
+            $dataset = new dataset();
+            $dataset->name = $name;
+            $dataset->JSON = (bool)$JSON;
+            $dataset->GEOJSON = (bool)$GEOJSON;
+            $dataset->util = $util;
+            $dataset->validated = false;
+            $dataset->description = $description;
+            $dataset->creator = $creator;
+            $dataset->contributor = $contributor;
+            $dataset->license = "Fermée";
+            $dataset->created_date = $date;
+            $dataset->updated_date = Carbon::now();
+            $dataset->realtime = false;
+            $dataset->conf_ready = false;
+            $dataset->upload_ready = false;
+            $dataset->open_data = false;
+            $dataset->visibility= "job_referent";
+            $dataset->user = $creator;
+            $dataset->producer = $creator;
+            $dataset->themeName = $metier;
+            $dataset->databaseName = str_replace("-","_",Str::slug($name));
+            $file = $request->file('uploadFile');
+            $file->move(storage_path().'/uploads',$dataset->databaseName.'.'.$file->getClientOriginalExtension());
+            $theme = theme::where('name',$metier)->first();
 
         if ($theme == null) {
             error_log($theme);

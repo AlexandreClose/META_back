@@ -71,12 +71,12 @@ Route::get('/representationTypes/{quantity?}', 'RepresentationTypesController@ge
 Route::post('/column/create', 'ColumnController@createColumn');
 
 //themes routes : Mysql
-Route::get('/theme/{quantity?}', 'ThemeController@getAllThemes');
+Route::get('/theme', 'ThemeController@getAllThemes');
 Route::post('/theme', 'ThemeController@addTheme');
 Route::delete('/theme', 'ThemeController@deleteTheme');
 
 //Roles routes : Mysql
-Route::get('/role/{quantity?}', 'RolesController@getAllRoles');
+Route::get('/role', 'RolesController@getAllRoles');
 
 //Tags routes : Mysql
 Route::get('/tag/{quantity?}', 'TagsController@getAllTags');
@@ -84,12 +84,14 @@ Route::get('/tag/{quantity?}', 'TagsController@getAllTags');
 //Directions routes : Mysql
 Route::post('/direction', 'DirectionController@addDirection');
 Route::delete('/direction', 'DirectionController@delDirection');
-Route::get('/direction/{quantity?}', 'DirectionController@getAllDirections');
+Route::put('/direction', 'ServiceDirection@updateDirection');
+Route::get('/direction', 'DirectionController@getAllDirections');
 
 //Services routes : Mysql
 Route::post('/service', 'ServiceController@addService');
 Route::delete('/service', 'ServiceController@delService');
-Route::get('/service/{quantity?}', 'ServiceController@getAllServices');
+Route::put('/service', 'ServiceController@updateService');
+Route::get('/service', 'ServiceController@getAllServices');
 
 //Routes de test
 //Route::get('/user/add/{uuid}','UserController@createUserIfDontExist');
