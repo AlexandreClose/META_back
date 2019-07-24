@@ -99,11 +99,12 @@ class IndexController extends Controller
         $fields = [];
         foreach ($return[$name]['mappings']['doc']['properties'] as $field => $field_data) {
             //dd($field_data['type']);
-            array_push($fields, $field);
             if ($field == "properties") {
                 foreach ($field_data["properties"] as $inner_field => $inner_field_data) {
                     array_push($fields, "properties" . "." . $inner_field);
                 }
+            } else {
+                array_push($fields, $field);
             }
         }
         //dd($date_fields);
@@ -233,8 +234,24 @@ class IndexController extends Controller
             }
         }
 
-        $data = Elasticsearch::search(['index' => $name, '_source' => $columnFilter, 'size' => $request->get('size'), "from" => $request->get('offset')]);
+        $body = [];
+        $date_col = $request->get('date_col');
+        $start_date = $request->get('start_date');
+        $end_date = $request->get('end_date');
+        if ($date_col != null && $start_date == null && $end_date == null) {
+            $body = ['sort' => [[$date_col => ['order' => 'desc']]]];
+        } elseif ($date_col != null && $start_date != null && $end_date == null) {
+            $body = ['sort' => [$date_col => ['order' => 'desc']], 'query' => ['range' => [$date_col => ['gte' => $start_date, 'lte' => $start_date]]]];
+        } elseif ($date_col != null && $start_date != null && $end_date != null) {
+            $body = ['sort' => [$date_col => ['order' => 'desc']], 'query' => ['range' => [$date_col => ['gte' => $start_date, 'lte' => $end_date]]]];
+        }
+
+        $data = Elasticsearch::search(['index' => $name, '_source' => $columnFilter,
+            'size' => $request->get('size'),
+            "from" => $request->get('offset'),
+            "body" => $body]);
+
         return response($data, 200);
     }
-    
+
 }
