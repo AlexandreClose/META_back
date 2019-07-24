@@ -14,7 +14,7 @@ class DirectionController extends Controller
             ->select('directions.direction', 'directions.description', DB::raw('count(users.uuid) as user_count'))
             ->groupBy('directions.direction')
             ->get();
-        return $direction;
+        return $directions;
     }
 
     public function addDirection($request){
