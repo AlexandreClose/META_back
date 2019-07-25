@@ -157,7 +157,7 @@ class IndexController extends Controller
             }
         }
 
-        //dd($fields);
+        dd($fields);
 
         $results = [];
 
