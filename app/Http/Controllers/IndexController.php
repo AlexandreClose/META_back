@@ -147,7 +147,11 @@ class IndexController extends Controller
                 }
             } else {
                 //dd($field_data['type']);
-                array_push($fields, [$field, $field_data['type']]);
+                try{
+                    array_push($fields, [$field, $field_data['type']]);
+                } catch (Exception $exception) {
+                    dd($exception);
+                }
             }
         }
 
