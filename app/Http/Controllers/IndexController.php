@@ -120,7 +120,7 @@ class IndexController extends Controller
     public function getAllAccessibleFieldsFromIndexByName(Request $request, $name)
     {
         $user = $request->get('user');
-
+        $canAccess = false;
         $datasets = DatasetController::getAllAccessibleDatasets($request, $user, true);
         foreach ($datasets as $dataset) {
             if ($name === $dataset->databaseName) {
