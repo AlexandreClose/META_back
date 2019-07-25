@@ -163,8 +163,7 @@ class IndexController extends Controller
 
         foreach($accessibleFields as $acc_field) {
             foreach($fields as $field){
-                dd(json_encode($acc_field['name']));
-                if($field[1] == $acc_field->attributes['name']){
+                if($field[1] == $acc_field['name']){
                     array_push($results, $field);
                 }
             }
