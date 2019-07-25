@@ -13,7 +13,7 @@ class ThemeController extends Controller
     function getAllThemes($quantity = null)
     {
         $themes = DB::table('themes')
-            ->join('user_theme', 'user_theme.name', 'themes.name')
+            ->leftJoin('user_theme', 'user_theme.name', '=', 'themes.name')
             ->select('themes.name', 'themes.description', DB::raw('count(user_theme.uuid) as user_count'))
             ->groupBy('themes.name')
             ->get();
@@ -54,5 +54,22 @@ class ThemeController extends Controller
         $theme->delete();
 
         return response('',200);
+    }
+
+    public function updateTheme(Request $request){
+        $role = $request->get('user')->role;
+        if($role != "Administrateur") {
+            abort(403);
+        }
+        $name = $request->get('theme');
+        $newName = $request->get('newName');
+        $desc = $request->get('desc');
+        $theme = theme::where('theme', $name);
+        if($theme == null){
+            abort(403);
+        }
+        $theme->theme = $newName != null ? $newName : $name;
+        $theme->description = $desc != null ? $desc : $theme->description;
+        $theme->save();
     }
 }
