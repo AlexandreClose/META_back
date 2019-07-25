@@ -157,13 +157,13 @@ class IndexController extends Controller
             }
         }
 
-        dd($fields);
+        //dd($fields);
 
         $results = [];
 
         foreach($accessibleFields as $acc_field) {
             foreach($fields as $field){
-                if($field[1] == $acc_field['name']){
+                if($field[0] == $acc_field['name']){
                     array_push($results, $field);
                 }
             }
