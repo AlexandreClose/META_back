@@ -292,15 +292,19 @@ class IndexController extends Controller
         $columns = DatasetController::getAllAccessibleColumnsFromADataset($request, $dataset);
         $columnFilter = [];
 
+        $canAccess = false;
+
         if ($request->get('columns') != null) {
             foreach ($columns as $column) {
                 if (in_array($column->name, $request->get('columns'))) {
                     array_push($columnFilter, $column->name);
-
+                    $canAccess = true;
                 }
             }
         }
-
+        if (!$canAccess) {
+            abort(403);
+        }
 
         $body = [];
         $date_col = $request->get('date_col');

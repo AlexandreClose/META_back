@@ -71,6 +71,7 @@ Route::get('/representationTypes/{quantity?}', 'RepresentationTypesController@ge
 
 //Columns routes : Mysql
 Route::post('/column/create', 'ColumnController@createColumn');
+Route::post('/column/stats', 'ColumnController@getStats');
 
 //themes routes : Mysql
 Route::get('/theme', 'ThemeController@getAllThemes');
