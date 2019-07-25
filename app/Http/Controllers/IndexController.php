@@ -139,7 +139,7 @@ class IndexController extends Controller
         $dataset = Dataset::where('databaseName', $name)->first();
         //dd($return);
         $accessibleFields = DatasetController::getAllAccessibleColumnsFromADataset($request, $dataset);
-        dd($accessibleFields);
+        //dd($accessibleFields);
         $fields = [];
         foreach ($return[$name]['mappings']['doc']['properties'] as $field => $field_data) {
             if ($field == "properties") {
