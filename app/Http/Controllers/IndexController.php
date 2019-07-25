@@ -138,7 +138,7 @@ class IndexController extends Controller
         $return = Elasticsearch::indices()->getMapping($data);
 
         //dd($return);
-        $accessibleFields = DatasetController::getAllAccessibleColumnsFromADataset($request, $databaseName);
+        $accessibleFields = DatasetController::getAllAccessibleColumnsFromADataset($request, $name);
         dd($accessibleFields);
         $fields = [];
         foreach ($return[$name]['mappings']['doc']['properties'] as $field => $field_data) {
