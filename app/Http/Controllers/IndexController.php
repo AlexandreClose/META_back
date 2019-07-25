@@ -121,7 +121,7 @@ class IndexController extends Controller
     {
         $user = $request->get('user');
         $canAccess = false;
-        $datasets = DatasetController::getAllAccessibleDatasets($request, $user, true);
+        $datasets = DatasetController::getAllAccessibleDatasets($request, $user, false);
         foreach ($datasets as $dataset) {
             if ($name === $dataset->databaseName) {
                 $datasetId = $dataset->id;
