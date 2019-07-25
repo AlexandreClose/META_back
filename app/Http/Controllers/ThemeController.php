@@ -15,7 +15,7 @@ class ThemeController extends Controller
         $themes = DB::table('themes')
             ->leftJoin('user_theme', 'user_theme.name', '=', 'themes.name')
             ->select('themes.name', 'themes.description', DB::raw('count(user_theme.uuid) as user_count'))
-            ->groupBy('themes.name')
+            ->groupBy('themes.name')    
             ->get();
         return response($themes)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
     }
@@ -62,13 +62,13 @@ class ThemeController extends Controller
             abort(403);
         }
         $name = $request->get('theme');
-        $newName = $request->get('newName');
+        //$newName = $request->get('newName');
         $desc = $request->get('desc');
         $theme = theme::where('theme', $name);
         if($theme == null){
             abort(403);
         }
-        $theme->theme = $newName != null ? $newName : $name;
+        //$theme->theme = $newName != null ? $newName : $name;
         $theme->description = $desc != null ? $desc : $theme->description;
         $theme->save();
     }
