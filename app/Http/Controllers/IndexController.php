@@ -142,10 +142,11 @@ class IndexController extends Controller
         foreach ($return[$name]['mappings']['doc']['properties'] as $field => $field_data) {
             if ($field == "properties") {
                 foreach ($field_data["properties"] as $inner_field => $inner_field_data) {
-                    dd("properties" . "." . $inner_field);
+                    dd("properties" . "." . $inner_field_data);
                     array_push($fields, ["properties" . "." . $inner_field, $inner_field_data['type']]);
                 }
             } else {
+                dd($field_data);
                 array_push($fields, [$field, $field_data['type']]);
             }
         }
