@@ -2,12 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use Elasticsearch;
-use App\Http\Functions;
 use App\dataset;
-use App\user;
-use Illuminate\Support\Str;
+use Illuminate\Http\Request;
 
 class IndexController extends Controller
 {
@@ -228,23 +224,49 @@ class IndexController extends Controller
 
         $columns = DatasetController::getAllAccessibleColumnsFromADataset($request, $dataset);
         $columnFilter = [];
-        foreach ($columns as $column) {
-            if (in_array($column->name, explode(",", $request->get('columns')))) {
-                array_push($columnFilter, $column->name);
+
+        if ($request->get('columns') != null) {
+            foreach ($columns as $column) {
+                if (in_array($column->name, $request->get('columns'))) {
+                    array_push($columnFilter, $column->name);
+
+                }
             }
         }
+
 
         $body = [];
         $date_col = $request->get('date_col');
         $start_date = $request->get('start_date');
         $end_date = $request->get('end_date');
-        if ($date_col != null && $start_date == null && $end_date == null) {
-            $body = ['sort' => [[$date_col => ['order' => 'desc']]]];
-        } elseif ($date_col != null && $start_date != null && $end_date == null) {
-            $body = ['sort' => [$date_col => ['order' => 'desc']], 'query' => ['range' => [$date_col => ['gte' => $start_date, 'lte' => $start_date]]]];
-        } elseif ($date_col != null && $start_date != null && $end_date != null) {
-            $body = ['sort' => [$date_col => ['order' => 'desc']], 'query' => ['range' => [$date_col => ['gte' => $start_date, 'lte' => $end_date]]]];
+        $start_hour = $request->get('start_hour');
+        $end_hour = $request->get('end_hour');
+        $hourQuery = "(doc['maj_date'].date.getHourOfDay() >= " . $start_hour . " && doc['maj_date'].date.getHourOfDay() < " . $end_hour . ")";
+        $week_day = $request->get('weekdays');
+        $emptyDayQuery = "doc['" . $date_col . "'].date.dayOfWeek == ";
+        $fullDayQuery = "";
+        foreach ($week_day as $day) {
+            $fullDayQuery .= $emptyDayQuery . $day . " || ";
         }
+        $fullDayQuery = str_replace(" || )", ")", "(" . $fullDayQuery . ")");
+
+        if ($date_col != null) {
+            $body = ['sort' => [[$date_col => ['order' => 'desc']]]];
+            if ($date_col != null && $start_date != null && $end_date == null) {
+                $body["query"]["bool"]["must"] = ['range' => [$date_col => ['gte' => $start_date, 'lte' => $start_date]]];
+            } elseif ($date_col != null && $start_date != null && $end_date != null) {
+                $body["query"]["bool"]["must"] = ['range' => [$date_col => ['gte' => $start_date, 'lte' => $end_date]]];
+            }
+
+            if ($week_day != null && ($start_hour != null && $end_hour != null)) {
+                $body["query"]["bool"]["filter"] = ['script' => ['script' => "(" . $fullDayQuery . " && " . $hourQuery . ")"]];
+            } elseif ($week_day != null && ($start_hour == null && $end_hour == null)) {
+                $body["query"]["bool"]["filter"] = ['script' => ['script' => $fullDayQuery]];
+            } elseif ($week_day == null && ($start_hour != null && $end_hour != null)) {
+                $body["query"]["bool"]["filter"] = ['script' => ['script' => $hourQuery]];
+            }
+        }
+
 
         $data = Elasticsearch::search(['index' => $name, '_source' => $columnFilter,
             'size' => $request->get('size'),
