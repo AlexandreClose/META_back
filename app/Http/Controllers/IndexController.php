@@ -146,7 +146,7 @@ class IndexController extends Controller
                     array_push($fields, ["properties" . "." . $inner_field, $inner_field_data['type']]);
                 }
             } else {
-                dd($field_data['type']);
+                //dd($field_data['type']);
                 array_push($fields, [$field, $field_data['type']]);
             }
         }
