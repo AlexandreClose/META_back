@@ -65,8 +65,12 @@ class ColumnController extends Controller
                 error_log($theme);
                 error_log($element["theme"]);
                 abort(400);
+            }elseif ($element["theme"] == null )
+            {
+                $column->themeName = dataset::select('themeName')->where("dataset_id",$column->dataset_id)->first();
+            }else{
+                $column->themeName = $element["theme"];
             }
-            $column->themeName = $element["theme"];
 
             $column->save();
             $users = $element['users'];
