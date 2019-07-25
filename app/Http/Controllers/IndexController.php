@@ -150,9 +150,9 @@ class IndexController extends Controller
                 if(!array_key_exists('type', $field_data))
                 {
                     array_push($fields, [$field, 'array']);
+                } else {
+                    array_push($fields, [$field, $field_data['type']]);
                 }
-                array_push($fields, [$field, $field_data['type']]);
-
             }
         }
 
