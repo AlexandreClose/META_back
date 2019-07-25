@@ -138,12 +138,15 @@ class IndexController extends Controller
         $return = Elasticsearch::indices()->getMapping($data);
 
         //dd($return);
+        $accessibleFields = DatasetController::getAllAccessibleColumnsFromADataset($request, $databaseName);
+        dd($accessibleFields);
         $fields = [];
         foreach ($return[$name]['mappings']['doc']['properties'] as $field => $field_data) {
             if ($field == "properties") {
                 foreach ($field_data["properties"] as $inner_field => $inner_field_data) {
-                    dd("properties" . "." . $inner_field_data);
-                    array_push($fields, ["properties" . "." . $inner_field, $inner_field_data['type']]);
+                    if($fields){
+                        array_push($fields, ["properties" . "." . $inner_field, $inner_field_data['type']]);
+                    }
                 }
             } else {
                 //dd($field_data['type']);
@@ -156,11 +159,13 @@ class IndexController extends Controller
             }
         }
 
-        dd($fields);
+        //dd($fields);
 
-        $accessibleFields = DatasetController::getAllAccessibleColumnsFromADataset($request, $databaseName);
+        $results = [];
 
-
+        foreach($accessibleFields as $field) {
+            
+        }
 
         //dd($date_fields);
         return $fields;
