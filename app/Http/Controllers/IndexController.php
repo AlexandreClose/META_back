@@ -2,8 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\dataset;
 use Illuminate\Http\Request;
+use Elasticsearch;
+use App\Http\Functions;
+use App\dataset;
+use App\user;
+use Illuminate\Support\Str;
+use TrayLabs\InfluxDB\Facades\InfluxDB;
 
 class IndexController extends Controller
 {
