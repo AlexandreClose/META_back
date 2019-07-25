@@ -149,6 +149,7 @@ class IndexController extends Controller
                 //dd($field_data['type']);
                 if(!array_key_exists('type', $field_data))
                 {
+                    $field_data['field'] = $field;
                     dd($field_data);
                 }
                 array_push($fields, [$field, $field_data['type']]);
