@@ -147,11 +147,12 @@ class IndexController extends Controller
                 }
             } else {
                 //dd($field_data['type']);
-                try{
-                    array_push($fields, [$field, $field_data['type']]);
-                } catch (Exception $exception) {
-                    dd($exception);
+                if(array_key_exists('type', $field_data))
+                {
+                    dd($field_data);
                 }
+                array_push($fields, [$field, $field_data['type']]);
+
             }
         }
 
