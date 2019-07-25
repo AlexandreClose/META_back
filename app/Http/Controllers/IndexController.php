@@ -147,7 +147,7 @@ class IndexController extends Controller
                 }
             } else {
                 //dd($field_data['type']);
-                if(array_key_exists('type', $field_data))
+                if(!array_key_exists('type', $field_data))
                 {
                     dd($field_data);
                 }
