@@ -140,16 +140,17 @@ class IndexController extends Controller
         //dd($return);
         $fields = [];
         foreach ($return[$name]['mappings']['doc']['properties'] as $field => $field_data) {
-            //dd($field_data['type']);
             if ($field == "properties") {
                 foreach ($field_data["properties"] as $inner_field => $inner_field_data) {
                     dd("properties" . "." . $inner_field);
-                    array_push($fields, "properties" . "." . $inner_field);
+                    array_push($fields, ["properties" . "." . $inner_field, $inner_field_data['type']]);
                 }
             } else {
-                array_push($fields, $field);
+                array_push($fields, [$field, $field_data['type']]);
             }
         }
+
+        dd($fields);
 
         $accessibleFields = DatasetController::getAllAccessibleColumnsFromADataset($request, $databaseName);
 
