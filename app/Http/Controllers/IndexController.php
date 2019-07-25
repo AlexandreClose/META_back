@@ -67,9 +67,13 @@ class IndexController extends Controller
         return $date_fields;
     }
 
-    public function getAllFieldFromIndexByName(Request $request, $name)
+    public function getAllFieldsFromIndexByName(Request $request, $name)
     {
         $user = $request->get('user');
+        
+        if($user->role == "Administrateur")
+
+        /* Should only be used by administrators for validating columns from a dataset
         $datasets = DatasetController::getAllAccessibleDatasets($request, $user, false);
         $canAccess = false;
         $datasetId;
@@ -79,6 +83,7 @@ class IndexController extends Controller
                 $canAccess = true;
             }
         }
+        */
 
         $datasets = DatasetController::getAllAccessibleDatasets($request, $user, true);
         foreach ($datasets as $dataset) {
@@ -111,6 +116,63 @@ class IndexController extends Controller
         //dd($date_fields);
         return $fields;
     }
+
+    public function getAllAccessibleFieldsFromIndexByName(Request $request, $name)
+    {
+        $user = $request->get('user');
+        $canAccess = false;
+        $datasets = DatasetController::getAllAccessibleDatasets($request, $user, false);
+        foreach ($datasets as $dataset) {
+            if ($name === $dataset->databaseName) {
+                $datasetId = $dataset->id;
+                $canAccess = true;
+            }
+        }
+        if (!$canAccess) {
+            abort(403);
+        }
+
+        $data = [
+            'index' => $name
+        ];
+        $return = Elasticsearch::indices()->getMapping($data);
+        $dataset = Dataset::where('databaseName', $name)->first();
+        //dd($return);
+        $accessibleFields = DatasetController::getAllAccessibleColumnsFromADataset($request, $dataset);
+        //dd($accessibleFields);
+        $fields = [];
+        foreach ($return[$name]['mappings']['doc']['properties'] as $field => $field_data) {
+            if ($field == "properties") {
+                foreach ($field_data["properties"] as $inner_field => $inner_field_data) {
+                    array_push($fields, ["properties" . "." . $inner_field, $inner_field_data['type']]);
+                }
+            } else {
+                //dd($field_data['type']);
+                if(!array_key_exists('type', $field_data))
+                {
+                    array_push($fields, [$field, 'array']);
+                } else {
+                    array_push($fields, [$field, $field_data['type']]);
+                }
+            }
+        }
+
+        //dd($fields);
+
+        $results = [];
+
+        foreach($accessibleFields as $acc_field) {
+            foreach($fields as $field){
+                if($field[0] == $acc_field['name']){
+                    array_push($results, $field);
+                }
+            }
+        }
+
+        //dd($date_fields);
+        return $results;
+    }
+
 
     public static function getIndexByNameQuantityAndOffset(Request $request, $name, $quantity = 5, $offset = 0, $date_col = null, $start_date = null, $end_date = null)
     {
