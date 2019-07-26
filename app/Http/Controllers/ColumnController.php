@@ -31,7 +31,9 @@ class ColumnController extends Controller
 
         $columns = [];
         foreach ($postbody as $element) {
-            //error_log(implode('  ', $element));
+            foreach($element as $field => $field_data){
+                error_log($field);
+            }
             $dataset = dataset::where('id', '=', $element["datasetId"])->first();
             if ($dataset === null) {
                 error_log("no dataset with that id");
