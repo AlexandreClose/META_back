@@ -144,6 +144,7 @@ class IndexController extends Controller
         foreach ($return[$name]['mappings']['doc']['properties'] as $field => $field_data) {
             if ($field == "properties") {
                 foreach ($field_data["properties"] as $inner_field => $inner_field_data) {
+                    dd(json_encode($field_data["properties"]));
                     if(!array_key_exists('type', $inner_field_data))
                     {
                         array_push($fields, ['properties.'.$inner_field, 'array']);
