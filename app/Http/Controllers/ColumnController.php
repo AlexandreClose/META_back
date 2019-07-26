@@ -60,6 +60,7 @@ class ColumnController extends Controller
             $column->data_type_name = $element["datatype"];
             */
             $column->visibility = $element["visibility"] == "" ? dataset::select('visibility')->where("id", $column->dataset_id)->first()['visibility'] : $element['visibility'];
+            error_log($column->visibility);
             $column->dataset_id = $element["datasetId"];
             $theme = theme::where('name', $element["theme"])->first();
             if ($theme == null && ($element['theme'] != null || $element['theme'] != "")) {
