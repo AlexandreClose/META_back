@@ -317,16 +317,20 @@ class IndexController extends Controller
         $date_col = $request->get('date_col');
         $start_date = $request->get('start_date');
         $end_date = $request->get('end_date');
-        $start_hour = $request->get('start_hour');
-        $end_hour = $request->get('end_hour');
-        $hourQuery = "(doc['maj_date'].date.getHourOfDay() >= " . $start_hour . " && doc['maj_date'].date.getHourOfDay() < " . $end_hour . ")";
         $week_day = $request->get('weekdays');
         $emptyDayQuery = "doc['" . $date_col . "'].date.dayOfWeek == ";
         $fullDayQuery = "";
-        foreach ($week_day as $day) {
-            $fullDayQuery .= $emptyDayQuery . $day . " || ";
+        $start_hour = $request->get('start_hour');
+        $end_hour = $request->get('end_hour');
+        if ($start_hour != null && $start_hour != null) {
+            $hourQuery = "(doc['" . $date_col . "'].date.getHourOfDay() >= " . $start_hour . " && doc['" . $date_col . "'].date.getHourOfDay() < " . $end_hour . ")";
         }
-        $fullDayQuery = str_replace(" || )", ")", "(" . $fullDayQuery . ")");
+        if ($week_day != null) {
+            foreach ($week_day as $day) {
+                $fullDayQuery .= $emptyDayQuery . $day . " || ";
+            }
+            $fullDayQuery = str_replace(" || )", ")", "(" . $fullDayQuery . ")");
+        }
 
         if ($date_col != null) {
             $body = ['sort' => [[$date_col => ['order' => 'desc']]]];
