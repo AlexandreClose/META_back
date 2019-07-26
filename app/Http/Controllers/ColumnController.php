@@ -59,7 +59,7 @@ class ColumnController extends Controller
             }
             $column->data_type_name = $element["datatype"];
             */
-            $column->visibility = $element["visibility"] == "" ? null : $element['visibility'];
+            $column->visibility = $element["visibility"] == "" ? dataset::select('visibility')->where("id", $column->dataset_id)->first()['visibility'] : $element['visibility'];
             $column->dataset_id = $element["datasetId"];
             $theme = theme::where('name', $element["theme"])->first();
             if ($theme == null && ($element['theme'] != null || $element['theme'] != "")) {
@@ -67,7 +67,7 @@ class ColumnController extends Controller
                 error_log($element["theme"]);
                 abort(400);
             } elseif ($element["theme"] == null) {
-                $column->themeName = dataset::select('themeName')->where("id", $column->dataset_id)->first();
+                $column->themeName = dataset::select('themeName')->where("id", $column->dataset_id)->first()['themeName'];
             } else {
                 $column->themeName = $element["theme"];
             }
