@@ -148,7 +148,7 @@ class IndexController extends Controller
                     {
                         array_push($fields, [$inner_field, 'array']);
                     } else {
-                        array_push($fields, [$field, $inner_field_data['type']]);
+                        array_push($fields, ["properties.".$inner_field, $inner_field_data['type']]);
                     }
                 }
             } else {
