@@ -51,6 +51,7 @@ class ColumnController extends Controller
             $column = new column();
             $column->name = $element["name"];
             $column->main = $element["main"];
+            /* Now we use directly the datatypes from elasticsearch
             $datatype = data_type::where('name', $element['datatype']);
             if($datatype == null){
                 error_log($datatype);
@@ -58,6 +59,7 @@ class ColumnController extends Controller
                 abort(400);
             }
             $column->data_type_name = $element["datatype"];
+            */
             $column->visibility = $element["visibility"] == "" ? null : $element['visibility'];
             $column->dataset_id = $element["datasetId"];
             $theme = theme::where('name', $element["theme"])->first();
