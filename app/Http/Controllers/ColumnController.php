@@ -49,7 +49,7 @@ class ColumnController extends Controller
             }
             $column = new column();
             $column->name = $element["name"];
-            $column->main = $element["main"];
+            $column->main = $element["main"] == null ? false : $element['main'];
             /* Now we use directly the datatypes from elasticsearch
             $datatype = data_type::where('name', $element['datatype']);
             if ($datatype == null) {
