@@ -21,7 +21,7 @@ class ColumnController extends Controller
             abort(403);
         }
         $postbody = "";
-
+        dd($request);
         if (count($request->json()->all())) {
             $postbody = $request->json()->all();
         } else {
