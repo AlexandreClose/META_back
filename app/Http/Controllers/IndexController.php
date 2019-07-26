@@ -146,7 +146,7 @@ class IndexController extends Controller
                 foreach ($field_data["properties"] as $inner_field => $inner_field_data) {
                     if(!array_key_exists('type', $inner_field_data))
                     {
-                        array_push($fields, [$inner_field, 'array']);
+                        array_push($fields, ['properties.'.$inner_field, 'array']);
                     } else {
                         array_push($fields, ['properties.'.$inner_field, $inner_field_data['type']]);
                     }
