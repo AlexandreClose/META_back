@@ -107,24 +107,23 @@ class ColumnController extends Controller
             abort(403);
         }
 
-        $columns = DatasetController::getAllAccessibleColumnsFromADataset($request, $dataset);
+        $AccessibleColumns = DatasetController::getAllAccessibleColumnsFromADataset($request, $dataset);
 
-        $column = "";
+        $columns = [];
         $canAccess = false;
 
-        if ($request->get('column') != null) {
-            foreach ($columns as $tempColumn) {
-                if ($tempColumn->name == $request->get('column')) {
-
+        if ($request->get('columns') != null) {
+            foreach ($AccessibleColumns as $column) {
+                if (in_array($column->name, $request->get('columns'))) {
+                    array_push($columns, $column->name);
                     $canAccess = true;
-                    $column = $request->get('column');
-                    break;
                 }
             }
         }
         if (!$canAccess) {
             abort(403);
         }
+
         $body = [];
         $date_col = $request->get('date_col');
         $group_by_column = $request->get('groupby');
@@ -157,10 +156,16 @@ class ColumnController extends Controller
                 $body["query"]["bool"]["filter"] = ['script' => ['script' => $hourQuery]];
             }
         }
+
+        $aggs = [];
+        foreach ($columns as $column) {
+            $aggs[$column] = ["stats" => ["field" => $column]];
+        }
+
         if ($group_by_column) {
-            $body["aggs"] = ["codes" => ["terms" => ["field" => $group_by_column, "size" => 10000], "aggs" => ["stats" => ["stats" => ["field" => $column]]]]];
+            $body["aggs"] = ["codes" => ["terms" => ["field" => $group_by_column, "size" => 10000], "aggs" => $aggs]];
         } else {
-            $body["aggs"] = ["stats" => ["stats" => ["field" => $column]]];
+            $body["aggs"] = $aggs;
         }
 
         $data = Elasticsearch::search(['index' => $name,
