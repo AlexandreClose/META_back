@@ -122,7 +122,8 @@ class ColumnController extends Controller
 
         if ($request->get('column') != null) {
             foreach ($columns as $tempColumn) {
-                if ($tempColumn->name == explode(".", $request->get('column'))[0]) {
+                if ($tempColumn->name == $request->get('column')) {
+
                     $canAccess = true;
                     $column = $request->get('column');
                     break;
@@ -134,11 +135,12 @@ class ColumnController extends Controller
         }
         $body = [];
         $date_col = $request->get('date_col');
+        $group_by_column = $request->get('groupby');
         $start_date = $request->get('start_date');
         $end_date = $request->get('end_date');
         $start_hour = $request->get('start_hour');
         $end_hour = $request->get('end_hour');
-        $hourQuery = "(doc['maj_date'].date.getHourOfDay() >= " . $start_hour . " && doc['maj_date'].date.getHourOfDay() < " . $end_hour . ")";
+        $hourQuery = "(doc['" . $date_col . "'].date.getHourOfDay() >= " . $start_hour . " && doc['" . $date_col . "'].date.getHourOfDay() < " . $end_hour . ")";
         $week_day = $request->get('weekdays');
         $emptyDayQuery = "doc['" . $date_col . "'].date.dayOfWeek == ";
         $fullDayQuery = "";
@@ -163,9 +165,13 @@ class ColumnController extends Controller
                 $body["query"]["bool"]["filter"] = ['script' => ['script' => $hourQuery]];
             }
         }
-        $body["aggs"] = ["stats" => ["stats" => ["field" => $column]]];
+        if ($group_by_column) {
+            $body["aggs"] = ["codes" => ["terms" => ["field" => $group_by_column, "size" => 10000], "aggs" => ["stats" => ["stats" => ["field" => $column]]]]];
+        } else {
+            $body["aggs"] = ["stats" => ["stats" => ["field" => $column]]];
+        }
 
-        $data = Elasticsearch::search(['index' => $name, '_source' => $column,
+        $data = Elasticsearch::search(['index' => $name,
             'size' => 0,
             "body" => $body]);
 
