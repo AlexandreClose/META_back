@@ -21,7 +21,6 @@ class ColumnController extends Controller
             abort(403);
         }
         $postbody = "";
-
         if (count($request->json()->all())) {
             $postbody = $request->json()->all();
         } else {
@@ -38,7 +37,7 @@ class ColumnController extends Controller
                 abort(404);
             }
 
-            if ($element["name"] == null || $element["datatype"] == null || $element["datasetId"] == null) {
+            if ($element["name"] == null || $element["datasetId"] == null) {
                 error_log("missing name, datatype or datasetId");
                 abort(400);
             }
@@ -50,7 +49,8 @@ class ColumnController extends Controller
             }
             $column = new column();
             $column->name = $element["name"];
-            $column->main = $element["main"];
+            $column->main = isset($element["main"]) ? $element['main'] : false;
+            /* Now we use directly the datatypes from elasticsearch
             $datatype = data_type::where('name', $element['datatype']);
             if ($datatype == null) {
                 error_log($datatype);
@@ -58,6 +58,7 @@ class ColumnController extends Controller
                 abort(400);
             }
             $column->data_type_name = $element["datatype"];
+            */
             $column->visibility = $element["visibility"] == "" ? null : $element['visibility'];
             $column->dataset_id = $element["datasetId"];
             $theme = theme::where('name', $element["theme"])->first();
@@ -66,7 +67,7 @@ class ColumnController extends Controller
                 error_log($element["theme"]);
                 abort(400);
             } elseif ($element["theme"] == null) {
-                $column->themeName = dataset::select('themeName')->where("dataset_id", $column->dataset_id)->first();
+                $column->themeName = dataset::select('themeName')->where("id", $column->dataset_id)->first();
             } else {
                 $column->themeName = $element["theme"];
             }
@@ -84,16 +85,7 @@ class ColumnController extends Controller
                 $auth_users->uuid = $auth_user->uuid;
                 $auth_users->save();
             }
-            //array_push($columns,$column);
-
-
         }
-        /*
-        foreach($columns as $item){
-            $item->save();
-        }*/
-
-
     }
 
     public function getStats(Request $request)

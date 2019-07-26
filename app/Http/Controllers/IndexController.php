@@ -75,7 +75,6 @@ class IndexController extends Controller
 
         /* Should only be used by administrators for validating columns from a dataset
         $datasets = DatasetController::getAllAccessibleDatasets($request, $user, false);
-        $canAccess = false;
         $datasetId;
         foreach ($datasets as $dataset) {
             if ($name === $dataset->databaseName) {
@@ -85,6 +84,7 @@ class IndexController extends Controller
         }
         */
 
+        $canAccess = false;
         $datasets = DatasetController::getAllAccessibleDatasets($request, $user, true);
         foreach ($datasets as $dataset) {
             if ($name === $dataset->databaseName) {
@@ -144,7 +144,14 @@ class IndexController extends Controller
         foreach ($return[$name]['mappings']['doc']['properties'] as $field => $field_data) {
             if ($field == "properties") {
                 foreach ($field_data["properties"] as $inner_field => $inner_field_data) {
-                    array_push($fields, ["properties" . "." . $inner_field, $inner_field_data['type']]);
+                    //dd(json_encode($field_data["properties"]));
+                    if(!array_key_exists('type', $inner_field_data))
+                    {
+                        array_push($fields, ['properties.'.$inner_field, 'array']);
+                    } else {
+                        array_push($fields, ['properties.'.$inner_field, $inner_field_data['type']]);
+                        //dd($fields);
+                    }
                 }
             } else {
                 //dd($field_data['type']);
