@@ -75,7 +75,6 @@ class IndexController extends Controller
 
         /* Should only be used by administrators for validating columns from a dataset
         $datasets = DatasetController::getAllAccessibleDatasets($request, $user, false);
-        $canAccess = false;
         $datasetId;
         foreach ($datasets as $dataset) {
             if ($name === $dataset->databaseName) {
@@ -85,6 +84,7 @@ class IndexController extends Controller
         }
         */
 
+        $canAccess = false;
         $datasets = DatasetController::getAllAccessibleDatasets($request, $user, true);
         foreach ($datasets as $dataset) {
             if ($name === $dataset->databaseName) {
