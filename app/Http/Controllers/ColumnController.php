@@ -21,7 +21,6 @@ class ColumnController extends Controller
             abort(403);
         }
         $postbody = "";
-        error_log($request);
         if (count($request->json()->all())) {
             $postbody = $request->json()->all();
         } else {
@@ -32,6 +31,7 @@ class ColumnController extends Controller
 
         $columns = [];
         foreach ($postbody as $element) {
+            error_log($element);
             $dataset = dataset::where('id', '=', $element["datasetId"])->first();
             if ($dataset === null) {
                 error_log("no dataset with that id");
@@ -86,16 +86,7 @@ class ColumnController extends Controller
                 $auth_users->uuid = $auth_user->uuid;
                 $auth_users->save();
             }
-            //array_push($columns,$column);
-
-
         }
-        /*
-        foreach($columns as $item){
-            $item->save();
-        }*/
-
-
     }
 
     public function getStats(Request $request)
