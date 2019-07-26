@@ -31,16 +31,13 @@ class ColumnController extends Controller
 
         $columns = [];
         foreach ($postbody as $element) {
-            foreach($element as $field => $field_data){
-                error_log($field);
-            }
             $dataset = dataset::where('id', '=', $element["datasetId"])->first();
             if ($dataset === null) {
                 error_log("no dataset with that id");
                 abort(404);
             }
 
-            if ($element["name"] == null || $element["datatype"] == null || $element["datasetId"] == null) {
+            if ($element["name"] == null || $element["datasetId"] == null) {
                 error_log("missing name, datatype or datasetId");
                 abort(400);
             }
