@@ -38,6 +38,7 @@ Route::post('/liteIndex/', 'IndexController@getLiteIndex');
 Route::get('/analyse/save', 'Analysecontroller@saveAnalyse');
 Route::get('/analyse/get/{id}', 'AnalyseController@getAnalysisFromId');
 Route::get('/analyse/all', 'AnalyseController@getAllAccessibleAnalysis');
+Route::delete('/analyse', 'AnalyseController@deleteAnalysis');
 
 //Datasets routes : Mysql
 Route::get('/datasets/data/validate', 'DatasetController@getDatasetsToValidate');
