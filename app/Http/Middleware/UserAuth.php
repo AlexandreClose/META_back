@@ -25,7 +25,7 @@ class UserAuth
         if(!isset($token)){
             abort(401);
         }
-
+        //Penser à retirer ça
         if($token == "Juiploetdjtozvelnjzkfpofn"){
             $user = user::where('uuid',"2be8c158-29a7-42b3-a9fb-de9ec266e196")->first();
             $request->merge(['user' => $user]);
@@ -52,7 +52,7 @@ class UserAuth
         }
 
             $user = user::where('tid',$value)->first();
-            if($user == null){
+            if($user == null || $user->role == "Désactivé"){
                 abort(403);
             }
             else{
