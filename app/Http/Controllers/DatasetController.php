@@ -175,7 +175,7 @@ class DatasetController extends Controller
             $dataset->creator = $creator;
             $dataset->contributor = $contributor;
             $dataset->license = "Fermée";
-            $dataset->created_date = $date;
+            $dataset->created_date = Carbon::now();
             $dataset->updated_date = Carbon::now();
             $dataset->realtime = false;
             $dataset->conf_ready = false;
