@@ -62,6 +62,7 @@ Route::get('/users/name/{quantity?}', 'UserController@getUsersName');
 Route::post('/user/create', 'UserController@addUser');
 Route::post('/user/theme', 'UserController@addUserTheme');
 Route::delete('/user/theme', 'UserController@deleteUserTheme');
+Route::get('/user/block/{uuid}', 'UserController@blockUser');
 
 //Datatypes routes : Mysql
 Route::get('/datatypes/{quantity?}', 'DataTypesController@getAllDataTypes');
