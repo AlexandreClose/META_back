@@ -32,13 +32,13 @@ Route::get('/index/accessiblefields/{name}', 'IndexController@getAllAccessibleFi
 Route::get('/index/get/{name}/{quantity?}/{offset?}/{date_col?}/{start_date?}/{end_date?}', 'IndexController@getIndexByName');
 Route::get('/index/file/{name}', 'IndexController@getIndexFile');
 Route::post('/index/geo', 'IndexController@getIndexFromCoordinatesInShape');
-Route::post('/liteIndex/', 'IndexController@getLiteIndex');
+Route::post('/liteIndex', 'IndexController@getLiteIndex');
 
 //Analyse routes : Mysql
 Route::get('/analyse/save', 'Analysecontroller@saveAnalyse');
 Route::get('/analyse/get/{id}', 'AnalyseController@getAnalysisFromId');
 Route::get('/analyse/all', 'AnalyseController@getAllAccessibleAnalysis');
-Route::delete('/analyse', 'AnalyseController@deleteAnalysis');
+Route::delete('/analyse/{id}', 'AnalyseController@deleteAnalysis');
 
 //Datasets routes : Mysql
 Route::get('/datasets/data/validate', 'DatasetController@getDatasetsToValidate');

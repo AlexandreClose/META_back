@@ -159,7 +159,7 @@ class DatasetController extends Controller
             $metier = $request->get('metier');
             $JSON = $request->get('JSON');
             $GEOJSON = $request->get('GEOJSON');
-            $util = $request->get('utils');
+            //$util = $request->get('utils');
             $visualisations = $request->get('visualisations');
             $visualisations = json_decode($visualisations);
             $date = $request->get('date');
@@ -169,7 +169,7 @@ class DatasetController extends Controller
             $dataset->name = $name;
             $dataset->JSON = (bool)$JSON;
             $dataset->GEOJSON = (bool)$GEOJSON;
-            $dataset->util = $util;
+            //$dataset->util = $util;
             $dataset->validated = false;
             $dataset->description = $description;
             $dataset->creator = $creator;
