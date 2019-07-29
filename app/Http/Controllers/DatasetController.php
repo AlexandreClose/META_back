@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use http\Env\Response;
 use Illuminate\Http\Request;
 use App\dataset;
 use Illuminate\Support\Carbon;
@@ -20,14 +21,16 @@ use GuzzleHttp;
 
 class DatasetController extends Controller
 {
-    function getAllDatasets(Request $request, $quantity = null, $offset = null){
-        $data = DatasetController::getAllAccessibleDatasets($request,$request->get('user'),false);
+    function getAllDatasets(Request $request, $quantity = null, $offset = null)
+    {
+        $data = DatasetController::getAllAccessibleDatasets($request, $request->get('user'), false);
         return response($data)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
     }
 
-    public function updateDataset(Request $request){
+    public function updateDataset(Request $request)
+    {
         $role = $request->get('user')->role;
-        if($role != "Référent-Métier" && $role != "Administrateur"){
+        if ($role != "Référent-Métier" && $role != "Administrateur") {
             abort(403);
         }
         /*
@@ -43,10 +46,10 @@ class DatasetController extends Controller
         }*/
 
         $dataset = null;
-        if($request->get('id') != null){
+        if ($request->get('id') != null) {
             $dataset = dataset::where('id', '=', $request->get('id'))->first();
         }
-        if($dataset == null){
+        if ($dataset == null) {
             error_log("no dataset with that id");
             abort(400);
         }
@@ -66,7 +69,7 @@ class DatasetController extends Controller
         $contributor = $request->get('contributor');
         $frequency = $request->get('frequency');
 
-        
+
         $visibility = $request->get('visibility');
         $theme = $request->get('theme');
         $JSON = (bool)$request->get('JSON');
@@ -74,7 +77,7 @@ class DatasetController extends Controller
 
         $dataset->name = $name;
         $dataset->description = $description;
-        
+
         $dataset->producer = $producer;
         $dataset->license = $license;
         $dataset->created_date = $created_date;
@@ -82,43 +85,45 @@ class DatasetController extends Controller
         $dataset->contributor = $contributor;
         $dataset->update_frequency = $frequency;
 
-        $dataset->visibility= $visibility;
+        $dataset->visibility = $visibility;
         $theme_from_base = theme::where('name', $theme)->first();
-        if($theme_from_base == null){
+        if ($theme_from_base == null) {
             error_log($theme_from_base);
             abort(400);
         }
-        
+
         $dataset->GEOJSON = $GEOJSON;
         $dataset->JSON = $JSON;
         $dataset->validated = true;
         $result = $dataset->save();
 
         $dataset = dataset::where('id', $request->get('id'))->first();
-        
+
         $tags = json_decode($tags);
-        foreach($tags as $tag){
-            $_tag = tag::where('name', $tag)->first();
-            if($_tag == null){
-                error_log("Créer un nouveau tag");
-                $_tag = new tag();
-                $_tag->name = $tag;
-                $_tag->save();
-            }
-            error_log("Créer la relation entre ".$dataset->name." et ".$_tag->name);
-            if((dataset_has_tag::where('id', $dataset->id)->where('name', $_tag->name)->first() == null)){
-                $dataset_tag = new dataset_has_tag();
-                $dataset_tag->id = $dataset->id;
-                $dataset_tag->name = $_tag->name;
-                $dataset_tag->save();
+        if($tags != null){
+            foreach ($tags as $tag) {
+                $_tag = tag::where('name', $tag)->first();
+                if ($_tag == null) {
+                    error_log("Créer un nouveau tag");
+                    $_tag = new tag();
+                    $_tag->name = $tag;
+                    $_tag->save();
+                }
+                error_log("Créer la relation entre " . $dataset->name . " et " . $_tag->name);
+                if ((dataset_has_tag::where('id', $dataset->id)->where('name', $_tag->name)->first() == null)) {
+                    $dataset_tag = new dataset_has_tag();
+                    $dataset_tag->id = $dataset->id;
+                    $dataset_tag->name = $_tag->name;
+                    $dataset_tag->save();
+                }
             }
         }
         error_log("first foreach passed");
         $visualisations = $request->get('visualisations');
         $visualisations = json_decode($visualisations);
-        foreach($visualisations as $visualisation){
+        foreach ($visualisations as $visualisation) {
             $type = representation_type::where('name', $visualisation)->first();
-            if((dataset_has_representation::where('representationName', $type->name)->where('datasetId', $request->get('id'))->first()) == null){
+            if ((dataset_has_representation::where('representationName', $type->name)->where('datasetId', $request->get('id'))->first()) == null) {
                 $types = new dataset_has_representation();
                 $types->datasetId = $request->get('id');
                 $types->representationName = $type->name;
@@ -128,9 +133,9 @@ class DatasetController extends Controller
         error_log("second foreach passed");
         $users = $request->get('users');
         $users = json_decode($users);
-        foreach($users as $user_id){
-            $auth_user = user::where('uuid',$user_id)->first();
-            if($auth_user == null || ((auth_users::where('uuid', $auth_user->uuid)->where('id', $request->get('id'))->first()) != null)            ){
+        foreach ($users as $user_id) {
+            $auth_user = user::where('uuid', $user_id)->first();
+            if ($auth_user == null || ((auth_users::where('uuid', $auth_user->uuid)->where('id', $request->get('id'))->first()) != null)) {
                 continue;
             }
             $auth_users = new auth_users();
@@ -140,10 +145,11 @@ class DatasetController extends Controller
         }
         error_log("last foreach passed");
 
-
+        /*
         $client = new GuzzleHttp\Client(['base_uri' => '212.129.57.50:9200']);
-        $url = '/'.$dataset->databaseName.'/_settings';
+        $url = '/' . $dataset->databaseName . '/_settings';
         $res = $client->request('PUT', $url, ['json' => ["index.max_result_window" => 5000000]]);
+        */
     }
 
     public function uploadDataset(Request $request){
@@ -153,6 +159,7 @@ class DatasetController extends Controller
             $metier = $request->get('metier');
             $JSON = $request->get('JSON');
             $GEOJSON = $request->get('GEOJSON');
+            $util = $request->get('utils');
             $visualisations = $request->get('visualisations');
             $visualisations = json_decode($visualisations);
             $date = $request->get('date');
@@ -162,6 +169,7 @@ class DatasetController extends Controller
             $dataset->name = $name;
             $dataset->JSON = (bool)$JSON;
             $dataset->GEOJSON = (bool)$GEOJSON;
+            $dataset->util = $util;
             $dataset->validated = false;
             $dataset->description = $description;
             $dataset->creator = $creator;
@@ -182,33 +190,35 @@ class DatasetController extends Controller
             $file->move(storage_path().'/uploads',$dataset->databaseName.'.'.$file->getClientOriginalExtension());
             $theme = theme::where('name',$metier)->first();
 
-            if($theme == null){
-                error_log($theme);
-                error_log($metier);
-                abort(400);
+        if ($theme == null) {
+            error_log($theme);
+            error_log($metier);
+            abort(400);
+        }
+        $dataset->save();
+        $dataset = dataset::where('name', $name)->first();
+        /*
+        foreach($visualisations as $visualisation){
+            $type = representation_type::where('name', $visualisation)->first();
+            if((dataset_has_representation::where('representationName', $type->name)->where('datasetId', $dataset->id)->first()) == null){
+                $types = new dataset_has_representation();
+                $types->datasetId = $request->get('id');
+                $types->representationName = $type->name;
+                $types->save();
             }
-            $dataset->save();
-            $dataset = dataset::where('name',$name)->first();
-            /*
-            foreach($visualisations as $visualisation){
-                $type = representation_type::where('name', $visualisation)->first();
-                if((dataset_has_representation::where('representationName', $type->name)->where('datasetId', $dataset->id)->first()) == null){
-                    $types = new dataset_has_representation();
-                    $types->datasetId = $request->get('id');
-                    $types->representationName = $type->name;
-                    $types->save();
-                }
-            }*/
+        }*/
 
     }
 
-    public function getDatasetsToValidate(Request $request){
-        $data = DatasetController::getAllAccessibleDatasets($request,$request->get('user'),true);
+    public function getDatasetsToValidate(Request $request)
+    {
+        $data = DatasetController::getAllAccessibleDatasets($request, $request->get('user'), true);
         return response($data)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
     }
 
-    public static function getAllAccessibleDatasets(Request $request,user $user = null, bool $validate = false, bool $saved = false, bool $favorite = false){
-        if($user == null){
+    public static function getAllAccessibleDatasets(Request $request, user $user = null, bool $validate = false, bool $saved = false, bool $favorite = false)
+    {
+        if ($user == null) {
             $user = $request->get('user');
         }
         $themes = $user->themes;
@@ -216,153 +226,144 @@ class DatasetController extends Controller
         $role = $user->role;
         $directdatasets = $user->datasets;
         $directcolumns = $user->columns;
-        switch($role){
+        switch ($role) {
             case "Administrateur":
-                if($validate){
-                    $datasets = dataset::with('representations')->with('tags')->where([['validated','=',false],['conf_ready','=',true],['upload_ready',"=",true]])->orderBy("created_date","desc")->get();
-                }
-                elseif ($saved) {
+                if ($validate) {
+                    $datasets = dataset::with('representations')->with('tags')->where([['validated', '=', false], ['conf_ready', '=', true], ['upload_ready', "=", true]])->orderBy("created_date", "desc")->get();
+                } elseif ($saved) {
                     $datasets = DB::table('datasets')
                         ->join('user_saved_datasets', 'datasets.id', '=', 'user_saved_datasets.id')
                         ->where('user_saved_datasets.uuid', $user->uuid)
                         ->where('user_saved_datasets.favorite', false)
-                        ->where([['datasets.validated','=',true],['datasets.conf_ready','=',true],['datasets.upload_ready',"=",true]])
+                        ->where([['datasets.validated', '=', true], ['datasets.conf_ready', '=', true], ['datasets.upload_ready', "=", true]])
                         ->select('datasets.*')
-                        ->orderBy("created_date","desc")
+                        ->orderBy("created_date", "desc")
                         ->get();
-                }
-                elseif ($favorite) {
+                } elseif ($favorite) {
                     $datasets = DB::table('datasets')
                         ->join('user_saved_datasets', 'datasets.id', '=', 'user_saved_datasets.id')
                         ->where('user_saved_datasets.uuid', $user->uuid)
                         ->where('user_saved_datasets.favorite', true)
-                        ->where([['datasets.validated','=',true],['datasets.conf_ready','=',true],['datasets.upload_ready',"=",true]])
+                        ->where([['datasets.validated', '=', true], ['datasets.conf_ready', '=', true], ['datasets.upload_ready', "=", true]])
                         ->select('datasets.*')
-                        ->orderBy("created_date","desc")
+                        ->orderBy("created_date", "desc")
                         ->get();
-                }
-                else{
-                    $datasets = dataset::with('representations')->with('tags')->where([['validated','=',true],['conf_ready','=',true],['upload_ready',"=",true]])->get();
+                } else {
+                    $datasets = dataset::with('representations')->with('tags')->where([['validated', '=', true], ['conf_ready', '=', true], ['upload_ready', "=", true]])->get();
                 }
                 break;
             case "Référent-Métier":
-                if($validate){
-                    $datasets = dataset::with('representations')->with('tags')->where([['validated','=',false],['conf_ready','=',true],['upload_ready',"=",true]])->whereIn('visibility',['job_referent','worker'])->whereIn('themeName',$themes)->orderBy("created_date","desc")->get();
-                    $datasets = $datasets->merge(dataset::with('representations')->with('tags')->where([['validated','=',false],['conf_ready','=',true],['upload_ready',"=",true]])->where('visibility','all')->orderBy("created_date","desc")->get());
-                }
-                elseif ($saved) {
+                if ($validate) {
+                    $datasets = dataset::with('representations')->with('tags')->where([['validated', '=', false], ['conf_ready', '=', true], ['upload_ready', "=", true]])->whereIn('visibility', ['job_referent', 'worker'])->whereIn('themeName', $themes)->orderBy("created_date", "desc")->get();
+                    $datasets = $datasets->merge(dataset::with('representations')->with('tags')->where([['validated', '=', false], ['conf_ready', '=', true], ['upload_ready', "=", true]])->where('visibility', 'all')->orderBy("created_date", "desc")->get());
+                } elseif ($saved) {
                     $datasets = DB::table('datasets')
                         ->join('user_saved_datasets', 'datasets.id', '=', 'user_saved_datasets.id')
                         ->where('user_saved_datasets.uuid', $user->uuid)
                         ->where('user_saved_datasets.favorite', false)
-                        ->where([['datasets.validated','=',true],['datasets.conf_ready','=',true],['datasets.upload_ready',"=",true]])
-                        ->whereIn('datasets.visibility',['job_referent','worker'])
-                        ->whereIn('datasets.themeName',$themes)
+                        ->where([['datasets.validated', '=', true], ['datasets.conf_ready', '=', true], ['datasets.upload_ready', "=", true]])
+                        ->whereIn('datasets.visibility', ['job_referent', 'worker'])
+                        ->whereIn('datasets.themeName', $themes)
                         ->select('datasets.*')
-                        ->orderBy("created_date","desc")
+                        ->orderBy("created_date", "desc")
                         ->get();
                     $datasets = $datasets->merge(DB::table('datasets')
                         ->join('user_saved_datasets', 'datasets.id', '=', 'user_saved_datasets.id')
                         ->where('user_saved_datasets.uuid', $user->uuid)
                         ->where('user_saved_datasets.favorite', false)
-                        ->where([['datasets.validated','=',true],['datasets.conf_ready','=',true],['datasets.upload_ready',"=",true]])
+                        ->where([['datasets.validated', '=', true], ['datasets.conf_ready', '=', true], ['datasets.upload_ready', "=", true]])
                         ->where('datasets.visibility', 'all')
                         ->select('datasets.*')
-                        ->orderBy("created_date","desc")
+                        ->orderBy("created_date", "desc")
                         ->get());
-                }
-                elseif ($favorite) {
+                } elseif ($favorite) {
                     $datasets = DB::table('datasets')
                         ->join('user_saved_datasets', 'datasets.id', '=', 'user_saved_datasets.id')
                         ->where('user_saved_datasets.uuid', $user->uuid)
                         ->where('user_saved_datasets.favorite', true)
-                        ->where([['datasets.validated','=',true],['datasets.conf_ready','=',true],['datasets.upload_ready',"=",true]])
-                        ->whereIn('datasets.visibility',['job_referent','worker'])
-                        ->whereIn('datasets.themeName',$themes)
+                        ->where([['datasets.validated', '=', true], ['datasets.conf_ready', '=', true], ['datasets.upload_ready', "=", true]])
+                        ->whereIn('datasets.visibility', ['job_referent', 'worker'])
+                        ->whereIn('datasets.themeName', $themes)
                         ->select('datasets.*')
-                        ->orderBy("created_date","desc")
+                        ->orderBy("created_date", "desc")
                         ->get();
                     $datasets = $datasets->merge(DB::table('datasets')
                         ->join('user_saved_datasets', 'datasets.id', '=', 'user_saved_datasets.id')
                         ->where('user_saved_datasets.uuid', $user->uuid)
                         ->where('user_saved_datasets.favorite', true)
-                        ->where([['datasets.validated','=',true],['datasets.conf_ready','=',true],['datasets.upload_ready',"=",true]])
+                        ->where([['datasets.validated', '=', true], ['datasets.conf_ready', '=', true], ['datasets.upload_ready', "=", true]])
                         ->where('datasets.visibility', 'all')
                         ->select('datasets.*')
-                        ->orderBy("created_date","desc")
+                        ->orderBy("created_date", "desc")
                         ->get());
-                }
-                else{
-                    $datasets = dataset::with('representations')->with('tags')->whereIn('visibility',['job_referent','worker'])->where([['validated','=',true],['conf_ready','=',true],['upload_ready',"=",true]])->whereIn('themeName',$themes)->get();
-                    $datasets = $datasets->merge(dataset::with('representations')->with('tags')->where('visibility', 'all')->where([['validated','=',true],['conf_ready','=',true],['upload_ready',"=",true]])->get());
+                } else {
+                    $datasets = dataset::with('representations')->with('tags')->whereIn('visibility', ['job_referent', 'worker'])->where([['validated', '=', true], ['conf_ready', '=', true], ['upload_ready', "=", true]])->whereIn('themeName', $themes)->get();
+                    $datasets = $datasets->merge(dataset::with('representations')->with('tags')->where('visibility', 'all')->where([['validated', '=', true], ['conf_ready', '=', true], ['upload_ready', "=", true]])->get());
                     $datasets = $datasets->merge($directdatasets);
-                    $columns = column::whereIn('visibility',['job_referent','worker'])->whereIn('themeName',$themes)->get();
+                    $columns = column::whereIn('visibility', ['job_referent', 'worker'])->whereIn('themeName', $themes)->get();
                     $columns = $columns->merge(column::whereIn('visibility', ['all', null])->get());
                     $columns = $columns->merge($directcolumns);
-                    $array= [];
-                    foreach($columns as $column){
-                        array_push($array,$column->dataset);
+                    $array = [];
+                    foreach ($columns as $column) {
+                        array_push($array, $column->dataset);
                     }
                     $datasets->merge($array);
                 }
                 break;
             case "Utilisateur":
-                if($validate){
+                if ($validate) {
                     $datasets = [];
                     return $datasets;
-                }
-                elseif ($saved) {
+                } elseif ($saved) {
                     $datasets = DB::table('datasets')
                         ->join('user_saved_datasets', 'datasets.id', '=', 'user_saved_datasets.id')
                         ->where('user_saved_datasets.uuid', $user->uuid)
                         ->where('user_saved_datasets.favorite', false)
-                        ->where([['datasets.validated','=',false],['datasets.conf_ready','=',true],['datasets.upload_ready',"=",true]])
+                        ->where([['datasets.validated', '=', false], ['datasets.conf_ready', '=', true], ['datasets.upload_ready', "=", true]])
                         ->where('datasets.visibility', 'worker')
-                        ->whereIn('datasets.themeName',$themes)
+                        ->whereIn('datasets.themeName', $themes)
                         ->select('datasets.*')
-                        ->orderBy("created_date","desc")
+                        ->orderBy("created_date", "desc")
                         ->get();
                     $datasets = $datasets->merge(DB::table('datasets')
                         ->join('user_saved_datasets', 'datasets.id', '=', 'user_saved_datasets.id')
                         ->where('user_saved_datasets.uuid', $user->uuid)
                         ->where('user_saved_datasets.favorite', false)
-                        ->where([['datasets.validated','=',false],['datasets.conf_ready','=',true],['datasets.upload_ready',"=",true]])
+                        ->where([['datasets.validated', '=', false], ['datasets.conf_ready', '=', true], ['datasets.upload_ready', "=", true]])
                         ->where('datasets.visibility', 'all')
                         ->select('datasets.*')
-                        ->orderBy("created_date","desc")
+                        ->orderBy("created_date", "desc")
                         ->get());
-                }
-                elseif ($favorite) {
+                } elseif ($favorite) {
                     $datasets = DB::table('datasets')
                         ->join('user_saved_datasets', 'datasets.id', '=', 'user_saved_datasets.id')
                         ->where('user_saved_datasets.uuid', $user->uuid)
                         ->where('user_saved_datasets.favorite', true)
-                        ->where([['datasets.validated','=',false],['datasets.conf_ready','=',true],['datasets.upload_ready',"=",true]])
-                        ->where('datasets.visibility','worker')
-                        ->whereIn('datasets.themeName',$themes)
+                        ->where([['datasets.validated', '=', false], ['datasets.conf_ready', '=', true], ['datasets.upload_ready', "=", true]])
+                        ->where('datasets.visibility', 'worker')
+                        ->whereIn('datasets.themeName', $themes)
                         ->select('datasets.*')
-                        ->orderBy("created_date","desc")
+                        ->orderBy("created_date", "desc")
                         ->get();
                     $datasets = $datasets->merge(DB::table('datasets')
                         ->join('user_saved_datasets', 'datasets.id', '=', 'user_saved_datasets.id')
                         ->where('user_saved_datasets.uuid', $user->uuid)
                         ->where('user_saved_datasets.favorite', true)
-                        ->where([['datasets.validated','=',false],['datasets.conf_ready','=',true],['datasets.upload_ready',"=",true]])
+                        ->where([['datasets.validated', '=', false], ['datasets.conf_ready', '=', true], ['datasets.upload_ready', "=", true]])
                         ->where('datasets.visibility', 'all')
                         ->select('datasets.*')
-                        ->orderBy("created_date","desc")
+                        ->orderBy("created_date", "desc")
                         ->get());
-                }
-                else{
-                    $datasets = dataset::with('representations')->with('tags')->whereIn('visibility', 'worker')->where([['validated','=',true],['conf_ready','=',true],['upload_ready',"=",true]])->whereIn('themeName',$themes)->get();
-                    $datasets = $datasets->merge(dataset::with('representations')->with('tags')->where('visibility', 'all')->where([['validated','=',true],['conf_ready','=',true],['upload_ready',"=",true]])->get());
+                } else {
+                    $datasets = dataset::with('representations')->with('tags')->whereIn('visibility', 'worker')->where([['validated', '=', true], ['conf_ready', '=', true], ['upload_ready', "=", true]])->whereIn('themeName', $themes)->get();
+                    $datasets = $datasets->merge(dataset::with('representations')->with('tags')->where('visibility', 'all')->where([['validated', '=', true], ['conf_ready', '=', true], ['upload_ready', "=", true]])->get());
                     $datasets = $datasets->merge($directdatasets);
-                    $columns = column::whereIn('visibility','worker')->whereIn('themeName',$themes)->get();
+                    $columns = column::whereIn('visibility', 'worker')->whereIn('themeName', $themes)->get();
                     $columns = $columns->merge(column::whereIn('visibility', ['all', null])->get());
                     $columns = $columns->merge($directcolumns);
-                    $array= [];
-                    foreach($columns as $column){
-                        array_push($array,$column->dataset);
+                    $array = [];
+                    foreach ($columns as $column) {
+                        array_push($array, $column->dataset);
                     }
                     $datasets->merge($array);
                 }
@@ -370,13 +371,14 @@ class DatasetController extends Controller
             default:
                 $datasets = [];
                 return $datasets;
-            }
+        }
         return $datasets;
     }
 
-    public function getRepresentationsOfDataset($id){
-        $dataset = dataset::where('id',$id)->first();
-        if($dataset == null){
+    public function getRepresentationsOfDataset($id)
+    {
+        $dataset = dataset::where('id', $id)->first();
+        if ($dataset == null) {
             abort(404);
         }
         $representations = $dataset->representations;
@@ -384,37 +386,44 @@ class DatasetController extends Controller
 
     }
 
-    public function getAllColumnFromDataset(Request $request,$id){
+    public function getAllColumnFromDataset(Request $request, $id)
+    {
         $dataset = dataset::where('id', $id)->first();
         $columns = DatasetController::getAllAccessibleColumnsFromADataset($request, $dataset);
         return response($columns)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
 
     }
 
-    public static function getAllAccessibleColumnsFromADataset(Request $request, dataset $dataset){
+    public static function getAllAccessibleColumnsFromADataset(Request $request, dataset $dataset)
+    {
         $user = $request->get('user');
-        $role = $user->roles->role;
-        $themes = $user->theme;
-        switch($role){
+        $role = $user->role;
+        $themes = [];
+
+        foreach ($user['themes'] as $t) {
+            array_push($themes, $t['name']);
+        }
+
+        switch ($role) {
             case "Administrateur":
                 $columns = column::where('dataset_id', $dataset->id)->get();
                 break;
             case "Référent-Métier":
-                $columns = column::where('dataset_id', $dataset->id)->whereIn('visibility',['job_referent','worker'])->whereIn('themeName',$themes)->get();
+                $columns = column::where('dataset_id', $dataset->id)->whereIn('themeName', $themes)->whereIn('visibility', ['job_referent', 'worker'])->get();
                 $columns->merge(column::where('dataset_id', $dataset->id)->whereIn('visibility', ['all', null]));
                 break;
             case "Utilisateur":
-                $columns = column::where('dataset_id', $dataset->id)->where('visibility', 'worker')->where('themeName',$themes)->get();
+                $columns = column::where('dataset_id', $dataset->id)->where('visibility', 'worker')->where('themeName', $themes)->get();
                 $columns->merge(column::where('dataset_id', $dataset->id)->whereIn('visibility', ['all', null]));
                 break;
             default:
                 $columns = [];
                 break;
-            }
+        }
         $array = [];
         $directcolumns = $user->columns;
-        foreach($directcolumns as $dc){
-            if($dc->dataset_id == $dataset->id){
+        foreach ($directcolumns as $dc) {
+            if ($dc->dataset_id == $dataset->id) {
                 array_push($array, $dc);
             }
         }
@@ -423,45 +432,56 @@ class DatasetController extends Controller
     }
 
 
-    public static function saveAndFavoriteDataset(user $user, dataset $dataset, $favorite = false){
-        $saved_ds =  user_saved_dataset::where('uuid', $user->uuid)->where('id', $dataset->id)->first();
-        if($saved_ds == null) {
+    public static function saveAndFavoriteDataset(user $user, dataset $dataset, $favorite = false)
+    {
+        $saved_ds = user_saved_dataset::where('uuid', $user->uuid)->where('id', $dataset->id)->first();
+        if ($saved_ds == null) {
             $saved_ds = new user_saved_dataset();
             $saved_ds->id = $dataset->id;
-            $saved_ds->uuid = $user->uuid;   
+            $saved_ds->uuid = $user->uuid;
         }
         $saved_ds->favorite = $favorite;
-        $saved_ds->save(); 
+        $saved_ds->save();
     }
 
-    public function saveDataset(Request $request, $id) {
+    public function saveDataset(Request $request, $id)
+    {
         $dataset = dataset::where('id', $id)->first();
         $user = $request->get('user');
         DatasetController::saveAndFavoriteDataset($user, $dataset);
     }
 
-    public function favoriteDataset(Request $request, $id){
+    public function favoriteDataset(Request $request, $id)
+    {
         $dataset = dataset::where('id', $id)->first();
         $user = $request->get('user');
         DatasetController::saveAndFavoriteDataset($user, $dataset, true);
     }
 
-    public function unsaveDataset(Request $request, $id){
+    public function unsaveDataset(Request $request, $id)
+    {
         $dataset = dataset::where('id', $id)->first();
         $user = $request->get('user');
-        $saved_ds =  user_saved_dataset::where('uuid', $user->uuid)->where('id', $dataset->id)->first();
-        if($saved_ds != null){
+        $saved_ds = user_saved_dataset::where('uuid', $user->uuid)->where('id', $dataset->id)->first();
+        if ($saved_ds != null) {
             $saved_ds->delete();
         }
     }
 
-    public function getAllAccessibleSavedDatasets(Request $request){
-        $data = DatasetController::getAllAccessibleDatasets($request,$request->get('user'), false, true);
+    public function getAllAccessibleSavedDatasets(Request $request)
+    {
+        $data = DatasetController::getAllAccessibleDatasets($request, $request->get('user'), false, true);
         return response($data)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
     }
 
-    public function getAllAccessibleFavoriteDatasets(Request $request){
-        $data = DatasetController::getAllAccessibleDatasets($request,$request->get('user'), false, false, true);
+    public function getAllAccessibleFavoriteDatasets(Request $request)
+    {
+        $data = DatasetController::getAllAccessibleDatasets($request, $request->get('user'), false, false, true);
         return response($data)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
+    }
+
+    public function getUtil($tinyInt)
+    {
+        return response(dataset::where("util", "=", $tinyInt)->get());
     }
 }

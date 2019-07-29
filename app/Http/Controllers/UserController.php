@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\theme;
 use App\user;
+use App\user_theme;
+use Exception;
 use App\service;
 use App\role;
 use App\direction;
@@ -73,13 +76,15 @@ class UserController extends Controller
         } else {
             abort(400);
         }
-        $user = user::where('uuid', '=', $postbody['uuid'])->first();
+
+        $user = new  user();
+        $user::where('uuid', '=', $postbody['uuid'])->first();
         if ($user == null) {
             abort(404);
         }
 
         if (!$user->validate($postbody)) {
-            abort(400);
+            abort(413);
         }
 
         $role = role::where('role',$postbody["role"])->first();
@@ -123,30 +128,74 @@ class UserController extends Controller
         }
 
         $user->uuid = $request->get("uuid");
-        
-        $role = role::where('role',$request->get("role"))->first();
-        if($role == null){
-            abort(400);
-        }
         $user->role = $request->get("role");
         $user->firstname = $request->get("firstname");
         $user->lastname = $request->get("lastname");
-        $service = service::where('service',$request->get("service"))->first();
-        if($service == null){
-            abort(400);
-        }
         $user->service = $request->get("service");
-        $direction = direction::where('direction',$request->get("direction"))->first();
-        if($direction == null){
-            abort(400);
-        }
         $user->direction = $request->get("direction");
         $user->mail = $request->get("mail");
         $user->phone = $request->get("phone");
-        $user->tid = $request->get("tid");
 
         $user->save();
 
         return response("", 200);
+    }
+
+    public function addUserTheme(Request $request)
+    {
+        $role = $request->get('user')->role;
+        if ($role != "Administrateur") {
+            abort(403);
+        }
+
+        $userTheme = new user_theme();
+        $postbody = $request->all();
+        if (!$userTheme->validate($postbody)) {
+            abort(400);
+        }
+
+        if (!(user::find($request->get("uuid")) and theme::find($request->get("name")))) {
+            abort(404);
+        }
+
+        try {
+            $userTheme->uuid = $postbody['uuid'];
+            $userTheme->name = $postbody['name'];
+            $userTheme->save();
+        } catch (Exception $e) {
+            if (!($e->getCode() === 0)) {
+                abort(400);
+            }
+        }
+
+        return response('', 200);
+    }
+
+    public function deleteUserTheme(Request $request)
+    {
+        $role = $request->get('user')->role;
+        if ($role != "Administrateur") {
+            abort(403);
+        }
+
+        if (user_theme::where('name', '=', $request->get('name'))
+            ->where('uuid', '=', $request->get('uuid'))->get() == '[]') {
+            abort(400);
+        }
+        user_theme::where('name', '=', $request->get('name'))
+            ->where('uuid', '=', $request->get('uuid'))->delete();
+
+        return response('', 200);
+    }
+
+    public function blockUser($request, $uuid){
+        $role = $request->get('user')->role;
+        if ($role != "Administrateur") {
+            abort(403);
+        }
+
+        $user = user::where('uuid', $uuid)->first();
+        $user->role = "Désactivé";
+        $user->save();
     }
 }

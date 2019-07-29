@@ -56,6 +56,16 @@ class user extends Model
         return $this->hasOne('App\role', 'role', 'role');
     }
 
+    public function service()
+    {
+        return $this->hasOne('App\service', 'service', 'service');
+    }
+
+    public function direction()
+    {
+        return $this->hasOne('App\direction', 'direction', 'direction');
+    }
+
     public function analysis()
     {
         return $this->hasMany('App\analysis', 'owner_id', 'uuid');
