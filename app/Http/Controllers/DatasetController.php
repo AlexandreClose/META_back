@@ -120,7 +120,7 @@ class DatasetController extends Controller
             }
         }
         else {
-            error_log(var_dump($request));
+            error_log(print_r($request, true));
         }
         error_log("first foreach passed");
         $visualisations = $request->get('visualisations');
