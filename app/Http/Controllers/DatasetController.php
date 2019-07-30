@@ -98,10 +98,11 @@ class DatasetController extends Controller
         $result = $dataset->save();
 
         $dataset = dataset::where('id', $request->get('id'))->first();
-        error_log($tags);
         $tags = json_decode($tags);
         if($tags != null){
+            error_log("tags not null");
             foreach ($tags as $tag) {
+                error_log("tag array");
                 $_tag = tag::where('name', $tag)->first();
                 if ($_tag == null) {
                     error_log("Créer un nouveau tag");
