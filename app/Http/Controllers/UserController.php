@@ -188,7 +188,7 @@ class UserController extends Controller
         return response('', 200);
     }
 
-    public function blockUser($request, $uuid){
+    public function blockUser(Request $request, $uuid){
         $role = $request->get('user')->role;
         if ($role != "Administrateur") {
             abort(403);
