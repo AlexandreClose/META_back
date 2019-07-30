@@ -33,6 +33,8 @@ Route::get('/index/get/{name}/{quantity?}/{offset?}/{date_col?}/{start_date?}/{e
 Route::get('/index/file/{name}', 'IndexController@getIndexFile');
 Route::post('/index/geo', 'IndexController@getIndexFromCoordinatesInShape');
 Route::post('/liteIndex', 'IndexController@getLiteIndex');
+Route::post('/index/join', 'IndexController@join');
+
 
 //Analyse routes : Mysql
 Route::get('/analyse/save', 'Analysecontroller@saveAnalyse');

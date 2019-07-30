@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\column;
+use http\Exception;
 use Illuminate\Http\Request;
 use Elasticsearch;
 use App\Http\Functions;
 use App\dataset;
 use App\user;
 use Illuminate\Support\Str;
+use PhpParser\Node\Expr\Array_;
 use TrayLabs\InfluxDB\Facades\InfluxDB;
 
 class IndexController extends Controller
@@ -70,21 +73,21 @@ class IndexController extends Controller
     public function getAllFieldsFromIndexByName(Request $request, $name)
     {
         $user = $request->get('user');
-        
-        if($user->role == "Administrateur")
 
-        /* Should only be used by administrators for validating columns from a dataset
-        $datasets = DatasetController::getAllAccessibleDatasets($request, $user, false);
-        $datasetId;
-        foreach ($datasets as $dataset) {
-            if ($name === $dataset->databaseName) {
-                $datasetId = $dataset->id;
-                $canAccess = true;
+        if ($user->role == "Administrateur")
+
+            /* Should only be used by administrators for validating columns from a dataset
+            $datasets = DatasetController::getAllAccessibleDatasets($request, $user, false);
+            $datasetId;
+            foreach ($datasets as $dataset) {
+                if ($name === $dataset->databaseName) {
+                    $datasetId = $dataset->id;
+                    $canAccess = true;
+                }
             }
-        }
-        */
+            */
 
-        $canAccess = false;
+            $canAccess = false;
         $datasets = DatasetController::getAllAccessibleDatasets($request, $user, true);
         foreach ($datasets as $dataset) {
             if ($name === $dataset->databaseName) {
@@ -143,18 +146,16 @@ class IndexController extends Controller
             if ($field == "properties") {
                 foreach ($field_data["properties"] as $inner_field => $inner_field_data) {
                     //dd(json_encode($field_data["properties"]));
-                    if(!array_key_exists('type', $inner_field_data))
-                    {
-                        array_push($fields, ['properties.'.$inner_field, 'array']);
+                    if (!array_key_exists('type', $inner_field_data)) {
+                        array_push($fields, ['properties.' . $inner_field, 'array']);
                     } else {
-                        array_push($fields, ['properties.'.$inner_field, $inner_field_data['type']]);
+                        array_push($fields, ['properties.' . $inner_field, $inner_field_data['type']]);
                         //dd($fields);
                     }
                 }
             } else {
                 //dd($field_data['type']);
-                if(!array_key_exists('type', $field_data))
-                {
+                if (!array_key_exists('type', $field_data)) {
                     array_push($fields, [$field, 'array']);
                 } else {
                     array_push($fields, [$field, $field_data['type']]);
@@ -166,9 +167,9 @@ class IndexController extends Controller
 
         $results = [];
 
-        foreach($accessibleFields as $acc_field) {
-            foreach($fields as $field){
-                if($field[0] == $acc_field['name']){
+        foreach ($accessibleFields as $acc_field) {
+            foreach ($fields as $field) {
+                if ($field[0] == $acc_field['name']) {
                     array_push($results, $field);
                 }
             }
@@ -356,4 +357,86 @@ class IndexController extends Controller
         return response($data, 200);
     }
 
+    private function recursiveJoin(int $i, array $data)
+    {
+        $join = [];
+        foreach (array_keys($data[$i]) as $key) {
+            foreach ($data[$i][(string)$key] as $field) {
+                if (array_key_exists((string)$key, $data[$i - 1])) {
+                    if (!array_key_exists($key, $join)) {
+                        $join[$key] = [array_merge($data[$i - 1][(string)$key][0], $field)];
+                    } else {
+                        array_push($join[$key], array_merge($data[$i - 1][(string)$key][0], $field));
+                    }
+                }
+            }
+        }
+        return $join;
+    }
+
+    public function join(Request $request)
+    {
+        $data = [];
+        $join = [];
+        $datasets = $request["datasets"];
+
+        for ($i = 0; $i < sizeof($datasets); $i++) {
+            $body = $datasets[$i];
+            $body["user"] = $request["user"];
+            $subRequest = new Request($body);
+            $results = $this::getLiteIndex($subRequest)->getOriginalContent()["hits"]["hits"];
+
+            $subColumn = false;
+            $column = $request["columns"][$i];
+
+            if (strpos($column, 'properties.') !== false) {
+                $column = explode(".", $column)[1];
+                $subColumn = true;
+            }
+
+            $temp = [];
+            foreach ($results as $result) {
+                if ($subColumn) {
+                    if (array_key_exists("geometry", $result["_source"])) {
+                        $path = $result["_source"]["properties"];
+                        $result = array_merge(["properties" => $result["_source"]["properties"]]
+                            , ["geometry" => $result["_source"]["geometry"]]);
+                    } else {
+                        $path = $result["_source"]["properties"];
+                        $result = ["properties" => $result["_source"]["properties"]];
+                    }
+                } else {
+                    $path = $result["_source"];
+                    $result = $path;
+                }
+
+                if (!array_key_exists($path[$column], $temp)) {
+                    $temp[$path[$column]] = [$result];
+                } else {
+                    array_push($temp[$path[$column]], $result);
+                }
+            }
+
+            array_push($data, $temp);
+
+
+            if ($i == 1) {
+                $join = $this::recursiveJoin($i, $data);
+            } elseif ($i > 1) {
+                $data[$i - 1] = $join;
+                $join = $this::recursiveJoin($i, $data);
+            }
+
+//            if ($i > 0) {
+//                foreach (array_keys($data[$i]) as $key) {
+//                    foreach ($data[$i][(string)$key] as $field) {
+//                        if (array_key_exists((string)$key, $data[$i - 1])) {
+//                            array_push($join, array_merge($data[$i - 1][(string)$key][0], $field));
+//                        }
+//                    }
+//                }
+//            }
+        }
+        return response($join);
+    }
 }
