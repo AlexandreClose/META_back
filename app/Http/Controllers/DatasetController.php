@@ -98,7 +98,7 @@ class DatasetController extends Controller
         $result = $dataset->save();
 
         $dataset = dataset::where('id', $request->get('id'))->first();
-
+        error_log($tags);
         $tags = json_decode($tags);
         if($tags != null){
             foreach ($tags as $tag) {
@@ -478,10 +478,5 @@ class DatasetController extends Controller
     {
         $data = DatasetController::getAllAccessibleDatasets($request, $request->get('user'), false, false, true);
         return response($data)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
-    }
-
-    public function getUtil($tinyInt)
-    {
-        return response(dataset::where("util", "=", $tinyInt)->get());
     }
 }
