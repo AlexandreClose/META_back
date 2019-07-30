@@ -57,13 +57,25 @@ class AnalyseController extends Controller
         $datasets = DatasetController::getAllAccessibleDatasets($request, $user, false);
         $canAccess = false;
         
-        $analysis = analysis::where('id', $id);
+        $analysis = analysis::where('id', $id)->first();
         foreach($analysis->columns as $column){
-            if(!array_search(dataset::where('id', $column->dataset_id), $datasets)){
+            if(array_search(dataset::where('id', $column->dataset_id), $datasets) == null){
                 abort(403);
             }
         }
         return response($analysis)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
+    }
+
+    public function deleteAnalysis(Request $request, $id){
+        $user = $request->get('user');
+        $datasets = DatasetController::getAllAccessibleDatasets($request, $user, false);
+        $canAccess = false;
+        
+        $analysis = analysis::where('id', $id)->first();
+        if(($analysis->owner_id != $user->uuid && $user->role != "Administrateur")|| $analyse != null){
+            abort(403);
+        }
+        $analysis->delete();
     }
 
     public function getAllAccessibleAnalysis($request){

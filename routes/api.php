@@ -40,6 +40,7 @@ Route::post('/index/join', 'IndexController@join');
 Route::get('/analyse/save', 'Analysecontroller@saveAnalyse');
 Route::get('/analyse/get/{id}', 'AnalyseController@getAnalysisFromId');
 Route::get('/analyse/all', 'AnalyseController@getAllAccessibleAnalysis');
+Route::delete('/analyse/{id}', 'AnalyseController@deleteAnalysis');
 
 //Datasets routes : Mysql
 Route::get('/datasets/data/validate', 'DatasetController@getDatasetsToValidate');
@@ -64,6 +65,7 @@ Route::get('/users/name/{quantity?}', 'UserController@getUsersName');
 Route::post('/user/create', 'UserController@addUser');
 Route::post('/user/theme', 'UserController@addUserTheme');
 Route::delete('/user/theme', 'UserController@deleteUserTheme');
+Route::get('/user/block/{uuid}', 'UserController@blockUser');
 
 //Datatypes routes : Mysql
 Route::get('/datatypes/{quantity?}', 'DataTypesController@getAllDataTypes');

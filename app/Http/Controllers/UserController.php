@@ -187,4 +187,15 @@ class UserController extends Controller
 
         return response('', 200);
     }
+
+    public function blockUser($request, $uuid){
+        $role = $request->get('user')->role;
+        if ($role != "Administrateur") {
+            abort(403);
+        }
+
+        $user = user::where('uuid', $uuid)->first();
+        $user->role = "Désactivé";
+        $user->save();
+    }
 }

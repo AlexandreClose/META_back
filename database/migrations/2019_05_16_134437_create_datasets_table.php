@@ -32,7 +32,7 @@ class CreateDatasetsTable extends Migration
             $table->string('user',45);
             $table->boolean('JSON')->default(false);
             $table->boolean('GEOJSON')->default(false);
-            $table->boolean('util')->default(false);
+            //$table->boolean('util')->default(false);
             $table->string('producer',45);
             $table->string('themeName');
             $table->string('update_frequency')->default("Jamais");

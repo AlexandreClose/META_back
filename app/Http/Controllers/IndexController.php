@@ -103,8 +103,7 @@ class IndexController extends Controller
             'index' => $name
         ];
         $return = Elasticsearch::indices()->getMapping($data);
-
-        //dd($return);
+        $count = Elasticsearch::search(['index' => $name, 'size' => 1, 'from' => 0]);
         $fields = [];
         foreach ($return[$name]['mappings']['doc']['properties'] as $field => $field_data) {
             //dd($field_data['type']);
@@ -116,8 +115,7 @@ class IndexController extends Controller
                 array_push($fields, $field);
             }
         }
-        //dd($date_fields);
-        return $fields;
+        return ['count' => $count['hits']['total'], 'fields' => $fields];
     }
 
     public function getAllAccessibleFieldsFromIndexByName(Request $request, $name)

@@ -98,10 +98,11 @@ class DatasetController extends Controller
         $result = $dataset->save();
 
         $dataset = dataset::where('id', $request->get('id'))->first();
-
         $tags = json_decode($tags);
         if($tags != null){
+            error_log("tags not null");
             foreach ($tags as $tag) {
+                error_log("tag array");
                 $_tag = tag::where('name', $tag)->first();
                 if ($_tag == null) {
                     error_log("Créer un nouveau tag");
@@ -117,6 +118,9 @@ class DatasetController extends Controller
                     $dataset_tag->save();
                 }
             }
+        }
+        else {
+            error_log(print_r($request, true));
         }
         error_log("first foreach passed");
         $visualisations = $request->get('visualisations');
@@ -159,7 +163,7 @@ class DatasetController extends Controller
             $metier = $request->get('metier');
             $JSON = $request->get('JSON');
             $GEOJSON = $request->get('GEOJSON');
-            $util = $request->get('utils');
+            //$util = $request->get('utils');
             $visualisations = $request->get('visualisations');
             $visualisations = json_decode($visualisations);
             $date = $request->get('date');
@@ -169,13 +173,13 @@ class DatasetController extends Controller
             $dataset->name = $name;
             $dataset->JSON = (bool)$JSON;
             $dataset->GEOJSON = (bool)$GEOJSON;
-            $dataset->util = $util;
+            //$dataset->util = $util;
             $dataset->validated = false;
             $dataset->description = $description;
             $dataset->creator = $creator;
             $dataset->contributor = $contributor;
             $dataset->license = "Fermée";
-            $dataset->created_date = $date;
+            $dataset->created_date = Carbon::now();
             $dataset->updated_date = Carbon::now();
             $dataset->realtime = false;
             $dataset->conf_ready = false;
@@ -478,10 +482,5 @@ class DatasetController extends Controller
     {
         $data = DatasetController::getAllAccessibleDatasets($request, $request->get('user'), false, false, true);
         return response($data)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
-    }
-
-    public function getUtil($tinyInt)
-    {
-        return response(dataset::where("util", "=", $tinyInt)->get());
     }
 }
