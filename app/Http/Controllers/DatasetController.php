@@ -119,6 +119,9 @@ class DatasetController extends Controller
                 }
             }
         }
+        else {
+            error_log('tags null');
+        }
         error_log("first foreach passed");
         $visualisations = $request->get('visualisations');
         $visualisations = json_decode($visualisations);
