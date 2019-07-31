@@ -108,9 +108,9 @@ class IndexController extends Controller
         $fields = [];
         foreach ($return[$name]['mappings']['doc']['properties'] as $field => $field_data) {
             //dd($field_data['type']);
-            if ($field == "properties") {
-                foreach ($field_data["properties"] as $inner_field => $inner_field_data) {
-                    array_push($fields, "properties" . "." . $inner_field);
+            if (gettype($field_data) == "array" && !array_key_exists('type', $field_data) && $field != "geometry") {
+                foreach ($field_data['properties'] as $inner_field => $inner_field_data) {
+                    array_push($fields, $field . "." . $inner_field);
                 }
             } else {
                 array_push($fields, $field);
@@ -144,23 +144,23 @@ class IndexController extends Controller
         //dd($accessibleFields);
         $fields = [];
         foreach ($return[$name]['mappings']['doc']['properties'] as $field => $field_data) {
-            if ($field == "properties") {
-                foreach ($field_data["properties"] as $inner_field => $inner_field_data) {
+            if(gettype($field_data) == "array" && !array_key_exists('type', $field_data) && $field != "geometry")
+            {
+                foreach ($field_data['properties'] as $inner_field => $inner_field_data) {
                     //dd(json_encode($field_data["properties"]));
-                    if (!array_key_exists('type', $inner_field_data)) {
-                        array_push($fields, ['properties.' . $inner_field, 'array']);
+                    if(!array_key_exists('type', $inner_field_data))
+                    {
+                        //dd($field_data);
+                        array_push($fields, [$field.$inner_field, 'array']);
                     } else {
-                        array_push($fields, ['properties.' . $inner_field, $inner_field_data['type']]);
+                        array_push($fields, [$field.'.'.$inner_field, $inner_field_data['type']]);
                         //dd($fields);
                     }
                 }
+            } else if ($field != "geometry"){
+                array_push($fields, [$field, "array"]);
             } else {
-                //dd($field_data['type']);
-                if (!array_key_exists('type', $field_data)) {
-                    array_push($fields, [$field, 'array']);
-                } else {
-                    array_push($fields, [$field, $field_data['type']]);
-                }
+                array_push($fields, [$field, $field_data['type']]);
             }
         }
 
