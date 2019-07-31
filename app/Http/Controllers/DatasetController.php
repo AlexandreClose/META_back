@@ -247,7 +247,7 @@ class DatasetController extends Controller
                                                 FROM metacity.datasets ds 
                                             LEFT JOIN metacity.user_saved_datasets usd 
                                             ON ds.id = usd.id 
-                                            WHERE (usd.uuid = ".$user->uuid."
+                                            WHERE (usd.uuid = '".$user->uuid."'
                                             OR usd.uuid IS NULL)
                                             AND ds.validated = 0
                                             AND ds.conf_ready = 1
@@ -268,7 +268,7 @@ class DatasetController extends Controller
                                                 FROM metacity.datasets ds 
                                             LEFT JOIN metacity.user_saved_datasets usd 
                                             ON ds.id = usd.id 
-                                            WHERE usd.uuid = ".$user->uuid."
+                                            WHERE usd.uuid = '".$user->uuid."'
                                             AND ds.validated = 1
                                             AND ds.conf_ready = 1
                                             AND ds.upload_ready = 1
@@ -290,7 +290,7 @@ class DatasetController extends Controller
                                                 FROM metacity.datasets ds 
                                             LEFT JOIN metacity.user_saved_datasets usd 
                                             ON ds.id = usd.id 
-                                            WHERE usd.uuid = ".$user->uuid."
+                                            WHERE usd.uuid = '".$user->uuid."'
                                             AND ds.validated = 1
                                             AND ds.conf_ready = 1
                                             AND ds.upload_ready = 1
@@ -312,7 +312,7 @@ class DatasetController extends Controller
                         FROM metacity.datasets ds 
                     LEFT JOIN metacity.user_saved_datasets usd 
                     ON ds.id = usd.id 
-                    WHERE (usd.uuid = ".$user->uuid."
+                    WHERE (usd.uuid = '".$user->uuid."'
                     OR usd.uuid IS NULL)
                     AND ds.validated = 1
                     AND ds.conf_ready = 1
