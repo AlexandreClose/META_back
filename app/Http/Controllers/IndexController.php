@@ -358,21 +358,48 @@ class IndexController extends Controller
         return response($data, 200);
     }
 
-    private function recursiveJoin(int $i, array $data)
+    private function do_stats(array $columns, array $data)
     {
-        $join = [];
-        foreach (array_keys($data[$i]) as $key) {
-            foreach ($data[$i][(string)$key] as $field) {
-                if (array_key_exists((string)$key, $data[$i - 1])) {
-                    if (!array_key_exists($key, $join)) {
-                        $join[$key] = [array_merge($data[$i - 1][(string)$key][0], $field)];
-                    } else {
-                        array_push($join[$key], array_merge($data[$i - 1][(string)$key][0], $field));
+        $stats = [];
+        foreach ($columns["data"] as $column) {
+            foreach ($data as $element) {
+                $pathPivot = $element;
+                $pathData = $element;
+                foreach (explode(".", $columns["pivot"]) as $field) {
+                    $pathPivot = $pathPivot[$field];
+                }
+                foreach (explode(".", $column) as $field) {
+                    $pathData = $pathData[$field];
+                }
+
+                if (!array_key_exists($pathPivot, $stats) or !array_key_exists($column, $stats[$pathPivot]["stats"])) {
+                    if (array_key_exists($pathPivot, $stats)) {
+                        $element = $stats[$pathPivot];
                     }
+
+                    $element["stats"][$column] = [
+                        "min" => $pathData,
+                        "max" => $pathData,
+                        "avg" => $pathData,
+                        "sum" => $pathData,
+                        "count" => 1];
+                    $stats[$pathPivot] = $element;
+
+                } else {
+                    $s = $stats[$pathPivot];
+                    $oldStats = $s["stats"][$column];
+                    array_merge_recursive($stats[$pathPivot], $element);
+
+                    $stats[$pathPivot]["stats"][$column] = [
+                        "min" => min($pathData, $oldStats["min"]),
+                        "max" => max($pathData, $oldStats["max"]),
+                        "avg" => ($pathData + $oldStats["avg"]) / 2,
+                        "sum" => ($pathData + $oldStats["sum"]),
+                        "count" => ($oldStats["count"] + 1)];
                 }
             }
         }
-        return $join;
+        return $stats;
     }
 
     public function join(Request $request)
@@ -390,7 +417,6 @@ class IndexController extends Controller
                 array_push($temp, $result["_source"]);
             }
             array_push($data, $temp);
-
             if ($i >= 1) {
                 $columns = $request["joining"][$i - 1];
                 $newData = [];
@@ -412,6 +438,12 @@ class IndexController extends Controller
                 $data[$i] = $newData;
             }
         }
-        return response($data[sizeof($datasets) - 1]);
+
+        if (!$request["stats"]["do_stats"]) {
+            return response($data[sizeof($datasets) - 1], 200);
+        } else {
+            return response($this::do_stats($request["stats"]["columns"]
+                , $data[sizeof($datasets) - 1]), 200);
+        }
     }
 }
