@@ -422,7 +422,7 @@ class DatasetController extends Controller
                         ->orderBy("created_date", "desc")
                         ->get());
                 } else {
-                    $datasets = 
+                    $datasets =
                     $datasets = dataset::with('representations')->with('tags')->whereIn('visibility', 'worker')->where([['validated', '=', true], ['conf_ready', '=', true], ['upload_ready', "=", true]])->whereIn('themeName', $themes)->get();
                     $datasets = $datasets->merge(dataset::with('representations')->with('tags')->where('visibility', 'all')->where([['validated', '=', true], ['conf_ready', '=', true], ['upload_ready', "=", true]])->get());
                     $datasets = $datasets->merge($directdatasets);
@@ -462,7 +462,7 @@ class DatasetController extends Controller
 
     }
 
-    public static function getAllAccessibleColumnsFromADataset(Request $request, dataset $dataset)
+    public static function getAllAccessibleColumnsFromADataset(Request $request, Dataset $dataset)
     {
         $user = $request->get('user');
         $role = $user->role;
