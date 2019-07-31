@@ -468,17 +468,60 @@ class DatasetController extends Controller
                 AND usd.favorite = 1
                 ORDER BY created_date DESC"));
                 } else {
-                    $datasets = dataset::with('representations')->with('tags')->whereIn('visibility', ['job_referent', 'worker'])->where([['validated', '=', true], ['conf_ready', '=', true], ['upload_ready', "=", true]])->whereIn('themeName', $themes)->get();
-                    $datasets = $datasets->merge(dataset::with('representations')->with('tags')->where('visibility', 'all')->where([['validated', '=', true], ['conf_ready', '=', true], ['upload_ready', "=", true]])->get());
+                    $datasets = DB::select("SELECT ds.*, IF(usd.id IS NULL, 0, 1) as saved, IFNULL(usd.favorite, 0) as favorite, 
+                                                (SELECT CONCAT('[', GROUP_CONCAT(CONCAT('[', name, ', ', srcBegin, ',', img, ',', description, ']') SEPARATOR ' ,'), ']') as representations
+                                                FROM metacity.representation_types 
+                                                JOIN metacity.dataset_has_representations 
+                                                ON representation_types.name = dataset_has_representations.representationName 
+                                                WHERE dataset_has_representations.datasetId = ds.id 
+                                                GROUP BY (dataset_has_representations.datasetId)) as representations,
+                                                (SELECT CONCAT('[', GROUP_CONCAT(name SEPARATOR ' ,'), ']') 
+                                                FROM metacity.dataset_has_tags 
+                                                WHERE dataset_has_tags.id = ds.id
+                                                GROUP BY (dataset_has_tags.id)) as tags
+                                                FROM metacity.datasets ds 
+                                            LEFT JOIN metacity.user_saved_datasets usd 
+                                            ON ds.id = usd.id 
+                                            WHERE (usd.uuid = '".$user->uuid."'
+                                            OR usd.uuid IS NULL)
+                                            AND ds.validated = 1
+                                            AND ds.conf_ready = 1
+                                            AND upload_ready = 1
+                                            AND ((ds.visibility IN ('worker', 'job_referent') AND ds.themeName = '".$user->theme."') OR ds.visibility = 'all')
+                                            ORDER BY created_date DESC");
                     $datasets = $datasets->merge($directdatasets);
-                    $columns = column::whereIn('visibility', ['job_referent', 'worker'])->whereIn('themeName', $themes)->get();
-                    $columns = $columns->merge(column::whereIn('visibility', ['all', null])->get());
-                    $columns = $columns->merge($directcolumns);
-                    $array = [];
-                    foreach ($columns as $column) {
-                        array_push($array, $column->dataset);
-                    }
-                    $datasets->merge($array);
+                    $datasets = $datasets->merge(DB::select("SELECT ds.*, IF(usd.id IS NULL, 0, 1) as saved, IFNULL(usd.favorite, 0) as favorite, 
+                    (SELECT CONCAT('[', GROUP_CONCAT(CONCAT('[', name, ', ', srcBegin, ',', img, ',', description, ']') SEPARATOR ' ,'), ']') as representations
+                    FROM metacity.representation_types 
+                    JOIN metacity.dataset_has_representations 
+                    ON representation_types.name = dataset_has_representations.representationName 
+                    WHERE dataset_has_representations.datasetId = ds.id 
+                    GROUP BY (dataset_has_representations.datasetId)) as representations,
+                    (SELECT CONCAT('[', GROUP_CONCAT(name SEPARATOR ' ,'), ']') 
+                    FROM metacity.dataset_has_tags 
+                    WHERE dataset_has_tags.id = ds.id
+                    GROUP BY (dataset_has_tags.id)) as tags
+                    FROM (SELECT dsi.* 
+                                            FROM metacity.datasets dsi 
+                                            JOIN metacity.columns c 
+                                            ON c.dataset_id = dsi.id 
+                                            LEFT OUTER JOIN metacity.colauth_users 
+                                            ON c.id = colauth_users.id 
+                                            WHERE colauth_users.uuid = '".$user->uuid."'
+                                            OR (colauth_users.uuid  IS NULL 
+                                            AND (c.visibility IN ('worker', 'job_referent') AND c.themeName = '".$user->theme."') 
+                                            OR c.visibility = 'all')
+                                            GROUP BY dsi.id) ds 
+                LEFT JOIN metacity.user_saved_datasets usd 
+                ON ds.id = usd.id 
+                WHERE (usd.uuid = '".$user->uuid."'
+                OR usd.uuid IS NULL)
+                AND ds.validated = 1
+                AND ds.conf_ready = 1
+                AND upload_ready = 1
+                AND IF(usd.id IS NULL, 0, 1) = 1
+                AND usd.favorite = 1
+                ORDER BY created_date DESC"));
                 }
                 break;
             case "Utilisateur":
@@ -486,58 +529,168 @@ class DatasetController extends Controller
                     $datasets = [];
                     return $datasets;
                 } elseif ($saved) {
-                    $datasets = DB::table('datasets')
-                        ->join('user_saved_datasets', 'datasets.id', '=', 'user_saved_datasets.id')
-                        ->where('user_saved_datasets.uuid', $user->uuid)
-                        ->where('user_saved_datasets.favorite', false)
-                        ->where([['datasets.validated', '=', false], ['datasets.conf_ready', '=', true], ['datasets.upload_ready', "=", true]])
-                        ->where('datasets.visibility', 'worker')
-                        ->whereIn('datasets.themeName', $themes)
-                        ->select('datasets.*')
-                        ->orderBy("created_date", "desc")
-                        ->get();
-                    $datasets = $datasets->merge(DB::table('datasets')
-                        ->join('user_saved_datasets', 'datasets.id', '=', 'user_saved_datasets.id')
-                        ->where('user_saved_datasets.uuid', $user->uuid)
-                        ->where('user_saved_datasets.favorite', false)
-                        ->where([['datasets.validated', '=', false], ['datasets.conf_ready', '=', true], ['datasets.upload_ready', "=", true]])
-                        ->where('datasets.visibility', 'all')
-                        ->select('datasets.*')
-                        ->orderBy("created_date", "desc")
-                        ->get());
+                    $datasets = DB::select("SELECT ds.*, IF(usd.id IS NULL, 0, 1) as saved, IFNULL(usd.favorite, 0) as favorite, 
+                        (SELECT CONCAT('[', GROUP_CONCAT(CONCAT('[', name, ', ', srcBegin, ',', img, ',', description, ']') SEPARATOR ' ,'), ']') as representations
+                        FROM metacity.representation_types 
+                        JOIN metacity.dataset_has_representations 
+                        ON representation_types.name = dataset_has_representations.representationName 
+                        WHERE dataset_has_representations.datasetId = ds.id 
+                        GROUP BY (dataset_has_representations.datasetId)) as representations,
+                        (SELECT CONCAT('[', GROUP_CONCAT(name SEPARATOR ' ,'), ']') 
+                        FROM metacity.dataset_has_tags 
+                        WHERE dataset_has_tags.id = ds.id
+                        GROUP BY (dataset_has_tags.id)) as tags
+                        FROM metacity.datasets ds 
+                    LEFT JOIN metacity.user_saved_datasets usd 
+                    ON ds.id = usd.id 
+                    WHERE usd.uuid = '".$user->uuid."'
+                    AND ds.validated = 1
+                    AND ds.conf_ready = 1
+                    AND upload_ready = 1
+                    AND IF(usd.id IS NULL, 0, 1) = 1
+                    AND usd.favorite = 0
+                    AND ((ds.visibility IN ('worker') AND ds.themeName = '".$user->theme."') OR ds.visibility = 'all')
+                    ORDER BY created_date DESC");
+                    $datasets = $datasets->merge(DB::select("SELECT ds.*, IF(usd.id IS NULL, 0, 1) as saved, IFNULL(usd.favorite, 0) as favorite, 
+                    (SELECT CONCAT('[', GROUP_CONCAT(CONCAT('[', name, ', ', srcBegin, ',', img, ',', description, ']') SEPARATOR ' ,'), ']') as representations
+                    FROM metacity.representation_types 
+                    JOIN metacity.dataset_has_representations 
+                    ON representation_types.name = dataset_has_representations.representationName 
+                    WHERE dataset_has_representations.datasetId = ds.id 
+                    GROUP BY (dataset_has_representations.datasetId)) as representations,
+                    (SELECT CONCAT('[', GROUP_CONCAT(name SEPARATOR ' ,'), ']') 
+                    FROM metacity.dataset_has_tags 
+                    WHERE dataset_has_tags.id = ds.id
+                    GROUP BY (dataset_has_tags.id)) as tags
+                    FROM (SELECT dsi.* 
+                                            FROM metacity.datasets dsi 
+                                            JOIN metacity.columns c 
+                                            ON c.dataset_id = dsi.id 
+                                            LEFT OUTER JOIN metacity.colauth_users 
+                                            ON c.id = colauth_users.id 
+                                            WHERE colauth_users.uuid = '".$user->uuid."'
+                                            OR (colauth_users.uuid  IS NULL 
+                                            AND (c.visibility IN ('worker') AND c.themeName = '".$user->theme."') 
+                                            OR c.visibility = 'all')
+                                            GROUP BY dsi.id) ds 
+                LEFT JOIN metacity.user_saved_datasets usd 
+                ON ds.id = usd.id 
+                WHERE usd.uuid = '".$user->uuid."'
+                AND ds.validated = 1
+                AND ds.conf_ready = 1
+                AND upload_ready = 1
+                AND IF(usd.id IS NULL, 0, 1) = 1
+                AND usd.favorite = 0
+                ORDER BY created_date DESC"));
                 } elseif ($favorite) {
-                    $datasets = DB::table('datasets')
-                        ->join('user_saved_datasets', 'datasets.id', '=', 'user_saved_datasets.id')
-                        ->where('user_saved_datasets.uuid', $user->uuid)
-                        ->where('user_saved_datasets.favorite', true)
-                        ->where([['datasets.validated', '=', false], ['datasets.conf_ready', '=', true], ['datasets.upload_ready', "=", true]])
-                        ->where('datasets.visibility', 'worker')
-                        ->whereIn('datasets.themeName', $themes)
-                        ->select('datasets.*')
-                        ->orderBy("created_date", "desc")
-                        ->get();
-                    $datasets = $datasets->merge(DB::table('datasets')
-                        ->join('user_saved_datasets', 'datasets.id', '=', 'user_saved_datasets.id')
-                        ->where('user_saved_datasets.uuid', $user->uuid)
-                        ->where('user_saved_datasets.favorite', true)
-                        ->where([['datasets.validated', '=', false], ['datasets.conf_ready', '=', true], ['datasets.upload_ready', "=", true]])
-                        ->where('datasets.visibility', 'all')
-                        ->select('datasets.*')
-                        ->orderBy("created_date", "desc")
-                        ->get());
+                    $datasets = DB::select("SELECT ds.*, IF(usd.id IS NULL, 0, 1) as saved, IFNULL(usd.favorite, 0) as favorite, 
+                        (SELECT CONCAT('[', GROUP_CONCAT(CONCAT('[', name, ', ', srcBegin, ',', img, ',', description, ']') SEPARATOR ' ,'), ']') as representations
+                        FROM metacity.representation_types 
+                        JOIN metacity.dataset_has_representations 
+                        ON representation_types.name = dataset_has_representations.representationName 
+                        WHERE dataset_has_representations.datasetId = ds.id 
+                        GROUP BY (dataset_has_representations.datasetId)) as representations,
+                        (SELECT CONCAT('[', GROUP_CONCAT(name SEPARATOR ' ,'), ']') 
+                        FROM metacity.dataset_has_tags 
+                        WHERE dataset_has_tags.id = ds.id
+                        GROUP BY (dataset_has_tags.id)) as tags
+                        FROM metacity.datasets ds 
+                    LEFT JOIN metacity.user_saved_datasets usd 
+                    ON ds.id = usd.id 
+                    WHERE usd.uuid = '".$user->uuid."'
+                    AND ds.validated = 1
+                    AND ds.conf_ready = 1
+                    AND upload_ready = 1
+                    AND IF(usd.id IS NULL, 0, 1) = 1
+                    AND usd.favorite = 1
+                    AND ((ds.visibility IN ('worker') AND ds.themeName = '".$user->theme."') OR ds.visibility = 'all')
+                    ORDER BY created_date DESC");
+                    $datasets = $datasets->merge(DB::select("SELECT ds.*, IF(usd.id IS NULL, 0, 1) as saved, IFNULL(usd.favorite, 0) as favorite, 
+                    (SELECT CONCAT('[', GROUP_CONCAT(CONCAT('[', name, ', ', srcBegin, ',', img, ',', description, ']') SEPARATOR ' ,'), ']') as representations
+                    FROM metacity.representation_types 
+                    JOIN metacity.dataset_has_representations 
+                    ON representation_types.name = dataset_has_representations.representationName 
+                    WHERE dataset_has_representations.datasetId = ds.id 
+                    GROUP BY (dataset_has_representations.datasetId)) as representations,
+                    (SELECT CONCAT('[', GROUP_CONCAT(name SEPARATOR ' ,'), ']') 
+                    FROM metacity.dataset_has_tags 
+                    WHERE dataset_has_tags.id = ds.id
+                    GROUP BY (dataset_has_tags.id)) as tags
+                    FROM (SELECT dsi.* 
+                                            FROM metacity.datasets dsi 
+                                            JOIN metacity.columns c 
+                                            ON c.dataset_id = dsi.id 
+                                            LEFT OUTER JOIN metacity.colauth_users 
+                                            ON c.id = colauth_users.id 
+                                            WHERE colauth_users.uuid = '".$user->uuid."'
+                                            OR (colauth_users.uuid  IS NULL 
+                                            AND (c.visibility IN ('worker') AND c.themeName = '".$user->theme."') 
+                                            OR c.visibility = 'all')
+                                            GROUP BY dsi.id) ds 
+                LEFT JOIN metacity.user_saved_datasets usd 
+                ON ds.id = usd.id 
+                WHERE usd.uuid = '".$user->uuid."'
+                AND ds.validated = 1
+                AND ds.conf_ready = 1
+                AND upload_ready = 1
+                AND IF(usd.id IS NULL, 0, 1) = 1
+                AND usd.favorite = 1
+                ORDER BY created_date DESC"));
                 } else {
-                    $datasets = 
-                    $datasets = dataset::with('representations')->with('tags')->whereIn('visibility', 'worker')->where([['validated', '=', true], ['conf_ready', '=', true], ['upload_ready', "=", true]])->whereIn('themeName', $themes)->get();
-                    $datasets = $datasets->merge(dataset::with('representations')->with('tags')->where('visibility', 'all')->where([['validated', '=', true], ['conf_ready', '=', true], ['upload_ready', "=", true]])->get());
+                    $datasets = DB::select("SELECT ds.*, IF(usd.id IS NULL, 0, 1) as saved, IFNULL(usd.favorite, 0) as favorite, 
+                                                (SELECT CONCAT('[', GROUP_CONCAT(CONCAT('[', name, ', ', srcBegin, ',', img, ',', description, ']') SEPARATOR ' ,'), ']') as representations
+                                                FROM metacity.representation_types 
+                                                JOIN metacity.dataset_has_representations 
+                                                ON representation_types.name = dataset_has_representations.representationName 
+                                                WHERE dataset_has_representations.datasetId = ds.id 
+                                                GROUP BY (dataset_has_representations.datasetId)) as representations,
+                                                (SELECT CONCAT('[', GROUP_CONCAT(name SEPARATOR ' ,'), ']') 
+                                                FROM metacity.dataset_has_tags 
+                                                WHERE dataset_has_tags.id = ds.id
+                                                GROUP BY (dataset_has_tags.id)) as tags
+                                                FROM metacity.datasets ds 
+                                            LEFT JOIN metacity.user_saved_datasets usd 
+                                            ON ds.id = usd.id 
+                                            WHERE (usd.uuid = '".$user->uuid."'
+                                            OR usd.uuid IS NULL)
+                                            AND ds.validated = 1
+                                            AND ds.conf_ready = 1
+                                            AND upload_ready = 1
+                                            AND ((ds.visibility IN ('worker', 'job_referent') AND ds.themeName = '".$user->theme."') OR ds.visibility = 'all')
+                                            ORDER BY created_date DESC");
                     $datasets = $datasets->merge($directdatasets);
-                    $columns = column::whereIn('visibility', 'worker')->whereIn('themeName', $themes)->get();
-                    $columns = $columns->merge(column::whereIn('visibility', ['all', null])->get());
-                    $columns = $columns->merge($directcolumns);
-                    $array = [];
-                    foreach ($columns as $column) {
-                        array_push($array, $column->dataset);
-                    }
-                    $datasets->merge($array);
+                    $datasets = $datasets->merge(DB::select("SELECT ds.*, IF(usd.id IS NULL, 0, 1) as saved, IFNULL(usd.favorite, 0) as favorite, 
+                    (SELECT CONCAT('[', GROUP_CONCAT(CONCAT('[', name, ', ', srcBegin, ',', img, ',', description, ']') SEPARATOR ' ,'), ']') as representations
+                    FROM metacity.representation_types 
+                    JOIN metacity.dataset_has_representations 
+                    ON representation_types.name = dataset_has_representations.representationName 
+                    WHERE dataset_has_representations.datasetId = ds.id 
+                    GROUP BY (dataset_has_representations.datasetId)) as representations,
+                    (SELECT CONCAT('[', GROUP_CONCAT(name SEPARATOR ' ,'), ']') 
+                    FROM metacity.dataset_has_tags 
+                    WHERE dataset_has_tags.id = ds.id
+                    GROUP BY (dataset_has_tags.id)) as tags
+                    FROM (SELECT dsi.* 
+                                            FROM metacity.datasets dsi 
+                                            JOIN metacity.columns c 
+                                            ON c.dataset_id = dsi.id 
+                                            LEFT OUTER JOIN metacity.colauth_users 
+                                            ON c.id = colauth_users.id 
+                                            WHERE colauth_users.uuid = '".$user->uuid."'
+                                            OR (colauth_users.uuid  IS NULL 
+                                            AND (c.visibility IN ('worker', 'job_referent') AND c.themeName = '".$user->theme."') 
+                                            OR c.visibility = 'all')
+                                            GROUP BY dsi.id) ds 
+                LEFT JOIN metacity.user_saved_datasets usd 
+                ON ds.id = usd.id 
+                WHERE (usd.uuid = '".$user->uuid."'
+                OR usd.uuid IS NULL)
+                AND ds.validated = 1
+                AND ds.conf_ready = 1
+                AND upload_ready = 1
+                AND IF(usd.id IS NULL, 0, 1) = 1
+                AND usd.favorite = 1
+                ORDER BY created_date DESC"));
                 }
                 break;
             default:
