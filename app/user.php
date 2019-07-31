@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Log;
  * @property mixed direction
  * @property mixed mail
  * @property mixed phone
+ * @property mixed tid
  */
 class user extends Model
 {
