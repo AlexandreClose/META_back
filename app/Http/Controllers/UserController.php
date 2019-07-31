@@ -116,6 +116,7 @@ class UserController extends Controller
 
     public function addUser(Request $request)
     {
+
         $role = $request->get('user')->role;
         if ($role != "Administrateur") {
             abort(403);
@@ -135,10 +136,10 @@ class UserController extends Controller
         $user->direction = $request->get("direction");
         $user->mail = $request->get("mail");
         $user->phone = $request->get("phone");
-
+        $user->tid = $request->get("tid");
         $user->save();
 
-        return response("", 200);
+       return response("", 200);
     }
 
     public function addUserTheme(Request $request)

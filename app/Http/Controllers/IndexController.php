@@ -3,14 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\column;
-use http\Exception;
-use Illuminate\Http\Request;
+
 use Elasticsearch;
 use App\Http\Functions;
 use App\dataset;
 use App\user;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use PhpParser\Node\Expr\Array_;
+
 use TrayLabs\InfluxDB\Facades\InfluxDB;
 
 class IndexController extends Controller
@@ -295,7 +296,7 @@ class IndexController extends Controller
             abort(403);
         }
 
-        $columns = DatasetController::getAllAccessibleColumnsFromADataset($request, $dataset);
+        $columns = DatasetController::getAllAccessibleColumnsFromADataset($request, dataset::where('databaseName', $name)->first());
         $columnFilter = [];
 
         $canAccess = false;
@@ -357,27 +358,53 @@ class IndexController extends Controller
         return response($data, 200);
     }
 
-    private function recursiveJoin(int $i, array $data)
+    private function do_stats(array $columns, array $data)
     {
-        $join = [];
-        foreach (array_keys($data[$i]) as $key) {
-            foreach ($data[$i][(string)$key] as $field) {
-                if (array_key_exists((string)$key, $data[$i - 1])) {
-                    if (!array_key_exists($key, $join)) {
-                        $join[$key] = [array_merge($data[$i - 1][(string)$key][0], $field)];
-                    } else {
-                        array_push($join[$key], array_merge($data[$i - 1][(string)$key][0], $field));
+        $stats = [];
+        foreach ($columns["data"] as $column) {
+            foreach ($data as $element) {
+                $pathPivot = $element;
+                $pathData = $element;
+                foreach (explode(".", $columns["pivot"]) as $field) {
+                    $pathPivot = $pathPivot[$field];
+                }
+                foreach (explode(".", $column) as $field) {
+                    $pathData = $pathData[$field];
+                }
+
+                if (!array_key_exists($pathPivot, $stats) or !array_key_exists($column, $stats[$pathPivot]["stats"])) {
+                    if (array_key_exists($pathPivot, $stats)) {
+                        $element = $stats[$pathPivot];
                     }
+
+                    $element["stats"][$column] = [
+                        "min" => $pathData,
+                        "max" => $pathData,
+                        "avg" => $pathData,
+                        "sum" => $pathData,
+                        "count" => 1];
+                    $stats[$pathPivot] = $element;
+
+                } else {
+                    $s = $stats[$pathPivot];
+                    $oldStats = $s["stats"][$column];
+                    array_merge_recursive($stats[$pathPivot], $element);
+
+                    $stats[$pathPivot]["stats"][$column] = [
+                        "min" => min($pathData, $oldStats["min"]),
+                        "max" => max($pathData, $oldStats["max"]),
+                        "avg" => ($pathData + $oldStats["avg"]) / 2,
+                        "sum" => ($pathData + $oldStats["sum"]),
+                        "count" => ($oldStats["count"] + 1)];
                 }
             }
         }
-        return $join;
+        return $stats;
     }
 
     public function join(Request $request)
     {
         $data = [];
-        $join = [];
         $datasets = $request["datasets"];
 
         for ($i = 0; $i < sizeof($datasets); $i++) {
@@ -385,58 +412,38 @@ class IndexController extends Controller
             $body["user"] = $request["user"];
             $subRequest = new Request($body);
             $results = $this::getLiteIndex($subRequest)->getOriginalContent()["hits"]["hits"];
-
-            $subColumn = false;
-            $column = $request["columns"][$i];
-
-            if (strpos($column, 'properties.') !== false) {
-                $column = explode(".", $column)[1];
-                $subColumn = true;
-            }
-
             $temp = [];
             foreach ($results as $result) {
-                if ($subColumn) {
-                    if (array_key_exists("geometry", $result["_source"])) {
-                        $path = $result["_source"]["properties"];
-                        $result = array_merge(["properties" => $result["_source"]["properties"]]
-                            , ["geometry" => $result["_source"]["geometry"]]);
-                    } else {
-                        $path = $result["_source"]["properties"];
-                        $result = ["properties" => $result["_source"]["properties"]];
-                    }
-                } else {
-                    $path = $result["_source"];
-                    $result = $path;
-                }
-
-                if (!array_key_exists($path[$column], $temp)) {
-                    $temp[$path[$column]] = [$result];
-                } else {
-                    array_push($temp[$path[$column]], $result);
-                }
+                array_push($temp, $result["_source"]);
             }
-
             array_push($data, $temp);
-
-
-            if ($i == 1) {
-                $join = $this::recursiveJoin($i, $data);
-            } elseif ($i > 1) {
-                $data[$i - 1] = $join;
-                $join = $this::recursiveJoin($i, $data);
+            if ($i >= 1) {
+                $columns = $request["joining"][$i - 1];
+                $newData = [];
+                foreach ($data[$i - 1] as $entry) {
+                    $path = $entry;
+                    foreach (explode(".", $columns[0]) as $field) {
+                        $path = $path[$field];
+                    }
+                    foreach ($data[$i] as $newEntry) {
+                        $newPath = $newEntry;
+                        foreach (explode(".", $columns[1]) as $field) {
+                            $newPath = $newPath[$field];
+                        }
+                        if ($path == $newPath) {
+                            array_push($newData, array_replace_recursive($entry, $newEntry));
+                        }
+                    }
+                }
+                $data[$i] = $newData;
             }
-
-//            if ($i > 0) {
-//                foreach (array_keys($data[$i]) as $key) {
-//                    foreach ($data[$i][(string)$key] as $field) {
-//                        if (array_key_exists((string)$key, $data[$i - 1])) {
-//                            array_push($join, array_merge($data[$i - 1][(string)$key][0], $field));
-//                        }
-//                    }
-//                }
-//            }
         }
-        return response($join);
+
+        if (!$request["stats"]["do_stats"]) {
+            return response($data[sizeof($datasets) - 1], 200);
+        } else {
+            return response($this::do_stats($request["stats"]["columns"]
+                , $data[sizeof($datasets) - 1]), 200);
+        }
     }
 }

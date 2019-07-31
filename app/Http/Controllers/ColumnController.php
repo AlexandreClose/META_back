@@ -108,7 +108,7 @@ class ColumnController extends Controller
             abort(403);
         }
 
-        $AccessibleColumns = DatasetController::getAllAccessibleColumnsFromADataset($request, $dataset);
+        $AccessibleColumns = DatasetController::getAllAccessibleColumnsFromADataset($request, dataset::where('databaseName', $name)->first());
 
         $columns = [];
         $canAccess = false;

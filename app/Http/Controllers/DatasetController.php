@@ -719,7 +719,7 @@ class DatasetController extends Controller
 
     }
 
-    public static function getAllAccessibleColumnsFromADataset(Request $request, dataset $dataset)
+    public static function getAllAccessibleColumnsFromADataset(Request $request, Dataset $dataset)
     {
         $user = $request->get('user');
         $role = $user->role;
