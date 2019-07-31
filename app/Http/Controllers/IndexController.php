@@ -296,7 +296,7 @@ class IndexController extends Controller
             abort(403);
         }
 
-        $columns = DatasetController::getAllAccessibleColumnsFromADataset($request, $dataset);
+        $columns = DatasetController::getAllAccessibleColumnsFromADataset($request, dataset::where('databaseName', $name)->first());
         $columnFilter = [];
 
         $canAccess = false;
