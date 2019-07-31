@@ -390,84 +390,28 @@ class IndexController extends Controller
                 array_push($temp, $result["_source"]);
             }
             array_push($data, $temp);
-        }
 
-        for ($i = 0; $i < sizeof($datasets) - 1; $i++) {
-            $columns = $request["joining"][$i];
-            $newData = [];
-            foreach ($data[$i] as $entry) {
-                $path = $entry;
-                foreach (explode(".", $columns[0]) as $field) {
-                    $path = $path[$field];
-                }
-                foreach ($data[$i + 1] as $newEntry) {
-                    $newPath = $newEntry;
-                    foreach (explode(".", $columns[1]) as $field) {
-                        $newPath = $newPath[$field];
+            if ($i >= 1) {
+                $columns = $request["joining"][$i - 1];
+                $newData = [];
+                foreach ($data[$i - 1] as $entry) {
+                    $path = $entry;
+                    foreach (explode(".", $columns[0]) as $field) {
+                        $path = $path[$field];
                     }
-                    if ($path == $newPath) {
-                        array_push($newData, array_replace_recursive($entry, $newEntry));
+                    foreach ($data[$i] as $newEntry) {
+                        $newPath = $newEntry;
+                        foreach (explode(".", $columns[1]) as $field) {
+                            $newPath = $newPath[$field];
+                        }
+                        if ($path == $newPath) {
+                            array_push($newData, array_replace_recursive($entry, $newEntry));
+                        }
                     }
                 }
+                $data[$i] = $newData;
             }
-            $data[$i + 1] = $newData;
         }
-
-        return response($data);
+        return response($data[sizeof($datasets) - 1]);
     }
-//    public function join(Request $request)
-//    {
-//        $data = [];
-//        $join = [];
-//        $datasets = $request["datasets"];
-//
-//        for ($i = 0; $i < sizeof($datasets); $i++) {
-//            $body = $datasets[$i];
-//            $body["user"] = $request["user"];
-//            $subRequest = new Request($body);
-//            $results = $this::getLiteIndex($subRequest)->getOriginalContent()["hits"]["hits"];
-//
-//            $subColumn = false;
-//            $column = $request["columns"][$i];
-//
-//            if (strpos($column, '.') !== false) {
-//                $column = explode(".", $column)[1];
-//                $subColumn = true;
-//            }
-//
-//            $temp = [];
-//            foreach ($results as $result) {
-//                if ($subColumn) {
-//                    if (array_key_exists("geometry", $result["_source"])) {
-//                        $path = $result["_source"]["properties"];
-//                        $result = array_merge(["properties" => $result["_source"]["properties"]]
-//                            , ["geometry" => $result["_source"]["geometry"]]);
-//                    } else {
-//                        $path = $result["_source"]["properties"];
-//                        $result = ["properties" => $result["_source"]["properties"]];
-//                    }
-//                } else {
-//                    $path = $result["_source"];
-//                    $result = $path;
-//                }
-//
-//                if (!array_key_exists($path[$column], $temp)) {
-//                    $temp[$path[$column]] = [$result];
-//                } else {
-//                    array_push($temp[$path[$column]], $result);
-//                }
-//            }
-//            return response($temp);
-//            array_push($data, $temp);
-//
-//            if ($i == 1) {
-//                $join = $this::recursiveJoin($i, $data);
-//            } elseif ($i > 1) {
-//                $data[$i - 1] = $join;
-//                $join = $this::recursiveJoin($i, $data);
-//            }
-//
-//        }
-//        return response($join);
-//    }
 }
