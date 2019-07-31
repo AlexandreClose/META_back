@@ -359,6 +359,7 @@ class DatasetController extends Controller
                         ->orderBy("created_date", "desc")
                         ->get());
                 } else {
+                    $datasets = 
                     $datasets = dataset::with('representations')->with('tags')->whereIn('visibility', 'worker')->where([['validated', '=', true], ['conf_ready', '=', true], ['upload_ready', "=", true]])->whereIn('themeName', $themes)->get();
                     $datasets = $datasets->merge(dataset::with('representations')->with('tags')->where('visibility', 'all')->where([['validated', '=', true], ['conf_ready', '=', true], ['upload_ready', "=", true]])->get());
                     $datasets = $datasets->merge($directdatasets);

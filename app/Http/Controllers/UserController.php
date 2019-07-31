@@ -77,8 +77,8 @@ class UserController extends Controller
             abort(400);
         }
 
-        $user = new  user();
-        $user::where('uuid', '=', $postbody['uuid'])->first();
+        //$user = new  user();
+        $user = user::where('uuid', '=', $postbody['uuid'])->first();
         if ($user == null) {
             abort(404);
         }
