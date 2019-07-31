@@ -195,6 +195,9 @@ class UserController extends Controller
         }
 
         $user = user::where('uuid', $uuid)->first();
+        if($user == null){
+            abort(404);
+        }
         $user->role = "Désactivé";
         $user->save();
     }
