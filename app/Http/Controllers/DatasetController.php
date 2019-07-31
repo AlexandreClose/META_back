@@ -233,7 +233,7 @@ class DatasetController extends Controller
         switch ($role) {
             case "Administrateur":
                 if ($validate) {
-                    $datasets = DB::statement("SELECT ds.*, IF(usd.id IS NULL, 0, 1) as saved, IFNULL(usd.favorite, 0) as favorite, 
+                    $datasets = DB::select("SELECT ds.*, IF(usd.id IS NULL, 0, 1) as saved, IFNULL(usd.favorite, 0) as favorite, 
                                                 (SELECT CONCAT('[', GROUP_CONCAT(CONCAT('[', name, ', ', srcBegin, ',', img, ',', description, ']') SEPARATOR ' ,'), ']') as representations
                                                 FROM metacity.representation_types 
                                                 JOIN metacity.dataset_has_representations 
@@ -254,7 +254,7 @@ class DatasetController extends Controller
                                             AND upload_ready = 1
                                             ORDER BY created_date DESC");
                 } elseif ($saved) {
-                    $datasets = DB::statement("SELECT ds.*, IF(usd.id IS NULL, 0, 1) as saved, IFNULL(usd.favorite, 0) as favorite, 
+                    $datasets = DB::select("SELECT ds.*, IF(usd.id IS NULL, 0, 1) as saved, IFNULL(usd.favorite, 0) as favorite, 
                                                 (SELECT CONCAT('[', GROUP_CONCAT(CONCAT('[', name, ', ', srcBegin, ',', img, ',', description, ']') SEPARATOR ' ,'), ']') as representations
                                                 FROM metacity.representation_types 
                                                 JOIN metacity.dataset_has_representations 
@@ -276,7 +276,7 @@ class DatasetController extends Controller
                                             AND usd.favorite = 0
                                             ORDER BY created_date DESC");
                 } elseif ($favorite) {
-                    $datasets = DB::statement("SELECT ds.*, IF(usd.id IS NULL, 0, 1) as saved, IFNULL(usd.favorite, 0) as favorite, 
+                    $datasets = DB::select("SELECT ds.*, IF(usd.id IS NULL, 0, 1) as saved, IFNULL(usd.favorite, 0) as favorite, 
                                                 (SELECT CONCAT('[', GROUP_CONCAT(CONCAT('[', name, ', ', srcBegin, ',', img, ',', description, ']') SEPARATOR ' ,'), ']') as representations
                                                 FROM metacity.representation_types 
                                                 JOIN metacity.dataset_has_representations 
@@ -298,7 +298,7 @@ class DatasetController extends Controller
                                             AND usd.favorite = 1
                                             ORDER BY created_date DESC");
                 } else {
-                    $datasets = DB::statement("SELECT ds.*, IF(usd.id IS NULL, 0, 1) as saved, IFNULL(usd.favorite, 0) as favorite, 
+                    $datasets = DB::select("SELECT ds.*, IF(usd.id IS NULL, 0, 1) as saved, IFNULL(usd.favorite, 0) as favorite, 
                         (SELECT CONCAT('[', GROUP_CONCAT(CONCAT('[', name, ', ', srcBegin, ',', img, ',', description, ']') SEPARATOR ' ,'), ']') as representations
                         FROM metacity.representation_types 
                         JOIN metacity.dataset_has_representations 
