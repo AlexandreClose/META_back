@@ -230,7 +230,7 @@ class DatasetController extends Controller
         error_log($themes[0]);
         $role = $user->role;
         $directdatasets = DB::select("SELECT ds.*, IF(usd.id IS NULL, 0, 1) as saved, IFNULL(usd.favorite, 0) as favorite, 
-            (SELECT CONCAT('[', GROUP_CONCAT(CONCAT('[\'', name, '\', \'', srcBegin, '\',\'', img, '\',\'', description, '\']') SEPARATOR ' ,'), ']') as representations
+            (SELECT GROUP_CONCAT(CONCAT('[\'', name, '\', \'', srcBegin, '\',\'', img, '\',\'', description, '\']') SEPARATOR ' ,') as representations
             FROM metacity.representation_types 
             JOIN metacity.dataset_has_representations 
             ON representation_types.name = dataset_has_representations.representationName 
@@ -249,7 +249,7 @@ class DatasetController extends Controller
         OR usd.uuid IS NULL)
         ORDER BY created_date DESC");
         $querybase = "SELECT ds.*, IF(usd.id IS NULL, 0, 1) as saved, IFNULL(usd.favorite, 0) as favorite, 
-        (SELECT CONCAT('[', GROUP_CONCAT(CONCAT('[\'', name, '\', \'', srcBegin, '\',\'', img, '\',\'', description, '\']') SEPARATOR ' ,'), ']') as representations
+        (SELECT GROUP_CONCAT(CONCAT('[\'', name, '\', \'', srcBegin, '\',\'', img, '\',\'', description, '\']') SEPARATOR ' ,') as representations
         FROM metacity.representation_types 
         JOIN metacity.dataset_has_representations 
         ON representation_types.name = dataset_has_representations.representationName 
@@ -275,7 +275,7 @@ class DatasetController extends Controller
                 $where = $where."AND ((ds.visibility IN ('worker', 'job_referent') AND ds.themeName = '".$user->theme."') OR ds.visibility = 'all')\n";
                 $datasets = $directdatasets;
                 $datasets = array_merge($datasets, (DB::select("SELECT ds.*, IF(usd.id IS NULL, 0, 1) as saved, IFNULL(usd.favorite, 0) as favorite, 
-                    (SELECT CONCAT('[', GROUP_CONCAT(CONCAT('[\'', name, '\', \'', srcBegin, '\',\'', img, '\',\'', description, '\']') SEPARATOR ' ,'), ']') as representations
+                    (SELECT GROUP_CONCAT(CONCAT('[\'', name, '\', \'', srcBegin, '\',\'', img, '\',\'', description, '\']') SEPARATOR ' ,') as representations
                     FROM metacity.representation_types 
                     JOIN metacity.dataset_has_representations 
                     ON representation_types.name = dataset_has_representations.representationName 
@@ -303,7 +303,7 @@ class DatasetController extends Controller
                 $where = $where."AND ((ds.visibility IN ('worker') AND ds.themeName = '".$user->theme."') OR ds.visibility = 'all')\n";
                 $datasets = $directdatasets;
                 $datasets = array_merge($datasets, (DB::select("SELECT ds.*, IF(usd.id IS NULL, 0, 1) as saved, IFNULL(usd.favorite, 0) as favorite, 
-                    (SELECT CONCAT('[', GROUP_CONCAT(CONCAT('[', name, ', ', srcBegin, ',', img, ',', description, ']') SEPARATOR ' ,'), ']') as representations
+                    (SELECT GROUP_CONCAT(CONCAT('[\'', name, '\', \'', srcBegin, '\',\'', img, '\',\'', description, '\']') SEPARATOR ' ,')
                     FROM metacity.representation_types 
                     JOIN metacity.dataset_has_representations 
                     ON representation_types.name = dataset_has_representations.representationName 
