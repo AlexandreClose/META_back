@@ -257,7 +257,7 @@ class DatasetController extends Controller
                                                 ON representation_types.name = dataset_has_representations.representationName 
                                                 WHERE dataset_has_representations.datasetId = ds.id 
                                                 GROUP BY (dataset_has_representations.datasetId)) as representations,
-                                                (SELECT CONCAT('[', GROUP_CONCAT(name SEPARATOR ' ,'), ']') 
+                                                (SELECT CONCAT('[', GROUP_CONCAT(CONCAT('\"', name, '\"') SEPARATOR ' ,'), ']') 
                                                 FROM metacity.dataset_has_tags 
                                                 WHERE dataset_has_tags.id = ds.id
                                                 GROUP BY (dataset_has_tags.id)) as tags
@@ -278,7 +278,7 @@ class DatasetController extends Controller
                                                 ON representation_types.name = dataset_has_representations.representationName 
                                                 WHERE dataset_has_representations.datasetId = ds.id 
                                                 GROUP BY (dataset_has_representations.datasetId)) as representations,
-                                                (SELECT CONCAT('[', GROUP_CONCAT(name SEPARATOR ' ,'), ']') 
+                                                (SELECT CONCAT('[', GROUP_CONCAT(CONCAT('\"', name, '\"') SEPARATOR ' ,'), ']') 
                                                 FROM metacity.dataset_has_tags 
                                                 WHERE dataset_has_tags.id = ds.id
                                                 GROUP BY (dataset_has_tags.id)) as tags
@@ -300,7 +300,7 @@ class DatasetController extends Controller
                                                 ON representation_types.name = dataset_has_representations.representationName 
                                                 WHERE dataset_has_representations.datasetId = ds.id 
                                                 GROUP BY (dataset_has_representations.datasetId)) as representations,
-                                                (SELECT CONCAT('[', GROUP_CONCAT(name SEPARATOR ' ,'), ']') 
+                                                (SELECT CONCAT('[', GROUP_CONCAT(CONCAT('\"', name, '\"') SEPARATOR ' ,'), ']') 
                                                 FROM metacity.dataset_has_tags 
                                                 WHERE dataset_has_tags.id = ds.id
                                                 GROUP BY (dataset_has_tags.id)) as tags
@@ -322,7 +322,7 @@ class DatasetController extends Controller
                         ON representation_types.name = dataset_has_representations.representationName 
                         WHERE dataset_has_representations.datasetId = ds.id 
                         GROUP BY (dataset_has_representations.datasetId)) as representations,
-                        (SELECT CONCAT('[', GROUP_CONCAT(name SEPARATOR ' ,'), ']') 
+                        (SELECT CONCAT('[', GROUP_CONCAT(CONCAT('\"', name, '\"') SEPARATOR ' ,'), ']') 
                         FROM metacity.dataset_has_tags 
                         WHERE dataset_has_tags.id = ds.id
                         GROUP BY (dataset_has_tags.id)) as tags
@@ -345,7 +345,7 @@ class DatasetController extends Controller
                                                 ON representation_types.name = dataset_has_representations.representationName 
                                                 WHERE dataset_has_representations.datasetId = ds.id 
                                                 GROUP BY (dataset_has_representations.datasetId)) as representations,
-                                                (SELECT CONCAT('[', GROUP_CONCAT(name SEPARATOR ' ,'), ']') 
+                                                (SELECT CONCAT('[', GROUP_CONCAT(CONCAT('\"', name, '\"') SEPARATOR ' ,'), ']') 
                                                 FROM metacity.dataset_has_tags 
                                                 WHERE dataset_has_tags.id = ds.id
                                                 GROUP BY (dataset_has_tags.id)) as tags
@@ -367,7 +367,7 @@ class DatasetController extends Controller
                         ON representation_types.name = dataset_has_representations.representationName 
                         WHERE dataset_has_representations.datasetId = ds.id 
                         GROUP BY (dataset_has_representations.datasetId)) as representations,
-                        (SELECT CONCAT('[', GROUP_CONCAT(name SEPARATOR ' ,'), ']') 
+                        (SELECT CONCAT('[', GROUP_CONCAT(CONCAT('\"', name, '\"') SEPARATOR ' ,'), ']') 
                         FROM metacity.dataset_has_tags 
                         WHERE dataset_has_tags.id = ds.id
                         GROUP BY (dataset_has_tags.id)) as tags
@@ -389,7 +389,7 @@ class DatasetController extends Controller
                     ON representation_types.name = dataset_has_representations.representationName 
                     WHERE dataset_has_representations.datasetId = ds.id 
                     GROUP BY (dataset_has_representations.datasetId)) as representations,
-                    (SELECT CONCAT('[', GROUP_CONCAT(name SEPARATOR ' ,'), ']') 
+                    (SELECT CONCAT('[', GROUP_CONCAT(CONCAT('\"', name, '\"') SEPARATOR ' ,'), ']') 
                     FROM metacity.dataset_has_tags 
                     WHERE dataset_has_tags.id = ds.id
                     GROUP BY (dataset_has_tags.id)) as tags
@@ -421,7 +421,7 @@ class DatasetController extends Controller
                         ON representation_types.name = dataset_has_representations.representationName 
                         WHERE dataset_has_representations.datasetId = ds.id 
                         GROUP BY (dataset_has_representations.datasetId)) as representations,
-                        (SELECT CONCAT('[', GROUP_CONCAT(name SEPARATOR ' ,'), ']') 
+                        (SELECT CONCAT('[', GROUP_CONCAT(CONCAT('\"', name, '\"') SEPARATOR ' ,'), ']') 
                         FROM metacity.dataset_has_tags 
                         WHERE dataset_has_tags.id = ds.id
                         GROUP BY (dataset_has_tags.id)) as tags
@@ -443,7 +443,7 @@ class DatasetController extends Controller
                     ON representation_types.name = dataset_has_representations.representationName 
                     WHERE dataset_has_representations.datasetId = ds.id 
                     GROUP BY (dataset_has_representations.datasetId)) as representations,
-                    (SELECT CONCAT('[', GROUP_CONCAT(name SEPARATOR ' ,'), ']') 
+                    (SELECT CONCAT('[', GROUP_CONCAT(CONCAT('\"', name, '\"') SEPARATOR ' ,'), ']') 
                     FROM metacity.dataset_has_tags 
                     WHERE dataset_has_tags.id = ds.id
                     GROUP BY (dataset_has_tags.id)) as tags
@@ -475,7 +475,7 @@ class DatasetController extends Controller
                                                 ON representation_types.name = dataset_has_representations.representationName 
                                                 WHERE dataset_has_representations.datasetId = ds.id 
                                                 GROUP BY (dataset_has_representations.datasetId)) as representations,
-                                                (SELECT CONCAT('[', GROUP_CONCAT(name SEPARATOR ' ,'), ']') 
+                                                (SELECT CONCAT('[', GROUP_CONCAT(CONCAT('\"', name, '\"') SEPARATOR ' ,'), ']') 
                                                 FROM metacity.dataset_has_tags 
                                                 WHERE dataset_has_tags.id = ds.id
                                                 GROUP BY (dataset_has_tags.id)) as tags
@@ -497,7 +497,7 @@ class DatasetController extends Controller
                     ON representation_types.name = dataset_has_representations.representationName 
                     WHERE dataset_has_representations.datasetId = ds.id 
                     GROUP BY (dataset_has_representations.datasetId)) as representations,
-                    (SELECT CONCAT('[', GROUP_CONCAT(name SEPARATOR ' ,'), ']') 
+                    (SELECT CONCAT('[', GROUP_CONCAT(CONCAT('\"', name, '\"') SEPARATOR ' ,'), ']') 
                     FROM metacity.dataset_has_tags 
                     WHERE dataset_has_tags.id = ds.id
                     GROUP BY (dataset_has_tags.id)) as tags
@@ -536,7 +536,7 @@ class DatasetController extends Controller
                         ON representation_types.name = dataset_has_representations.representationName 
                         WHERE dataset_has_representations.datasetId = ds.id 
                         GROUP BY (dataset_has_representations.datasetId)) as representations,
-                        (SELECT CONCAT('[', GROUP_CONCAT(name SEPARATOR ' ,'), ']') 
+                        (SELECT CONCAT('[', GROUP_CONCAT(CONCAT('\"', name, '\"') SEPARATOR ' ,'), ']') 
                         FROM metacity.dataset_has_tags 
                         WHERE dataset_has_tags.id = ds.id
                         GROUP BY (dataset_has_tags.id)) as tags
@@ -558,7 +558,7 @@ class DatasetController extends Controller
                     ON representation_types.name = dataset_has_representations.representationName 
                     WHERE dataset_has_representations.datasetId = ds.id 
                     GROUP BY (dataset_has_representations.datasetId)) as representations,
-                    (SELECT CONCAT('[', GROUP_CONCAT(name SEPARATOR ' ,'), ']') 
+                    (SELECT CONCAT('[', GROUP_CONCAT(CONCAT('\"', name, '\"') SEPARATOR ' ,'), ']') 
                     FROM metacity.dataset_has_tags 
                     WHERE dataset_has_tags.id = ds.id
                     GROUP BY (dataset_has_tags.id)) as tags
@@ -590,7 +590,7 @@ class DatasetController extends Controller
                         ON representation_types.name = dataset_has_representations.representationName 
                         WHERE dataset_has_representations.datasetId = ds.id 
                         GROUP BY (dataset_has_representations.datasetId)) as representations,
-                        (SELECT CONCAT('[', GROUP_CONCAT(name SEPARATOR ' ,'), ']') 
+                        (SELECT CONCAT('[', GROUP_CONCAT(CONCAT('\"', name, '\"') SEPARATOR ' ,'), ']') 
                         FROM metacity.dataset_has_tags 
                         WHERE dataset_has_tags.id = ds.id
                         GROUP BY (dataset_has_tags.id)) as tags
@@ -612,7 +612,7 @@ class DatasetController extends Controller
                     ON representation_types.name = dataset_has_representations.representationName 
                     WHERE dataset_has_representations.datasetId = ds.id 
                     GROUP BY (dataset_has_representations.datasetId)) as representations,
-                    (SELECT CONCAT('[', GROUP_CONCAT(name SEPARATOR ' ,'), ']') 
+                    (SELECT CONCAT('[', GROUP_CONCAT(CONCAT('\"', name, '\"') SEPARATOR ' ,'), ']') 
                     FROM metacity.dataset_has_tags 
                     WHERE dataset_has_tags.id = ds.id
                     GROUP BY (dataset_has_tags.id)) as tags
@@ -644,7 +644,7 @@ class DatasetController extends Controller
                                                 ON representation_types.name = dataset_has_representations.representationName 
                                                 WHERE dataset_has_representations.datasetId = ds.id 
                                                 GROUP BY (dataset_has_representations.datasetId)) as representations,
-                                                (SELECT CONCAT('[', GROUP_CONCAT(name SEPARATOR ' ,'), ']') 
+                                                (SELECT CONCAT('[', GROUP_CONCAT(CONCAT('\"', name, '\"') SEPARATOR ' ,'), ']') 
                                                 FROM metacity.dataset_has_tags 
                                                 WHERE dataset_has_tags.id = ds.id
                                                 GROUP BY (dataset_has_tags.id)) as tags
@@ -666,7 +666,7 @@ class DatasetController extends Controller
                     ON representation_types.name = dataset_has_representations.representationName 
                     WHERE dataset_has_representations.datasetId = ds.id 
                     GROUP BY (dataset_has_representations.datasetId)) as representations,
-                    (SELECT CONCAT('[', GROUP_CONCAT(name SEPARATOR ' ,'), ']') 
+                    (SELECT CONCAT('[', GROUP_CONCAT(CONCAT('\"', name, '\"') SEPARATOR ' ,'), ']') 
                     FROM metacity.dataset_has_tags 
                     WHERE dataset_has_tags.id = ds.id
                     GROUP BY (dataset_has_tags.id)) as tags
