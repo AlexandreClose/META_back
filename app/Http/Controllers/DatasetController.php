@@ -229,17 +229,7 @@ class DatasetController extends Controller
         $themes = $user->themes;
         error_log($themes[0]);
         $role = $user->role;
-        $directdatasets = DB::select("SELECT ds.*, IF(usd.id IS NULL, 0, 1) as saved, IFNULL(usd.favorite, 0) as favorite, 
-            (SELECT GROUP_CONCAT(CONCAT('[\'', name, '\', \'', srcBegin, '\',\'', img, '\',\'', description, '\']') SEPARATOR ' ,') as representations
-            FROM metacity.representation_types 
-            JOIN metacity.dataset_has_representations 
-            ON representation_types.name = dataset_has_representations.representationName 
-            WHERE dataset_has_representations.datasetId = ds.id 
-            GROUP BY (dataset_has_representations.datasetId)) as representations,
-            (SELECT CONCAT('[', GROUP_CONCAT(name SEPARATOR ' ,'), ']') 
-            FROM metacity.dataset_has_tags 
-            WHERE dataset_has_tags.id = ds.id
-            GROUP BY (dataset_has_tags.id)) as tags
+        $directdatasets = DB::select("SELECT ds.*, IF(usd.id IS NULL, 0, 1) as saved, IFNULL(usd.favorite, 0) as favorite
         FROM metacity.datasets ds 
         JOIN metacity.auth_users au
         ON au.id = ds.id
@@ -248,17 +238,7 @@ class DatasetController extends Controller
         WHERE (usd.uuid = '".$user->uuid."'
         OR usd.uuid IS NULL)
         ORDER BY created_date DESC");
-        $querybase = "SELECT ds.*, IF(usd.id IS NULL, 0, 1) as saved, IFNULL(usd.favorite, 0) as favorite, 
-        (SELECT GROUP_CONCAT(CONCAT('[\'', name, '\', \'', srcBegin, '\',\'', img, '\',\'', description, '\']') SEPARATOR ' ,') as representations
-        FROM metacity.representation_types 
-        JOIN metacity.dataset_has_representations 
-        ON representation_types.name = dataset_has_representations.representationName 
-        WHERE dataset_has_representations.datasetId = ds.id 
-        GROUP BY (dataset_has_representations.datasetId)) as representations,
-        (SELECT CONCAT('[', GROUP_CONCAT(CONCAT('\'', name, '\'') SEPARATOR ' ,'), ']') 
-        FROM metacity.dataset_has_tags 
-        WHERE dataset_has_tags.id = ds.id
-        GROUP BY (dataset_has_tags.id)) as tags
+        $querybase = "SELECT ds.*, IF(usd.id IS NULL, 0, 1) as saved, IFNULL(usd.favorite, 0) as favorite
         FROM metacity.datasets ds 
         LEFT JOIN metacity.user_saved_datasets usd 
         ON ds.id = usd.id\n";
@@ -274,18 +254,8 @@ class DatasetController extends Controller
             case "Référent-Métier":
                 $where = $where."AND ((ds.visibility IN ('worker', 'job_referent') AND ds.themeName = '".$user->theme."') OR ds.visibility = 'all')\n";
                 $datasets = $directdatasets;
-                $datasets = array_merge($datasets, (DB::select("SELECT ds.*, IF(usd.id IS NULL, 0, 1) as saved, IFNULL(usd.favorite, 0) as favorite, 
-                    (SELECT GROUP_CONCAT(CONCAT('[\'', name, '\', \'', srcBegin, '\',\'', img, '\',\'', description, '\']') SEPARATOR ' ,') as representations
-                    FROM metacity.representation_types 
-                    JOIN metacity.dataset_has_representations 
-                    ON representation_types.name = dataset_has_representations.representationName 
-                    WHERE dataset_has_representations.datasetId = ds.id 
-                    GROUP BY (dataset_has_representations.datasetId)) as representations,
-                    (SELECT CONCAT('[', GROUP_CONCAT(CONCAT('\'', name, '\'') SEPARATOR ' ,'), ']') 
-                    FROM metacity.dataset_has_tags 
-                    WHERE dataset_has_tags.id = ds.id
-                    GROUP BY (dataset_has_tags.id)) as tags
-                    FROM (SELECT dsi.* 
+                $datasets = array_merge($datasets, (DB::select("SELECT ds.*, IF(usd.id IS NULL, 0, 1) as saved, IFNULL(usd.favorite, 0) as favorite
+                                            FROM (SELECT dsi.* 
                                             FROM metacity.datasets dsi 
                                             JOIN metacity.columns c 
                                             ON c.dataset_id = dsi.id 
@@ -302,17 +272,7 @@ class DatasetController extends Controller
             case "Utilisateur":
                 $where = $where."AND ((ds.visibility IN ('worker') AND ds.themeName = '".$user->theme."') OR ds.visibility = 'all')\n";
                 $datasets = $directdatasets;
-                $datasets = array_merge($datasets, (DB::select("SELECT ds.*, IF(usd.id IS NULL, 0, 1) as saved, IFNULL(usd.favorite, 0) as favorite, 
-                    (SELECT GROUP_CONCAT(CONCAT('[\'', name, '\', \'', srcBegin, '\',\'', img, '\',\'', description, '\']') SEPARATOR ' ,')
-                    FROM metacity.representation_types 
-                    JOIN metacity.dataset_has_representations 
-                    ON representation_types.name = dataset_has_representations.representationName 
-                    WHERE dataset_has_representations.datasetId = ds.id 
-                    GROUP BY (dataset_has_representations.datasetId)) as representations,
-                    (SELECT CONCAT('[', GROUP_CONCAT(CONCAT('\'', name, '\'') SEPARATOR ' ,'), ']') 
-                    FROM metacity.dataset_has_tags 
-                    WHERE dataset_has_tags.id = ds.id
-                    GROUP BY (dataset_has_tags.id)) as tags
+                $datasets = array_merge($datasets, (DB::select("SELECT ds.*, IF(usd.id IS NULL, 0, 1) as saved, IFNULL(usd.favorite, 0) as favorite
                     FROM (SELECT dsi.* 
                                             FROM metacity.datasets dsi 
                                             JOIN metacity.columns c 
@@ -335,6 +295,12 @@ class DatasetController extends Controller
         $query = $querybase.$where;
         error_log($query);
         $datasets = array_merge($datasets, DB::select($query));
+        foreach($datasets as $dataset){
+            $fromBase = Dataset::where('id', $dataset->id)->first();
+            //dd($dataset);
+            $dataset->representations = $fromBase->representations;
+            $dataset->tags = $fromBase->tags;
+        }
         return $datasets;
     }
 
