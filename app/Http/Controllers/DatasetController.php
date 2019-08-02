@@ -240,7 +240,7 @@ class DatasetController extends Controller
         FROM metacity.datasets ds 
         LEFT JOIN metacity.user_saved_datasets usd 
         ON ds.id = usd.id\n";
-        $where = "WHERE ".($saved || $favorite ? "usd.uuid = '".$user->uuid."'" : "'(usd.uuid = '".$user->uuid."' OR usd.uuid IS NULL)" )."
+        $where = "WHERE ".($saved || $favorite ? "usd.uuid = '".$user->uuid."'" : "(usd.uuid = '".$user->uuid."' OR usd.uuid IS NULL)" )."
         AND ds.validated = ".($validate ? 0 : 1)."
         AND ds.conf_ready = 1
         AND upload_ready = 1\n";
