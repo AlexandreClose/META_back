@@ -19,6 +19,7 @@ class CreateSavedCardsTable extends Migration
             $table->tinyInteger('displayed');
             $table->integer('position');
             $table->integer('size')->nullable(true);
+            $table->boolean('favorite');
             $table->timestamps();
             $table->primary(['uuid', 'id']);
         });

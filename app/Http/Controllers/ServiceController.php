@@ -30,12 +30,11 @@ class ServiceController extends Controller
         $service->save();
     }
 
-    public function delService(){
+    public function delService($name){
         $role = $request->get('user')->role;
         if($role != "Administrateur") {
             abort(403);
         }
-        $name = $request->get('service');
         $service = service::where('service', $name);
         if($service == null){
             abort(403);

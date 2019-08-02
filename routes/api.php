@@ -40,6 +40,7 @@ Route::post('/index/join', 'IndexController@join');
 Route::get('/analyse/save', 'Analysecontroller@saveAnalyse');
 Route::get('/analyse/get/{id}', 'AnalyseController@getAnalysisFromId');
 Route::get('/analyse/all', 'AnalyseController@getAllAccessibleAnalysis');
+Route::get('/analyse/saved', 'AnalyseController@getAllSavedAnalysis');
 Route::delete('/analyse/{id}', 'AnalyseController@deleteAnalysis');
 
 //Datasets routes : Mysql
@@ -90,13 +91,13 @@ Route::get('/tag/{quantity?}', 'TagsController@getAllTags');
 
 //Directions routes : Mysql
 Route::post('/direction', 'DirectionController@addDirection');
-Route::delete('/direction', 'DirectionController@delDirection');
+Route::delete('/direction/{name}', 'DirectionController@delDirection');
 Route::put('/direction', 'ServiceDirection@updateDirection');
 Route::get('/direction', 'DirectionController@getAllDirections');
 
 //Services routes : Mysql
 Route::post('/service', 'ServiceController@addService');
-Route::delete('/service', 'ServiceController@delService');
+Route::delete('/service/{name}', 'ServiceController@delService');
 Route::put('/service', 'ServiceController@updateService');
 Route::get('/service', 'ServiceController@getAllServices');
 
