@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Elasticsearch\ClientBuilder;
 use Illuminate\Http\Request;
 use App\column;
 use App\dataset;
@@ -15,6 +16,7 @@ class ColumnController extends Controller
 {
     function createColumn(Request $request)
     {
+        $client = ClientBuilder::create()->setHosts([env("ELASTICSEARCH_HOST") . ":" . env("ELASTICSEARCH_PORT")])->build();
 
         $role = $request->get('user')->role;
         if ($role != "Référent-Métier" && $role != "Administrateur") {
@@ -86,8 +88,19 @@ class ColumnController extends Controller
                 $auth_users->uuid = $auth_user->uuid;
                 $auth_users->save();
             }
+
+            if ((bool)$column->main) {
+                $paramsSettings = ['index' => $dataset->databaseName,
+                    'body' => ["index.blocks.read_only_allow_delete" => false]];
+
+                $paramsMapping = ['index' => $dataset->databaseName, 'type' => 'doc',
+                    'body' => ['properties' => [$column->name => ['type' => 'text', 'fielddata' => true]]]];
+
+                $client->indices()->putSettings($paramsSettings);
+                $client->indices()->putMapping($paramsMapping);
+            }
         }
-    }
+}
 
     public function getStats(Request $request)
     {
