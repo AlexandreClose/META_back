@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Elasticsearch\ClientBuilder;
 use http\Env\Response;
 use Illuminate\Http\Request;
 use App\dataset;
@@ -149,11 +150,10 @@ class DatasetController extends Controller
         }
         error_log("last foreach passed");
 
-        /*
-        $client = new GuzzleHttp\Client(['base_uri' => '212.129.57.50:9200']);
-        $url = '/' . $dataset->databaseName . '/_settings';
-        $res = $client->request('PUT', $url, ['json' => ["index.max_result_window" => 5000000]]);
-        */
+        $client = ClientBuilder::create()->setHosts([env("ELASTICSEARCH_HOST") . ":" . env("ELASTICSEARCH_PORT")])->build();
+        $paramsSettings = ['index' => $dataset->databaseName,
+            'body' => ["index.max_result_window" => 5000000]];
+        $client->indices()->putSettings($paramsSettings);
     }
 
     public function uploadDataset(Request $request){
