@@ -10,7 +10,7 @@ class DirectionController extends Controller
 {
     public function getAllDirections(){
         $directions = DB::table('directions')
-            ->join('users', 'users.direction', 'directions.direction')
+            ->leftJoin('users', 'users.direction', 'directions.direction')
             ->select('directions.direction', 'directions.description', DB::raw('count(users.uuid) as user_count'))
             ->groupBy('directions.direction')
             ->get();

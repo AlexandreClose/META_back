@@ -10,7 +10,7 @@ class ServiceController extends Controller
 {
     public function getAllServices(){
         $services = DB::table('services')
-            ->join('users', 'users.service', 'services.service')
+            ->leftJoin('users', 'users.service', 'services.service')
             ->select('services.service', 'services.description', DB::raw('count(users.uuid) as user_count'))
             ->groupBy('services.service')
             ->get();
