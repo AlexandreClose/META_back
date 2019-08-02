@@ -100,7 +100,7 @@ class DatasetController extends Controller
 
         $dataset = dataset::where('id', $request->get('id'))->first();
         $tags = json_decode($tags);
-        if($tags != null){
+        if ($tags != null) {
             error_log("tags not null");
             foreach ($tags as $tag) {
                 error_log("tag array");
@@ -119,8 +119,7 @@ class DatasetController extends Controller
                     $dataset_tag->save();
                 }
             }
-        }
-        else {
+        } else {
             error_log(print_r($request, true));
         }
         error_log("first foreach passed");
@@ -153,46 +152,49 @@ class DatasetController extends Controller
         $client = ClientBuilder::create()->setHosts([env("ELASTICSEARCH_HOST") . ":" . env("ELASTICSEARCH_PORT")])->build();
         $paramsSettings = ['index' => $dataset->databaseName,
             'body' => ["index.max_result_window" => 5000000]];
-        $client->indices()->putSettings($paramsSettings);
+        error_log((string)$client->indices()->putSettings($paramsSettings));
     }
 
-    public function uploadDataset(Request $request){
-            $description = $request->get('description');
-            $name = $request->get('name');
-            $tags = $request->get('tag');
-            $metier = $request->get('metier');
-            $JSON = $request->get('JSON');
-            $GEOJSON = $request->get('GEOJSON');
-            //$util = $request->get('utils');
-            $visualisations = $request->get('visualisations');
-            $visualisations = json_decode($visualisations);
-            $date = $request->get('date');
-            $creator = $request->get('creator');
-            $contributor = $request->get('contributor');
-            $dataset = new dataset();
-            $dataset->name = $name;
-            $dataset->JSON = (bool)$JSON;
-            $dataset->GEOJSON = (bool)$GEOJSON;
-            //$dataset->util = $util;
-            $dataset->validated = false;
-            $dataset->description = $description;
-            $dataset->creator = $creator;
-            $dataset->contributor = $contributor;
-            $dataset->license = "Fermée";
-            $dataset->created_date = Carbon::now();
-            $dataset->updated_date = Carbon::now();
-            $dataset->realtime = false;
-            $dataset->conf_ready = false;
-            $dataset->upload_ready = false;
-            $dataset->open_data = false;
-            $dataset->visibility= "job_referent";
-            $dataset->user = $creator;
-            $dataset->producer = $creator;
-            $dataset->themeName = $metier;
-            $dataset->databaseName = str_replace("-","_",Str::slug($name));
-            $file = $request->file('uploadFile');
-            $file->move(storage_path().'/uploads',$dataset->databaseName.'.'.$file->getClientOriginalExtension());
-            $theme = theme::where('name',$metier)->first();
+
+
+    public function uploadDataset(Request $request)
+    {
+        $description = $request->get('description');
+        $name = $request->get('name');
+        $tags = $request->get('tag');
+        $metier = $request->get('metier');
+        $JSON = $request->get('JSON');
+        $GEOJSON = $request->get('GEOJSON');
+        //$util = $request->get('utils');
+        $visualisations = $request->get('visualisations');
+        $visualisations = json_decode($visualisations);
+        $date = $request->get('date');
+        $creator = $request->get('creator');
+        $contributor = $request->get('contributor');
+        $dataset = new dataset();
+        $dataset->name = $name;
+        $dataset->JSON = (bool)$JSON;
+        $dataset->GEOJSON = (bool)$GEOJSON;
+        //$dataset->util = $util;
+        $dataset->validated = false;
+        $dataset->description = $description;
+        $dataset->creator = $creator;
+        $dataset->contributor = $contributor;
+        $dataset->license = "Fermée";
+        $dataset->created_date = Carbon::now();
+        $dataset->updated_date = Carbon::now();
+        $dataset->realtime = false;
+        $dataset->conf_ready = false;
+        $dataset->upload_ready = false;
+        $dataset->open_data = false;
+        $dataset->visibility = "job_referent";
+        $dataset->user = $creator;
+        $dataset->producer = $creator;
+        $dataset->themeName = $metier;
+        $dataset->databaseName = str_replace("-", "_", Str::slug($name));
+        $file = $request->file('uploadFile');
+        $file->move(storage_path() . '/uploads', $dataset->databaseName . '.' . $file->getClientOriginalExtension());
+        $theme = theme::where('name', $metier)->first();
 
         if ($theme == null) {
             error_log($theme);
@@ -233,25 +235,25 @@ class DatasetController extends Controller
         ON au.id = ds.id
         LEFT JOIN metacity.user_saved_datasets usd 
         ON ds.id = usd.id 
-        WHERE (usd.uuid = '".$user->uuid."'
+        WHERE (usd.uuid = '" . $user->uuid . "'
         OR usd.uuid IS NULL)
         ORDER BY created_date DESC");
         $querybase = "SELECT ds.*, IF(usd.id IS NULL, 0, 1) as saved, IFNULL(usd.favorite, 0) as favorite
         FROM metacity.datasets ds 
         LEFT JOIN metacity.user_saved_datasets usd 
         ON ds.id = usd.id\n";
-        $where = "WHERE ".($saved || $favorite ? "usd.uuid = '".$user->uuid."'" : "(usd.uuid = '".$user->uuid."' OR usd.uuid IS NULL)" )."
-        AND ds.validated = ".($validate ? 0 : 1)."
+        $where = "WHERE " . ($saved || $favorite ? "usd.uuid = '" . $user->uuid . "'" : "(usd.uuid = '" . $user->uuid . "' OR usd.uuid IS NULL)") . "
+        AND ds.validated = " . ($validate ? 0 : 1) . "
         AND ds.conf_ready = 1
         AND upload_ready = 1\n";
-        $where = $where.($saved || $favorite ? "AND usd.favorite = ".($favorite ? 1 : 0)."\n" : "");
+        $where = $where . ($saved || $favorite ? "AND usd.favorite = " . ($favorite ? 1 : 0) . "\n" : "");
         //$where = "";
-        switch ($user->role){
+        switch ($user->role) {
             case "Administrateur":
                 $datasets = [];
                 break;
             case "Référent-Métier":
-                $where = $where."AND ((ds.visibility IN ('worker', 'job_referent') AND ds.themeName = '".$user->theme."') OR ds.visibility = 'all')\n";
+                $where = $where . "AND ((ds.visibility IN ('worker', 'job_referent') AND ds.themeName = '" . $user->theme . "') OR ds.visibility = 'all')\n";
                 $datasets = $directdatasets;
                 $datasets = array_merge($datasets, (DB::select("SELECT ds.*, IF(usd.id IS NULL, 0, 1) as saved, IFNULL(usd.favorite, 0) as favorite
                                             FROM (SELECT dsi.* 
@@ -260,16 +262,16 @@ class DatasetController extends Controller
                                             ON c.dataset_id = dsi.id 
                                             LEFT OUTER JOIN metacity.colauth_users 
                                             ON c.id = colauth_users.id 
-                                            WHERE colauth_users.uuid = '".$user->uuid."'
+                                            WHERE colauth_users.uuid = '" . $user->uuid . "'
                                             OR (colauth_users.uuid  IS NULL 
-                                            AND (c.visibility IN ('worker', 'job_referent') AND c.themeName = '".$user->theme."') 
+                                            AND (c.visibility IN ('worker', 'job_referent') AND c.themeName = '" . $user->theme . "') 
                                             OR c.visibility = 'all')
                                             GROUP BY dsi.id) ds 
                 LEFT JOIN metacity.user_saved_datasets usd 
-                ON ds.id = usd.id\n".$where."ORDER BY created_date DESC"))); 
+                ON ds.id = usd.id\n" . $where . "ORDER BY created_date DESC")));
                 break;
             case "Utilisateur":
-                $where = $where."AND ((ds.visibility IN ('worker') AND ds.themeName = '".$user->theme."') OR ds.visibility = 'all')\n";
+                $where = $where . "AND ((ds.visibility IN ('worker') AND ds.themeName = '" . $user->theme . "') OR ds.visibility = 'all')\n";
                 $datasets = $directdatasets;
                 $datasets = array_merge($datasets, (DB::select("SELECT ds.*, IF(usd.id IS NULL, 0, 1) as saved, IFNULL(usd.favorite, 0) as favorite
                     FROM (SELECT dsi.* 
@@ -278,23 +280,23 @@ class DatasetController extends Controller
                                             ON c.dataset_id = dsi.id 
                                             LEFT OUTER JOIN metacity.colauth_users 
                                             ON c.id = colauth_users.id 
-                                            WHERE colauth_users.uuid = '".$user->uuid."'
+                                            WHERE colauth_users.uuid = '" . $user->uuid . "'
                                             OR (colauth_users.uuid  IS NULL 
-                                            AND (c.visibility IN ('worker') AND c.themeName = '".$user->theme."') 
+                                            AND (c.visibility IN ('worker') AND c.themeName = '" . $user->theme . "') 
                                             OR c.visibility = 'all')
                                             GROUP BY dsi.id) ds 
                     LEFT JOIN metacity.user_saved_datasets usd 
-                    ON ds.id = usd.id\n".$where."ORDER BY created_date DESC"))); 
+                    ON ds.id = usd.id\n" . $where . "ORDER BY created_date DESC")));
                 break;
             default:
                 $datasets = [];
                 return $datasets;
         }
-        $where = $where."ORDER BY created_date DESC"; 
-        $query = $querybase.$where;
+        $where = $where . "ORDER BY created_date DESC";
+        $query = $querybase . $where;
         //error_log($query);
         $datasets = array_merge($datasets, DB::select($query));
-        foreach($datasets as $dataset){
+        foreach ($datasets as $dataset) {
             $fromBase = Dataset::where('id', $dataset->id)->first();
             //dd($dataset);
             $dataset->representations = $fromBase->representations;
