@@ -89,7 +89,7 @@ class ColumnController extends Controller
                 $auth_users->save();
             }
 
-            if ((bool)$column->main) {
+            if ((bool)$column->main and $column->data_type_name != "Date") {
                 $paramsSettings = ['index' => $dataset->databaseName,
                     'body' => ["index.blocks.read_only_allow_delete" => false]];
 
@@ -100,7 +100,7 @@ class ColumnController extends Controller
                 $client->indices()->putMapping($paramsMapping);
             }
         }
-}
+    }
 
     public function getStats(Request $request)
     {
