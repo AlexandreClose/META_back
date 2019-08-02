@@ -222,12 +222,10 @@ class DatasetController extends Controller
 
     public static function getAllAccessibleDatasets(Request $request, user $user = null, bool $validate = false, bool $saved = false, bool $favorite = false)
     {
-        error_log("EH?");
         if ($user == null) {
             $user = $request->get('user');
         }
         $themes = $user->themes;
-        error_log($themes[0]);
         $role = $user->role;
         $directdatasets = DB::select("SELECT ds.*, IF(usd.id IS NULL, 0, 1) as saved, IFNULL(usd.favorite, 0) as favorite
         FROM metacity.datasets ds 
@@ -242,10 +240,11 @@ class DatasetController extends Controller
         FROM metacity.datasets ds 
         LEFT JOIN metacity.user_saved_datasets usd 
         ON ds.id = usd.id\n";
-        $where = "WHERE ".($saved || $favorite ? "usd.uuid = '".$user->uuid : "(usd.uuid = '".$user->uuid."'OR usd.uuid IS NULL)" )."
+        $where = "WHERE ".($saved || $favorite ? "usd.uuid = '".$user->uuid."'" : "'(usd.uuid = '".$user->uuid."' OR usd.uuid IS NULL)" )."
         AND ds.validated = ".($validate ? 0 : 1)."
         AND ds.conf_ready = 1
         AND upload_ready = 1\n";
+        $where = $where.($saved || $favorite ? "AND usd.favorite = ".($favorite ? 1 : 0)."\n" : "");
         //$where = "";
         switch ($user->role){
             case "Administrateur":
@@ -293,7 +292,7 @@ class DatasetController extends Controller
         }
         $where = $where."ORDER BY created_date DESC"; 
         $query = $querybase.$where;
-        error_log($query);
+        //error_log($query);
         $datasets = array_merge($datasets, DB::select($query));
         foreach($datasets as $dataset){
             $fromBase = Dataset::where('id', $dataset->id)->first();
