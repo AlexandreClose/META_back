@@ -8,6 +8,7 @@ use Elasticsearch;
 use App\Http\Functions;
 use App\dataset;
 use App\user;
+use Elasticsearch\ClientBuilder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use PhpParser\Node\Expr\Array_;
@@ -144,20 +145,18 @@ class IndexController extends Controller
         //dd($accessibleFields);
         $fields = [];
         foreach ($return[$name]['mappings']['doc']['properties'] as $field => $field_data) {
-            if(gettype($field_data) == "array" && !array_key_exists('type', $field_data) && $field != "geometry")
-            {
+            if (gettype($field_data) == "array" && !array_key_exists('type', $field_data) && $field != "geometry") {
                 foreach ($field_data['properties'] as $inner_field => $inner_field_data) {
                     //dd(json_encode($field_data["properties"]));
-                    if(!array_key_exists('type', $inner_field_data))
-                    {
+                    if (!array_key_exists('type', $inner_field_data)) {
                         //dd($field_data);
-                        array_push($fields, [$field.$inner_field, 'array']);
+                        array_push($fields, [$field . $inner_field, 'array']);
                     } else {
-                        array_push($fields, [$field.'.'.$inner_field, $inner_field_data['type']]);
+                        array_push($fields, [$field . '.' . $inner_field, $inner_field_data['type']]);
                         //dd($fields);
                     }
                 }
-            } else if ($field != "geometry"){
+            } else if ($field != "geometry") {
                 array_push($fields, [$field, "array"]);
             } else {
                 array_push($fields, [$field, $field_data['type']]);
@@ -369,7 +368,7 @@ class IndexController extends Controller
                     $pathPivot = $pathPivot[$field];
                 }
                 foreach (explode(".", $column) as $field) {
-                    $pathData = $pathData[$field];
+                    $pathData = (float)$pathData[$field];
                 }
 
                 if (!array_key_exists($pathPivot, $stats) or !array_key_exists($column, $stats[$pathPivot]["stats"])) {
