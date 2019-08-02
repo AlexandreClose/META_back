@@ -30,7 +30,7 @@ class ServiceController extends Controller
         $service->save();
     }
 
-    public function delService($name){
+    public function delService(Request $request, $name){
         $role = $request->get('user')->role;
         if($role != "Administrateur") {
             abort(403);

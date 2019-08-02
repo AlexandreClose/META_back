@@ -30,7 +30,7 @@ class DirectionController extends Controller
         $direction->save();
     }
 
-    public function delDirection($name){
+    public function delDirection(Request $request, $name){
         $role = $request->get('user')->role;
         if($role != "Administrateur") {
             abort(403);
