@@ -17,7 +17,7 @@ class DirectionController extends Controller
         return $directions;
     }
 
-    public function addDirection($request){
+    public function addDirection(Request $request){
         $role = $request->get('user')->role;
         if($role != "Administrateur") {
             abort(403);

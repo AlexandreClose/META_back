@@ -17,7 +17,7 @@ class ServiceController extends Controller
         return $services;
     }
 
-    public function addService($request){
+    public function addService(Request $request){
         $role = $request->get('user')->role;
         if($role != "Administrateur") {
             abort(403);
