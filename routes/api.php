@@ -79,7 +79,7 @@ Route::post('/column/stats', 'ColumnController@getStats');
 //themes routes : Mysql
 Route::get('/theme', 'ThemeController@getAllThemes');
 Route::post('/theme', 'ThemeController@addTheme');
-//Route::delete('/theme', 'ThemeController@deleteTheme');
+Route::delete('/theme/{name}/{newName}', 'ThemeController@deleteTheme');
 Route::put('/theme', 'ThemeController@updateTheme');
 
 //Roles routes : Mysql
