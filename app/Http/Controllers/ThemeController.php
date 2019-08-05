@@ -81,7 +81,7 @@ class ThemeController extends Controller
             dataset::where('themeName', '=', $theme->name)->update(['themeName' => $newName]);
             column::where('themeName', '=', $theme->name)->update(['themeName' => $newName]);
             analysis::where('theme_name', '=', $theme->name)->update(['theme_name' => $newName]);
-            $theme->theme = $newName;
+            $theme->name = $newName;
         }
         if ($desc != null){
             $theme->description = $desc;
