@@ -98,6 +98,11 @@ class DatasetController extends Controller
         $dataset->validated = true;
         $result = $dataset->save();
 
+        $client = ClientBuilder::create()->setHosts([env("ELASTICSEARCH_HOST") . ":" . env("ELASTICSEARCH_PORT")])->build();
+        $paramsSettings = ['index' => $dataset->databaseName,
+            'body' => ["index.max_result_window" => 5000000]];
+        $client->indices()->putSettings($paramsSettings);
+
         $dataset = dataset::where('id', $request->get('id'))->first();
         $tags = json_decode($tags);
         if ($tags != null) {
@@ -119,8 +124,6 @@ class DatasetController extends Controller
                     $dataset_tag->save();
                 }
             }
-        } else {
-            error_log(print_r($request, true));
         }
         error_log("first foreach passed");
         $visualisations = $request->get('visualisations');
@@ -149,12 +152,7 @@ class DatasetController extends Controller
         }
         error_log("last foreach passed");
 
-        $client = ClientBuilder::create()->setHosts([env("ELASTICSEARCH_HOST") . ":" . env("ELASTICSEARCH_PORT")])->build();
-        $paramsSettings = ['index' => $dataset->databaseName,
-            'body' => ["index.max_result_window" => 5000000]];
-        error_log((string)$client->indices()->putSettings($paramsSettings));
     }
-
 
 
     public function uploadDataset(Request $request)
