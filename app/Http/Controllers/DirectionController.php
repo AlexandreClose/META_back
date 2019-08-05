@@ -35,7 +35,7 @@ class DirectionController extends Controller
         if($role != "Administrateur") {
             abort(403);
         }
-        $direction = direction::where('direction', $name);
+        $direction = direction::where('direction', $name)->get();
         if($direction == null){
             abort(403);
         }
@@ -50,7 +50,7 @@ class DirectionController extends Controller
         $name = $request->get('direction');
         $newName = $request->get('newName');
         $desc = $request->get('desc');
-        $direction = direction::where('direction', $name);
+        $direction = direction::where('direction', $name)->get();
         if($direction == null){
             abort(403);
         }
