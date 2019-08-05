@@ -35,7 +35,7 @@ class ServiceController extends Controller
         if($role != "Administrateur") {
             abort(403);
         }
-        $service = service::where('service', $name);
+        $service = service::where('service', $name)->first();
         if($service == null){
             abort(403);
         }
@@ -50,7 +50,7 @@ class ServiceController extends Controller
         $name = $request->get('service');
         $newName = $request->get('newName');
         $desc = $request->get('desc');
-        $service = service::where('service', $name)->get();
+        $service = service::where('service', $name)->first();
         if($service == null){
             abort(403);
         }
