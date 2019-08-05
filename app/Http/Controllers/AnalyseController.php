@@ -78,14 +78,29 @@ class AnalyseController extends Controller
         $analysis->delete();
     }
 
-    public function getAllAccessibleAnalysis($request){
+    public function getAllAccessibleAnalysis(Request $request){
         $user = $request->get('user');
         $datasets = DatasetController::getAllAccessibleDatasets($request, $user, false);
         $analysis = $user->analysis();
 
         foreach($analysis as $key=>$analyse){
             foreach($analysis->columns as $column){
-                if(!array_search(dataset::where('id', $column->dataset_id), $datasets)){
+                if(!$analyse->shared || !array_search(dataset::where('id', $column->dataset_id), $datasets)){
+                    unset($analysis[$key]);
+                }
+            }
+        }
+        
+        return response($analysis)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
+    }
+
+    public function getAllSavedAnalysis(Request $request){
+        $user = $request->get('user');
+        $datasets = DatasetController::getAllAccessibleDatasets($request, $user, false);
+        $analysis = $user->saved_analysis();
+        foreach($analysis as $key=>$analyse){
+            foreach($analysis->columns as $column){
+                if(($user->uuid != $analyse->owner_id && !$analysis->shared) || !array_search(dataset::where('id', $column->dataset_id), $datasets)){
                     unset($analysis[$key]);
                 }
             }

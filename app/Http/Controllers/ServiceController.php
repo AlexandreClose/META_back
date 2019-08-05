@@ -10,7 +10,7 @@ class ServiceController extends Controller
 {
     public function getAllServices(){
         $services = DB::table('services')
-            ->join('users', 'users.service', 'services.service')
+            ->leftJoin('users', 'users.service', 'services.service')
             ->select('services.service', 'services.description', DB::raw('count(users.uuid) as user_count'))
             ->groupBy('services.service')
             ->get();
@@ -30,12 +30,11 @@ class ServiceController extends Controller
         $service->save();
     }
 
-    public function delService(){
+    public function delService(Request $request, $name){
         $role = $request->get('user')->role;
         if($role != "Administrateur") {
             abort(403);
         }
-        $name = $request->get('service');
         $service = service::where('service', $name);
         if($service == null){
             abort(403);
@@ -51,7 +50,7 @@ class ServiceController extends Controller
         $name = $request->get('service');
         $newName = $request->get('newName');
         $desc = $request->get('desc');
-        $service = service::where('service', $name);
+        $service = service::where('service', $name)->get();
         if($service == null){
             abort(403);
         }

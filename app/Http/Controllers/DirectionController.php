@@ -10,7 +10,7 @@ class DirectionController extends Controller
 {
     public function getAllDirections(){
         $directions = DB::table('directions')
-            ->join('users', 'users.direction', 'directions.direction')
+            ->leftJoin('users', 'users.direction', 'directions.direction')
             ->select('directions.direction', 'directions.description', DB::raw('count(users.uuid) as user_count'))
             ->groupBy('directions.direction')
             ->get();
@@ -30,13 +30,12 @@ class DirectionController extends Controller
         $direction->save();
     }
 
-    public function delDirection(){
+    public function delDirection(Request $request, $name){
         $role = $request->get('user')->role;
         if($role != "Administrateur") {
             abort(403);
         }
-        $name = $request->get('direction');
-        $direction = direction::where('direction', $name);
+        $direction = direction::where('direction', $name)->get();
         if($direction == null){
             abort(403);
         }
@@ -51,7 +50,7 @@ class DirectionController extends Controller
         $name = $request->get('direction');
         $newName = $request->get('newName');
         $desc = $request->get('desc');
-        $direction = direction::where('direction', $name);
+        $direction = direction::where('direction', $name)->get();
         if($direction == null){
             abort(403);
         }

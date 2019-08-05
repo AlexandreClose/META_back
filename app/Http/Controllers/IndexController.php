@@ -159,7 +159,7 @@ class IndexController extends Controller
             } else if ($field != "geometry") {
                 array_push($fields, [$field, "array"]);
             } else {
-                array_push($fields, [$field, $field_data['type']]);
+                array_push($fields, [$field, $field_data['properties']["type"]["type"]]);
             }
         }
 
