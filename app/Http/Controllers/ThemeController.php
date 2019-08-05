@@ -80,9 +80,9 @@ class ThemeController extends Controller
             analyse::where('theme_name', '=', $theme->name)->update(['theme_name' => $newName]);
             $theme->theme = $newName;
         }
-        
-
-        $theme->description = $desc != null ? $desc : $theme->description;
+        if ($desc != null){
+            $theme->description = $desc;
+        }
         $theme->save();
     }
 }
