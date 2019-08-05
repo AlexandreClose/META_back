@@ -47,7 +47,7 @@ class ThemeController extends Controller
             abort(403);
         }
 
-        $theme = theme::find($request->get("name"));
+        $theme = theme::where('name', $request->get("name"))->first();
 
         user_theme::where('name', '=', $theme->name)->update(['name' => $newName]);
         dataset::where('themeName', '=', $theme->name)->update(['themeName' => $newName]);
