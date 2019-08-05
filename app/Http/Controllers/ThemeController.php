@@ -6,7 +6,7 @@ use App\theme;
 use App\user;
 use App\user_theme;
 use App\dataset;
-use App\analyse;
+use App\analysis;
 use App\column;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -55,7 +55,7 @@ class ThemeController extends Controller
         user_theme::where('name', '=', $theme->name)->update(['name' => $newName]);
         dataset::where('themeName', '=', $theme->name)->update(['themeName' => $newName]);
         column::where('themeName', '=', $theme->name)->update(['themeName' => $newName]);
-        analyse::where('theme_name', '=', $theme->name)->update(['theme_name' => $newName]);
+        analysis::where('theme_name', '=', $theme->name)->update(['theme_name' => $newName]);
 
 
         $theme->delete();
@@ -80,7 +80,7 @@ class ThemeController extends Controller
             user_theme::where('name', '=', $theme->name)->update(['name' => $newName]);
             dataset::where('themeName', '=', $theme->name)->update(['themeName' => $newName]);
             column::where('themeName', '=', $theme->name)->update(['themeName' => $newName]);
-            analyse::where('theme_name', '=', $theme->name)->update(['theme_name' => $newName]);
+            analysis::where('theme_name', '=', $theme->name)->update(['theme_name' => $newName]);
             $theme->theme = $newName;
         }
         if ($desc != null){
