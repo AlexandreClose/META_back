@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\theme;
 use App\user;
 use App\user_theme;
+use App\dataset;
+use App\analyse;
+use App\column;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
