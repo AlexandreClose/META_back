@@ -68,7 +68,7 @@ class ThemeController extends Controller
         $name = $request->get('theme');
         $newName = $request->get('newName');
         $desc = $request->get('desc');
-        $theme = theme::where('theme', $name);
+        $theme = theme::where('theme', $name)->get();
         if($theme == null){
             abort(403);
         }
