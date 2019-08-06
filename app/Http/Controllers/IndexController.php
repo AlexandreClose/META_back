@@ -60,16 +60,59 @@ class IndexController extends Controller
             if (array_key_exists('type', $field_data) && $field_data['type'] == "date") {
                 array_push($date_fields, $field);
             }
-            if ($field == "properties") {
-                foreach ($field_data["properties"] as $inner_field => $inner_field_data) {
-                    if (array_key_exists('type', $inner_field_data) && $inner_field_data['type'] == "date") {
-                        array_push($date_fields, "properties" . "." . $inner_field);
-                    }
+            if (gettype($field_data) == "array" && !array_key_exists('type', $field_data) && $field != "geometry") {
+                foreach ($field_data['properties'] as $inner_field => $inner_field_data) {
+                    array_push($date_fields, $field . "." . $inner_field);
+
                 }
             }
         }
         //dd($date_fields);
         return $date_fields;
+        }
+
+    public static function getFieldsAndType(Request $request, $name){
+        $user = $request->get('user');
+        $canAccess = false;
+        $datasets = DatasetController::getAllAccessibleDatasets($request, $user, true);
+        foreach ($datasets as $dataset) {
+            if ($name === $dataset->databaseName) {
+                $datasetId = $dataset->id;
+                $canAccess = true;
+            }
+        }
+        if (!$canAccess) {
+            abort(403);
+        }
+
+        $data = [
+            'index' => $name
+        ];
+        $return = Elasticsearch::indices()->getMapping($data);
+        $dataset = Dataset::where('databaseName', $name)->first();
+        //dd($return);
+        $accessibleFields = DatasetController::getAllAccessibleColumnsFromADataset($request, $dataset);
+        //dd($accessibleFields);
+        $fields = [];
+        foreach ($return[$name]['mappings']['doc']['properties'] as $field => $field_data) {
+            if (gettype($field_data) == "array" && !array_key_exists('type', $field_data) && $field != "geometry") {
+                foreach ($field_data['properties'] as $inner_field => $inner_field_data) {
+                    //dd(json_encode($field_data["properties"]));
+                    if (!array_key_exists('type', $inner_field_data)) {
+                        //dd($field_data);
+                        array_push($fields, [$field . $inner_field => 'array']);
+                    } else {
+                        array_push($fields, [$field . '.' . $inner_field => $inner_field_data['type']]);
+                        //dd($fields);
+                    }
+                }
+            } else if ($field != "geometry") {
+                array_push($fields, [$field => "array"]);
+            } else {
+                array_push($fields, [$field => $field_data['properties']["type"]["type"]]);
+            }
+        }
+        return $fields;
     }
 
     public function getAllFieldsFromIndexByName(Request $request, $name)
@@ -77,8 +120,7 @@ class IndexController extends Controller
         $user = $request->get('user');
 
         if ($user->role == "Administrateur")
-
-            /* Should only be used by administrators for validating columns from a dataset
+            /*
             $datasets = DatasetController::getAllAccessibleDatasets($request, $user, false);
             $datasetId;
             foreach ($datasets as $dataset) {
@@ -86,12 +128,11 @@ class IndexController extends Controller
                     $datasetId = $dataset->id;
                     $canAccess = true;
                 }
-            }
-            */
+            }*/
 
             $canAccess = false;
-        $datasets = DatasetController::getAllAccessibleDatasets($request, $user, true);
-        foreach ($datasets as $dataset) {
+            $datasets = DatasetController::getAllAccessibleDatasets($request, $user, true);
+            foreach ($datasets as $dataset) {
             if ($name === $dataset->databaseName) {
                 $datasetId = $dataset->id;
                 $canAccess = true;

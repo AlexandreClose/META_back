@@ -89,7 +89,9 @@ class ColumnController extends Controller
                 $auth_users->save();
             }
 
-            if ((bool)$column->main and $column->data_type_name != "Date") {
+            $fields = IndexController::getFieldsAndType($request, $dataset->databaseName);
+
+            if ((bool)$column->main and $fields[$column->name] != "Date") {
                 $paramsSettings = ['index' => $dataset->databaseName,
                     'body' => ["index.blocks.read_only_allow_delete" => false]];
 
