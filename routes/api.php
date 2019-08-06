@@ -91,7 +91,7 @@ Route::get('/tag/{quantity?}', 'TagsController@getAllTags');
 //Directions routes : Mysql
 Route::post('/direction', 'DirectionController@addDirection');
 Route::delete('/direction/{name}', 'DirectionController@delDirection');
-Route::put('/direction', 'ServiceDirection@updateDirection');
+Route::put('/direction', 'DirectionController@updateDirection');
 Route::get('/direction', 'DirectionController@getAllDirections');
 
 //Services routes : Mysql

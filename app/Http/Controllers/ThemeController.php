@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\theme;
 use App\user;
 use App\user_theme;
+use App\dataset;
+use App\analysis;
+use App\column;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -52,7 +55,7 @@ class ThemeController extends Controller
         user_theme::where('name', '=', $theme->name)->update(['name' => $newName]);
         dataset::where('themeName', '=', $theme->name)->update(['themeName' => $newName]);
         column::where('themeName', '=', $theme->name)->update(['themeName' => $newName]);
-        analyse::where('theme_name', '=', $theme->name)->update(['theme_name' => $newName]);
+        analysis::where('theme_name', '=', $theme->name)->update(['theme_name' => $newName]);
 
 
         $theme->delete();
@@ -68,7 +71,7 @@ class ThemeController extends Controller
         $name = $request->get('theme');
         $newName = $request->get('newName');
         $desc = $request->get('desc');
-        $theme = theme::where('name', $name)->get();
+        $theme = theme::where('name', $name)->first();
         if($theme == null){
             abort(403);
         }
@@ -77,8 +80,8 @@ class ThemeController extends Controller
             user_theme::where('name', '=', $theme->name)->update(['name' => $newName]);
             dataset::where('themeName', '=', $theme->name)->update(['themeName' => $newName]);
             column::where('themeName', '=', $theme->name)->update(['themeName' => $newName]);
-            analyse::where('theme_name', '=', $theme->name)->update(['theme_name' => $newName]);
-            $theme->theme = $newName;
+            analysis::where('theme_name', '=', $theme->name)->update(['theme_name' => $newName]);
+            $theme->name = $newName;
         }
         if ($desc != null){
             $theme->description = $desc;
