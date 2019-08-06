@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\column;
 
+use DateTime;
 use Elasticsearch;
 use App\Http\Functions;
 use App\dataset;
@@ -408,10 +409,15 @@ class IndexController extends Controller
                 foreach (explode(".", $columns["pivot"]) as $field) {
                     $pathPivot = $pathPivot[$field];
                 }
+
+                if ($columns["isDate"]) {
+                    $d = new DateTime($pathPivot);
+                    $pathPivot = date('Y-m-d\TH:i:s.Z\Z', floor($d->getTimestamp() / $columns["step"]) * $columns["step"]);
+                }
+
                 foreach (explode(".", $column) as $field) {
                     $pathData = (float)$pathData[$field];
                 }
-
                 if (!array_key_exists($pathPivot, $stats) or !array_key_exists($column, $stats[$pathPivot]["stats"])) {
                     if (array_key_exists($pathPivot, $stats)) {
                         $element = $stats[$pathPivot];
