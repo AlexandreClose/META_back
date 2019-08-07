@@ -63,13 +63,11 @@ class ThemeController extends Controller
         return response('',200);
     }
 
-    public function updateTheme(Request $request){
+    public function updateTheme(Request $request, $name, $newName){
         $role = $request->get('user')->role;
         if($role != "Administrateur") {
             abort(403);
         }
-        $name = $request->get('theme');
-        $newName = $request->get('newName');
         $desc = $request->get('desc');
         $theme = theme::where('name', $name)->first();
         if($theme == null){

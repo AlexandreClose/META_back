@@ -77,6 +77,8 @@ class IndexController extends Controller
         $user = $request->get('user');
         $canAccess = false;
         $datasets = DatasetController::getAllAccessibleDatasets($request, $user, true);
+        $datasets = array_merge($datasets, DatasetController::getAllAccessibleDatasets($request, $user, false));
+
         foreach ($datasets as $dataset) {
             if ($name === $dataset->databaseName) {
                 $datasetId = $dataset->id;
@@ -102,16 +104,16 @@ class IndexController extends Controller
                     //dd(json_encode($field_data["properties"]));
                     if (!array_key_exists('type', $inner_field_data)) {
                         //dd($field_data);
-                        array_push($fields, [$field . $inner_field => 'array']);
+                        $fields[$field . $inner_field] = 'array';
                     } else {
-                        array_push($fields, [$field . '.' . $inner_field => $inner_field_data['type']]);
+                        $fields[$field . '.' . $inner_field] = $inner_field_data['type'];
                         //dd($fields);
                     }
                 }
             } else if ($field != "geometry") {
-                array_push($fields, [$field => "array"]);
+                $fields[$field] = "array";
             } else {
-                array_push($fields, [$field => $field_data['properties']["type"]["type"]]);
+                $fields[$field] = $field_data['properties']["type"]["type"];
             }
         }
         return $fields;
