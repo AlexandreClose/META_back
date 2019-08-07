@@ -189,7 +189,6 @@ class IndexController extends Controller
         $accessibleFields = DatasetController::getAllAccessibleColumnsFromADataset($request, $dataset);
         //dd($accessibleFields);
         $fields = [];
-        /*
         foreach ($return[$name]['mappings']['doc']['properties'] as $field => $field_data) {
             if (gettype($field_data) == "array" && !array_key_exists('type', $field_data) && $field != "geometry") {
                 foreach ($field_data['properties'] as $inner_field => $inner_field_data) {
@@ -207,35 +206,18 @@ class IndexController extends Controller
             } else {
                 array_push($fields, [$field, $field_data['properties']["type"]["type"]]);
             }
-        }*/
-
-        foreach ($return[$name]['mappings']['doc']['properties'] as $field => $field_data) {
-            if (gettype($field_data) == "array" && !array_key_exists('type', $field_data) && $field != "geometry") {
-                foreach ($field_data['properties'] as $inner_field => $inner_field_data) {
-                    //dd(json_encode($field_data["properties"]));
-                    if (!array_key_exists('type', $inner_field_data)) {
-                        //dd($field_data);
-                        $fields[$field . $inner_field] = 'array';
-                    } else {
-                        $fields[$field . '.' . $inner_field] = $inner_field_data['type'];
-                        //dd($fields);
-                    }
-                }
-            } else if ($field != "geometry") {
-                $fields[$field] = "array";
-            } else {
-                $fields[$field] = $field_data['properties']["type"]["type"];
-            }
         }
+
+        
 
         //dd($fields);
 
         $results = [];
 
         foreach ($accessibleFields as $acc_field) {
-            foreach ($fields as $key => $value) {
-                if ($key == $acc_field['name']) {
-                    $results[$key] = $value;
+            foreach ($fields as $field) {
+                if ($field[0] == $acc_field['name']) {
+                    array_push($results, $field);
                 }
             }
         }
@@ -445,7 +427,7 @@ class IndexController extends Controller
 
                 if ($columns["isDate"]) {
                     $d = new DateTime($pathPivot);
-                    $pathPivot = date('Y-m-d\TH:i:s.Z\Z', floor($d->getTimestamp() / ($columns["step"] * 3600)) * ($columns["step"] * 3600));
+                    $pathPivot = date('Y-m-d\TH:i:s.Z\Z', floor($d->getTimestamp() / $columns["step"]) * $columns["step"]);
                 }
 
                 foreach (explode(".", $column) as $field) {
@@ -482,7 +464,7 @@ class IndexController extends Controller
                         "avg" => ($pathData + $oldStats["avg"]) / 2,
                         "sum" => ($pathData + $oldStats["sum"]),
                         "count" => ($oldStats["count"] + 1),
-                        "DiffOcc" => ($result["Count"])];
+                        "DiffOcc" =>($result["Count"])];
                 }
             }
         }
