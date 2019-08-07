@@ -445,7 +445,7 @@ class IndexController extends Controller
 
                 if ($columns["isDate"]) {
                     $d = new DateTime($pathPivot);
-                    $pathPivot = date('Y-m-d\TH:i:s.Z\Z', floor($d->getTimestamp() / $columns["step"]) * $columns["step"]);
+                    $pathPivot = date('Y-m-d\TH:i:s.Z\Z', floor($d->getTimestamp() / ($columns["step"] * 3600)) * ($columns["step"] * 3600));
                 }
 
                 foreach (explode(".", $column) as $field) {
@@ -482,7 +482,7 @@ class IndexController extends Controller
                         "avg" => ($pathData + $oldStats["avg"]) / 2,
                         "sum" => ($pathData + $oldStats["sum"]),
                         "count" => ($oldStats["count"] + 1),
-                        "DiffOcc" =>($result["Count"])];
+                        "DiffOcc" => ($result["Count"])];
                 }
             }
         }
