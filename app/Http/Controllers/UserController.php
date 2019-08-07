@@ -128,7 +128,7 @@ class UserController extends Controller
             abort(400);
         }
 
-        $user->uuid = $request->get("uuid");
+        $user->uuid = $request->get("tid");
         $user->role = $request->get("role");
         $user->firstname = $request->get("firstname");
         $user->lastname = $request->get("lastname");
