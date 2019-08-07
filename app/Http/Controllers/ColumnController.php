@@ -91,7 +91,7 @@ class ColumnController extends Controller
 
             $fields = IndexController::getFieldsAndType($request, $dataset->databaseName);
 
-            if ((bool)$column->main and $fields[$column->name] != "Date") {
+            if ((bool)$column->main and $fields[$column->name] == "text" and $column->name != "geometry") {
                 $paramsSettings = ['index' => $dataset->databaseName,
                     'body' => ["index.blocks.read_only_allow_delete" => false]];
 
