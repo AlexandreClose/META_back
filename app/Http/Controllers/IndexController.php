@@ -70,9 +70,10 @@ class IndexController extends Controller
         }
         //dd($date_fields);
         return $date_fields;
-        }
+    }
 
-    public static function getFieldsAndType(Request $request, $name){
+    public static function getFieldsAndType(Request $request, $name)
+    {
         $user = $request->get('user');
         $canAccess = false;
         $datasets = DatasetController::getAllAccessibleDatasets($request, $user, true);
@@ -134,8 +135,8 @@ class IndexController extends Controller
             }*/
 
             $canAccess = false;
-            $datasets = DatasetController::getAllAccessibleDatasets($request, $user, true);
-            foreach ($datasets as $dataset) {
+        $datasets = DatasetController::getAllAccessibleDatasets($request, $user, true);
+        foreach ($datasets as $dataset) {
             if ($name === $dataset->databaseName) {
                 $datasetId = $dataset->id;
                 $canAccess = true;
@@ -401,10 +402,20 @@ class IndexController extends Controller
         return response($data, 200);
     }
 
+    private function diff_occurrences(array $occurrences, $element, $i)
+    {
+        if (!in_array($element, $occurrences)) {
+            array_push($occurrences, $element);
+            $i++;
+        }
+        return ["Count" => $i, "Occurrences" => $occurrences];
+    }
+
     private function do_stats(array $columns, array $data)
     {
         $stats = [];
         foreach ($columns["data"] as $column) {
+            $occurrences = [];
             foreach ($data as $element) {
                 $pathPivot = $element;
                 $pathData = $element;
@@ -424,13 +435,17 @@ class IndexController extends Controller
                     if (array_key_exists($pathPivot, $stats)) {
                         $element = $stats[$pathPivot];
                     }
+                    $occurrences[$pathPivot] = [];
+                    $result = $this->diff_occurrences($occurrences[$pathPivot], $pathData, 0);
+                    $occurrences[$pathPivot] = $result["Occurrences"];
 
                     $element["stats"][$column] = [
                         "min" => $pathData,
                         "max" => $pathData,
                         "avg" => $pathData,
                         "sum" => $pathData,
-                        "count" => 1];
+                        "count" => 1,
+                        "DiffOcc" => $result["Count"]];
                     $stats[$pathPivot] = $element;
 
                 } else {
@@ -438,12 +453,16 @@ class IndexController extends Controller
                     $oldStats = $s["stats"][$column];
                     array_merge_recursive($stats[$pathPivot], $element);
 
+                    $result = $this->diff_occurrences($occurrences[$pathPivot], $pathData, $oldStats["DiffOcc"]);
+                    $occurrences[$pathPivot] = $result["Occurrences"];
+
                     $stats[$pathPivot]["stats"][$column] = [
                         "min" => min($pathData, $oldStats["min"]),
                         "max" => max($pathData, $oldStats["max"]),
                         "avg" => ($pathData + $oldStats["avg"]) / 2,
                         "sum" => ($pathData + $oldStats["sum"]),
-                        "count" => ($oldStats["count"] + 1)];
+                        "count" => ($oldStats["count"] + 1),
+                        "DiffOcc" =>($result["Count"])];
                 }
             }
         }
