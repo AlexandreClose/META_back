@@ -57,9 +57,9 @@ class AnalyseController extends Controller
         $datasets = DatasetController::getAllAccessibleDatasets($request, $user, false);
         $canAccess = false;
         
-        $analysis = analysis::where('id', $id)->first();
-        foreach($analysis->columns as $column){
-            if(array_search(dataset::where('id', $column->dataset_id), $datasets) == null){
+        $analysis = analysis::with('fields')->where('id', $id)->first();
+        foreach($analysis->fields as $field){
+            if(array_search(dataset::where('databaseName', $field->databaseName), $datasets) == null){
                 abort(403);
             }
         }
