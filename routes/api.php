@@ -38,7 +38,7 @@ Route::post('/index/join', 'IndexController@join');
 //Analyse routes : Mysql
 Route::get('/analyse/save', 'Analysecontroller@saveAnalyse');
 Route::get('/analyse/get/{id}', 'AnalyseController@getAnalysisFromId');
-Route::get('/analyse/all', 'AnalyseController@getAllAccessibleAnalysis');
+Route::get('/analyse/all/{shared?}', 'AnalyseController@getAllAccessibleAnalysis');
 Route::get('/analyse/saved', 'AnalyseController@getAllSavedAnalysis');
 Route::delete('/analyse/{id}', 'AnalyseController@deleteAnalysis');
 
@@ -102,7 +102,9 @@ Route::get('/service', 'ServiceController@getAllServices');
 
 //Saved cards routes : Mysql
 Route::get('/saved_cards', 'SavedCardsController@getAllSavedCards');
-Route::post('/save_card', 'SavedCardsController@getAllSavedCards');
+Route::post('/saved_card', 'SavedCardsController@saveCard');
+Route::put('/saved_card', 'SavedCardsController@updateCard');
+Route::delete('/save_card', 'SavedCardsController@deleteCard');
 
 //Routes de test
 //Route::get('/user/add/{uuid}','UserController@createUserIfDontExist');

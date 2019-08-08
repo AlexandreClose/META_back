@@ -78,14 +78,16 @@ class AnalyseController extends Controller
         $analysis->delete();
     }
 
-    public function getAllAccessibleAnalysis(Request $request){
+    public function getAllAccessibleAnalysis(Request $request, $shared = false){
         $user = $request->get('user');
         $datasets = DatasetController::getAllAccessibleDatasets($request, $user, false);
         $analysis = $user->analysis();
 
         foreach($analysis as $key=>$analyse){
             foreach($analysis->columns as $column){
-                if(!$analyse->shared || !array_search(dataset::where('id', $column->dataset_id), $datasets)){
+                if(!$shared && (!$analyse->shared || !array_search(dataset::where('id', $column->dataset_id), $datasets))){
+                    unset($analysis[$key]);
+                } else if($shared && !$analyse->shared && !array_search(dataset::where('id', $column->dataset_id), $datasets)){
                     unset($analysis[$key]);
                 }
             }

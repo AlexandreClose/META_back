@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateSavedCardsTable extends Migration
+class CreateUserSavedAnalysesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,14 +13,11 @@ class CreateSavedCardsTable extends Migration
      */
     public function up()
     {
-        Schema::create('saved_cards', function (Blueprint $table) {
-            $table->bigInteger('id');
+        Schema::create('user_saved_analyses', function (Blueprint $table) {
             $table->uuid('uuid');
-            $table->integer('position')->nullable(true);
-            $table->boolean('displayed');
-            $table->integer('size')->nullable(true);
+            $table->bigInteger('analyse_id');
             $table->timestamps();
-            $table->primary(['uuid', 'id']);
+            $table->primary(['uuid', 'analyse_id']);
         });
     }
 
@@ -31,6 +28,6 @@ class CreateSavedCardsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('saved_cards');
+        Schema::dropIfExists('user_saved_analyses');
     }
 }
