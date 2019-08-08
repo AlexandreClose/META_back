@@ -14,12 +14,13 @@ class CreateAnalysisColumnsTable extends Migration
     public function up()
     {
         Schema::create('analysis_columns', function (Blueprint $table) {
-            $table->bigInteger('column_id');
             $table->bigInteger('analysis_id');
+            $table->string('field');
+            $table->string('databaseName');
             $table->string('color_code');
             $table->string('usage');
             $table->timestamps();
-            $table->primary(['column_id', 'analysis_id']);
+            $table->primary(['column_id', 'analysis_id', 'databaseName']);
         });
     }
 
