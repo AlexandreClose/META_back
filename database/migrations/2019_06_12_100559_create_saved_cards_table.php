@@ -16,7 +16,6 @@ class CreateSavedCardsTable extends Migration
         Schema::create('saved_cards', function (Blueprint $table) {
             $table->bigInteger('id');
             $table->uuid('uuid');
-            $table->tinyInteger('displayed');
             $table->integer('position');
             $table->integer('size')->nullable(true);
             $table->boolean('favorite');
