@@ -209,6 +209,8 @@ class IndexController extends Controller
             }
         }
 
+        
+
         //dd($fields);
 
         $results = [];
@@ -466,7 +468,7 @@ class IndexController extends Controller
                         "avg" => ($pathData + $oldStats["avg"]) / 2,
                         "sum" => ($pathData + $oldStats["sum"]),
                         "count" => ($oldStats["count"] + 1),
-                        "DiffOcc" => ($result["Count"])];
+                        "DiffOcc" =>($result["Count"])];
                 }
             }
         }

@@ -26,7 +26,7 @@ class AnalyseController extends Controller
         $analyse->description = $request->get('description');
         $analyse->visibility = $request->get('name');
         $theme_name = theme::where('name', $request->get('theme_name'))->first();
-        if($representation == null){
+        if($theme_name == null){
             error_log("missing theme");
             abort(409);
         }
@@ -57,9 +57,9 @@ class AnalyseController extends Controller
         $datasets = DatasetController::getAllAccessibleDatasets($request, $user, false);
         $canAccess = false;
         
-        $analysis = analysis::where('id', $id)->first();
-        foreach($analysis->columns as $column){
-            if(array_search(dataset::where('id', $column->dataset_id), $datasets) == null){
+        $analysis = analysis::with('fields')->where('id', $id)->first();
+        foreach($analysis->fields as $field){
+            if(array_search(dataset::where('databaseName', $field->databaseName), $datasets) == null){
                 abort(403);
             }
         }

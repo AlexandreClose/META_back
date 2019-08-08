@@ -100,6 +100,10 @@ Route::delete('/service/{name}', 'ServiceController@delService');
 Route::put('/service', 'ServiceController@updateService');
 Route::get('/service', 'ServiceController@getAllServices');
 
+//Saved cards routes : Mysql
+Route::get('/saved_cards', 'SavedCardsController@getAllSavedCards');
+Route::post('/save_card', 'SavedCardsController@getAllSavedCards');
+
 //Routes de test
 //Route::get('/user/add/{uuid}','UserController@createUserIfDontExist');
 Route::post('/user/update/', 'UserController@updateUserWithData');
