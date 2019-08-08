@@ -148,10 +148,10 @@ class ColumnController extends Controller
         $week_day = $request->get('weekdays');
         $emptyDayQuery = "doc['" . $date_col . "'].date.dayOfWeek == ";
         $fullDayQuery = "";
-        $start_hour = $request->get('start_hour');
-        $end_hour = $request->get('end_hour');
-        if ($start_hour != null && $start_hour != null) {
-            $hourQuery = "(doc['" . $date_col . "'].date.getHourOfDay() >= " . $start_hour . " && doc['" . $date_col . "'].date.getHourOfDay() < " . $end_hour . ")";
+        $start_minute = $request->get('start_minute');
+        $end_minute = $request->get('end_minute');
+        if ($start_minute != null && $start_minute != null) {
+            $minuteQuery = "(doc['" . $date_col . "'].date.getMinuteOfDay() >= " . $start_minute . " && doc['" . $date_col . "'].date.getMinuteOfDay() < " . $end_minute . ")";
         }
         if ($week_day != null) {
             foreach ($week_day as $day) {
@@ -169,12 +169,12 @@ class ColumnController extends Controller
                 $body["query"]["bool"]["must"] = ['range' => [$date_col => ['gte' => $start_date, 'lte' => $end_date]]];
             }
 
-            if ($week_day != null && ($start_hour != null && $end_hour != null)) {
-                $body["query"]["bool"]["filter"] = ['script' => ['script' => "(" . $fullDayQuery . " && " . $hourQuery . ")"]];
-            } elseif ($week_day != null && ($start_hour == null && $end_hour == null)) {
+            if ($week_day != null && ($start_minute != null && $end_minute != null)) {
+                $body["query"]["bool"]["filter"] = ['script' => ['script' => "(" . $fullDayQuery . " && " . $minuteQuery . ")"]];
+            } elseif ($week_day != null && ($start_minute == null && $end_minute == null)) {
                 $body["query"]["bool"]["filter"] = ['script' => ['script' => $fullDayQuery]];
-            } elseif ($week_day == null && ($start_hour != null && $end_hour != null)) {
-                $body["query"]["bool"]["filter"] = ['script' => ['script' => $hourQuery]];
+            } elseif ($week_day == null && ($start_minute != null && $end_minute != null)) {
+                $body["query"]["bool"]["filter"] = ['script' => ['script' => $minuteQuery]];
             }
         }
 
