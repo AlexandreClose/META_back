@@ -209,7 +209,6 @@ class IndexController extends Controller
             }
         }
 
-        
 
         //dd($fields);
 
@@ -468,7 +467,7 @@ class IndexController extends Controller
                         "avg" => ($pathData + $oldStats["avg"]) / 2,
                         "sum" => ($pathData + $oldStats["sum"]),
                         "count" => ($oldStats["count"] + 1),
-                        "DiffOcc" =>($result["Count"])];
+                        "DiffOcc" => ($result["Count"])];
                 }
             }
         }
@@ -519,4 +518,71 @@ class IndexController extends Controller
                 , $data[sizeof($datasets) - 1]), 200);
         }
     }
+
+    public function getInPointInPolygon(Request $request)
+    {
+        $name = $request->get('name');
+        $nameFilter = $request->get('nameFilter');
+        $datasets = DatasetController::getAllAccessibleDatasets($request, $request->get('user'), false);
+        $canAccess = false;
+        $datasetId = null;
+        $dataset = null;
+
+        foreach ($datasets as $data) {
+            if ($name === $data->databaseName or $nameFilter === $data->databaseName) {
+                $dataset = $data;
+                $canAccess = true;
+                break;
+            }
+        }
+        if (!$canAccess) {
+            abort(403);
+        }
+
+        $columns = [];
+        $AccessibleColumns = DatasetController::getAllAccessibleColumnsFromADataset($request, dataset::where('databaseName', $name)->first());
+        $canAccess = false;
+
+
+        $columnToTest = $request->get('columns');
+        array_push($columnToTest, $request->get('targetColumn'));
+        if ($request->get('columns') != null) {
+            foreach ($AccessibleColumns as $column) {
+                if (in_array($column->name, $columnToTest)) {
+                    array_push($columns, $column->name);
+                    $canAccess = true;
+                }
+            }
+        }
+        if (!$canAccess) {
+            abort(403);
+        }
+
+        $dataFilters = Elasticsearch::search(['index' => $nameFilter, '_source' => $request->get('filterColumn'),
+            'size' => $request->get('size'),
+            "from" => $request->get('offset')])["hits"]["hits"];
+
+
+        $result = [];
+        foreach ($dataFilters as $dataFilter) {
+            $path = $dataFilter["_source"];
+            foreach (explode(".",  $request->get('targetColumn')) as $field) {
+                $path = $path[$field];
+            }
+            $polygon = $path[0][0];
+
+            $body = ["query" => ["bool" => [
+                "must" => ["match_all" => (object)null],
+                "filter" => ["geo_polygon" => ["geometry.coordinates" => ["points" => $polygon]]]]]];
+
+
+            $data = Elasticsearch::search(['index' => $name, '_source' => $columns,
+                'size' => $request->get('size'),
+                "from" => $request->get('offset'),
+                "body" => $body]);
+            array_push($result, $data);
+        }
+        return $result;
+    }
+
 }
