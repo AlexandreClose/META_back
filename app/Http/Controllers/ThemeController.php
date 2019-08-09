@@ -43,14 +43,14 @@ class ThemeController extends Controller
         return response("", 200);
     }
 
-    function deleteTheme(Request $request, $newName)
+    function deleteTheme(Request $request, $name, $newName)
     {
         $role = $request->get('user')->role;
         if ($role != "Administrateur") {
             abort(403);
         }
 
-        $theme = theme::where('name', $request->get("name"))->first();
+        $theme = theme::where('name', urldecode($name))->first();
 
         user_theme::where('name', '=', $theme->name)->update(['name' => $newName]);
         dataset::where('themeName', '=', $theme->name)->update(['themeName' => $newName]);
@@ -63,11 +63,13 @@ class ThemeController extends Controller
         return response('',200);
     }
 
-    public function updateTheme(Request $request, $name, $newName){
+    public function updateTheme(Request $request){
         $role = $request->get('user')->role;
         if($role != "Administrateur") {
             abort(403);
         }
+        $name = $request->get('name');
+        $newName = $request->get('newName');
         $desc = $request->get('desc');
         $theme = theme::where('name', $name)->first();
         if($theme == null){
