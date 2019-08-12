@@ -434,8 +434,9 @@ class IndexController extends Controller
                 }
 
                 foreach (explode(".", $column) as $field) {
-                    $pathData = (float)$pathData[$field];
+                    $pathData = $pathData[$field];
                 }
+                $pathData = (float)$pathData;
                 if (!array_key_exists($pathPivot, $stats) or !array_key_exists($column, $stats[$pathPivot]["stats"])) {
                     if (array_key_exists($pathPivot, $stats)) {
                         $element = $stats[$pathPivot];
@@ -474,6 +475,28 @@ class IndexController extends Controller
         return $stats;
     }
 
+    private function do_join(int $i, array $data, array $columns)
+    {
+        $newData = [];
+        foreach ($data[$i - 1] as $entry) {
+            $path = $entry;
+            foreach (explode(".", $columns[0]) as $field) {
+                $path = $path[$field];
+            }
+            foreach ($data[$i] as $newEntry) {
+                $newPath = $newEntry;
+                foreach (explode(".", $columns[1]) as $field) {
+                    $newPath = $newPath[$field];
+                }
+                if ($path == $newPath) {
+                    array_push($newData, array_replace($entry, $newEntry));
+                }
+            }
+        }
+        $data[$i] = $newData;
+        return $data;
+    }
+
     public function join(Request $request)
     {
         $data = [];
@@ -491,23 +514,7 @@ class IndexController extends Controller
             array_push($data, $temp);
             if ($i >= 1) {
                 $columns = $request["joining"][$i - 1];
-                $newData = [];
-                foreach ($data[$i - 1] as $entry) {
-                    $path = $entry;
-                    foreach (explode(".", $columns[0]) as $field) {
-                        $path = $path[$field];
-                    }
-                    foreach ($data[$i] as $newEntry) {
-                        $newPath = $newEntry;
-                        foreach (explode(".", $columns[1]) as $field) {
-                            $newPath = $newPath[$field];
-                        }
-                        if ($path == $newPath) {
-                            array_push($newData, array_replace($entry, $newEntry));
-                        }
-                    }
-                }
-                $data[$i] = $newData;
+                $data = $this::do_join($i, $data, $columns);
             }
         }
 
@@ -523,6 +530,8 @@ class IndexController extends Controller
     {
         $name = $request->get('name');
         $nameFilter = $request->get('nameFilter');
+        $doStats = (bool)$request->get('stats')["do_stats"];
+        $doJoin = (bool)$request->get('join')["do_join"];
         $datasets = DatasetController::getAllAccessibleDatasets($request, $request->get('user'), false);
         $canAccess = false;
         $datasetId = null;
@@ -562,11 +571,11 @@ class IndexController extends Controller
             'size' => $request->get('size'),
             "from" => $request->get('offset')])["hits"]["hits"];
 
-
         $result = [];
+        $keyId = 1;
         foreach ($dataFilters as $dataFilter) {
             $path = $dataFilter["_source"];
-            foreach (explode(".",  $request->get('targetColumn')) as $field) {
+            foreach (explode(".", $request->get('targetColumn')) as $field) {
                 $path = $path[$field];
             }
             $polygon = $path[0][0];
@@ -580,9 +589,40 @@ class IndexController extends Controller
                 'size' => $request->get('size'),
                 "from" => $request->get('offset'),
                 "body" => $body]);
-            array_push($result, $data);
+
+            if ($doStats) {
+                foreach ($data["hits"]["hits"] as $element) {
+                    $element = $element["_source"];
+                    $element["KeyId"] = $keyId;
+                    $element["geometry"]["coordinates"] = $polygon;
+                    array_push($result, $element);
+                }
+                $keyId++;
+            } else {
+                $NewData = [];
+                foreach ($data["hits"]["hits"] as $element) {
+                    $element = $element["_source"];
+                    array_push($NewData, $element);
+                }
+                array_push($result, $NewData);
+            }
         }
-        return $result;
+
+        if ($doJoin) {
+            $subRequest = $request["join"]["request"];
+            $subRequest["stats"]["do_stats"] = false;
+            $subRequest["user"] = $request->get("user");
+            $subRequest = new Request($subRequest);
+            $subResult = $this::join($subRequest)->getOriginalContent();
+            $result = $this::do_join(1, [$subResult, $result], $request["join"]["joining"])[1];
+        }
+        if ($doStats) {
+            $columns = $request->get("stats")["columns"];
+            $columns["pivot"] = "KeyId";
+            $columns["isDate"] = false;
+            $result = $this::do_stats($columns, $result);
+        }
+        return response($result);
     }
 
 }
