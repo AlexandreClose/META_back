@@ -217,6 +217,7 @@ class IndexController extends Controller
         foreach ($accessibleFields as $acc_field) {
             foreach ($fields as $field) {
                 if ($field[0] == $acc_field['name']) {
+                    array_push($field, $acc_field['main']);
                     array_push($results, $field);
                 }
             }

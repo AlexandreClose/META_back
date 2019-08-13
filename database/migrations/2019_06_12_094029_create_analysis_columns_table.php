@@ -17,7 +17,7 @@ class CreateAnalysisColumnsTable extends Migration
             $table->bigInteger('analysis_id');
             $table->string('field');
             $table->string('databaseName');
-            $table->string('color_code');
+            $table->string('color_code')->nullable;
             $table->string('usage');
             $table->timestamps();
             $table->primary(['column_id', 'analysis_id', 'databaseName']);

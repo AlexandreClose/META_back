@@ -34,18 +34,21 @@ class AnalyseController extends Controller
         
         $analyse = analysis::where('name')->first();
 
+        createAnalysisColumn($request, $id);
+
         return response($analyse)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
     }
 
-    public function createAnalysisColumn(Request $request, $id){
+    public static function createAnalysisColumn($request, $id){
         $user = $request->get('user');
         $analyse = analysis::where('id', $id);
         $analysis_columns = [];
         $analysis_columns_data = json_decode($request->get('analysis_columns'));
         foreach($analysis_columns as $analysis_column_data){
             $analysis_column = new analyse_column();
-            $analysis_column->column_id = $analysis_column_data['column_id'];
+            $analysis_column->field = $analysis_column_data['field'];
             $analysis_column->analysis_id = $analysis_column_data['analysis_id'];
+            $analysis_column->databaseName = $analysis_column_data['databaseName'];
             $analysis_column->color_code = $analysis_column_data['color_code'];
             $analysis_column->usage = $analysis_column_data['usage'];
             $analysis_column->save();

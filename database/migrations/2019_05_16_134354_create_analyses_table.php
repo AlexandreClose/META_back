@@ -21,7 +21,6 @@ class CreateAnalysesTable extends Migration
             $table->uuid('owner_id');
             $table->mediumText('description');
             $table->string('visibility');
-            $table->string('theme_name');
             $table->timestamps();
         });
     }

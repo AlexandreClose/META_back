@@ -220,6 +220,19 @@ class DatasetController extends Controller
         return response($data)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
     }
 
+    public function getFilterDatasets(Request $request){
+        $datasets = DatasetController::getAllAccessibleDatasets($request);
+
+        $filter_datasets = [];
+        foreach($dataset as $datasets){
+            if($dataset['update_frequency'] != 'Production unique' && $dataset['GEOJSON'] == '0'){
+                array_push($filter_datasets, $dataset);
+            }
+        }
+
+        return $filter_datasets;
+    }
+
     public static function getAllAccessibleDatasets(Request $request, user $user = null, bool $validate = false, bool $saved = false, bool $favorite = false)
     {
         if ($user == null) {
