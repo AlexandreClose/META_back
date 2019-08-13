@@ -9,15 +9,16 @@
   "license": "MIT",
   "require": {
     "php": "^7.1.3",
+    "ext-json": "*",
     "barryvdh/laravel-cors": "^0.11.3",
     "cviebrock/laravel-elasticsearch": "^3.5",
     "fideloper/proxy": "^4.0",
     "guzzlehttp/guzzle": "~6.0",
+    "influxdb/influxdb-php": "^1.15",
+      "tray-labs/laravel-influxdb": "*",
     "laravel/framework": "5.8.*",
     "laravel/telescope": "^2.0",
-    "laravel/tinker": "^1.0",
-    "tray-labs/laravel-influxdb": "*",
-      "ext-json": "*"
+    "laravel/tinker": "^1.0"
   },
   "require-dev": {
     "beyondcode/laravel-dump-server": "^1.0",
