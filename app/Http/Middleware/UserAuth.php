@@ -33,33 +33,32 @@ class UserAuth
         }
 
         $user = user::where('token',$token)->first();
-        if($user != null){
-            $request->merge(['user' => $user]);
-            return $next($request);
-        }
+        if($user == null){
+            $client = new Client();
+            $headers = [
+                'Authorization' => 'Bearer ' . $token,
+                'Accept'        => 'application/json',
+            ];
 
-        $client = new Client();
-        $headers = [
-            'Authorization' => 'Bearer ' . $token,
-            'Accept'        => 'application/json',
-        ];
+            $res = $client->get('https://authsso.extranet.toulouse.fr/cas/oidc/profile', ['headers' => $headers]);
+            $data = json_decode($res->getBody(),true);
+            $value = $data["sub"];
+            if(!isset($value)){
+                abort(403);
+            }
 
-        $res = $client->get('https://authsso.extranet.toulouse.fr/cas/oidc/profile', ['headers' => $headers]);
-        $data = json_decode($res->getBody(),true);
-        $value = $data["sub"];
-        if(!isset($value)){
-            abort(403);
-        }
-
-            $user = user::where('uuid',$value)->first();
+            $user = user::where('tid',$value)->first();
             if($user == null){
                 abort(403);
             }
-            else{
-                $user->token = $value;
-                $request->merge(['user' => $user]);
+        }
+        if($user->role == "Désactivé"){
+            abort(403);
+        }
+        $request->merge(['user' => $user]);
+        return $next($request);
 
-            }
+        
 
         return $next($request);
     }
