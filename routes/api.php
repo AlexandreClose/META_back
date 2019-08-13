@@ -34,6 +34,7 @@ Route::get('/index/file/{name}', 'IndexController@getIndexFile');
 Route::post('/index/geo', 'IndexController@getIndexFromCoordinatesInShape');
 Route::post('/liteIndex', 'IndexController@getLiteIndex');
 Route::post('/index/join', 'IndexController@join');
+Route::post('/index/fromPolygon','IndexController@getInPointInPolygon');
 
 //Analyse routes : Mysql
 Route::get('/analyse/save', 'Analysecontroller@saveAnalyse');
