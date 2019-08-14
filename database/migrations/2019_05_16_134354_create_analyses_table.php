@@ -20,6 +20,7 @@ class CreateAnalysesTable extends Migration
             $table->boolean('shared');
             $table->uuid('owner_id');
             $table->mediumText('description');
+            $table->mediumText('body');
             $table->string('visibility');
             $table->timestamps();
         });
