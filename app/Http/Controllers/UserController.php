@@ -8,6 +8,7 @@ use App\user_theme;
 use Exception;
 use App\service;
 use App\role;
+use App\color;
 use App\direction;
 use Illuminate\Http\Request;
 use function React\Promise\all;
@@ -201,5 +202,24 @@ class UserController extends Controller
         }
         $user->role = "Désactivé";
         $user->save();
+    }
+
+    public function getAllUserColor(Request $request){
+        $user = $request->get('user');
+        return response($user->colors)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
+    }
+
+    public function addColorToUser(Request $request){
+        $user = $request->get('user');
+        $color = new color();
+        $color->user_uuid = $user->uuid;
+        $color->color_code = $request->get('color_code');
+        $color->save();
+    }
+
+    public function removeColorFromUser(Request $request){
+        $user = $request->get('user');
+        $color = color::where([['user_uuid', $user->uuid], ['color_code', $request->get('color_code')]]);
+        $color->delete();
     }
 }

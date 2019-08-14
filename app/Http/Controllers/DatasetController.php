@@ -305,7 +305,7 @@ class DatasetController extends Controller
         }
         $where = $where . "ORDER BY created_date DESC";
         $query = $querybase . $where;
-        //error_log($query);
+        error_log($query);
         $datasets = array_merge($datasets, DB::select($query));
         foreach ($datasets as $dataset) {
             $fromBase = Dataset::where('id', $dataset->id)->first();
