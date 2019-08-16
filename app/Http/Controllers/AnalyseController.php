@@ -22,6 +22,7 @@ class AnalyseController extends Controller
         }
         $analyse->$representation;
         $analyse->shared = $request->get('shared');
+        $analyse->visibility = $request->get('visibility');
         $analyse->isStats = $request->get('isStats');
         $analyse->owner_id = $user->uuid;
         $analyse->description = $request->get('description');
