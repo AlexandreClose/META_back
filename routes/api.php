@@ -37,7 +37,7 @@ Route::post('/index/join', 'IndexController@join');
 Route::post('/index/fromPolygon','IndexController@getInPointInPolygon');
 
 //Analyse routes : Mysql
-Route::post('/analyse/save', 'Analysecontroller@saveAnalyse');
+Route::post('/analyse/save', 'AnalyseController@saveAnalyse');
 Route::get('/analyse/get/{id}', 'AnalyseController@getAnalysisFromId');
 Route::get('/analyse/all/{shared?}', 'AnalyseController@getAllAccessibleAnalysis');
 Route::get('/analyse/saved', 'AnalyseController@getAllSavedAnalysis');
