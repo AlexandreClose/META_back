@@ -204,6 +204,20 @@ class UserController extends Controller
         $user->save();
     }
 
+    public function unblockUser(Request $request, $uuid){
+        $role = $request->get('user')->role;
+        if ($role != "Administrateur") {
+            abort(403);
+        }
+
+        $user = user::where('uuid', $uuid)->first();
+        if($user == null){
+            abort(404);
+        }
+        $user->role = "Utilisateur";
+        $user->save();
+    }
+
     public function getAllUserColor(Request $request){
         $user = $request->get('user');
         return response($user->colors)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
