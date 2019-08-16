@@ -39,7 +39,7 @@ class AnalyseController extends Controller
         
         $analyse = analysis::where('name')->first();
 
-        createAnalysisColumn($request, $id);
+        AnalyseController::createAnalysisColumn($request, $id);
 
         return response($analyse)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
     }
