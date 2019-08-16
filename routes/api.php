@@ -60,13 +60,17 @@ Route::get('/datasets/saved', "DatasetController@getAllAccessibleSavedDatasets")
 
 
 //Users routes : Mysql
-Route::get('/user/{quantity?}', 'UserController@getAllUsers');
+Route::get('/user', 'UserController@getAllUsers');
 Route::get('self', 'UserController@getConnectedUserData');
 Route::get('/users/name/{quantity?}', 'UserController@getUsersName');
 Route::post('/user/create', 'UserController@addUser');
 Route::post('/user/theme', 'UserController@addUserTheme');
 Route::delete('/user/theme', 'UserController@deleteUserTheme');
 Route::get('/user/block/{uuid}', 'UserController@blockUser');
+Route::get('/user/unblock/{uuid}', 'UserController@unblockUser');
+Route::get('/user/color', 'UserController@getAllUserColor');
+Route::post('user/color', 'UserController@addColorToUser');
+Route::delete('user/color', 'UserController@removeColorFromUser');
 
 //Datatypes routes : Mysql
 Route::get('/datatypes/{quantity?}', 'DataTypesController@getAllDataTypes');

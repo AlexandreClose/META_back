@@ -89,6 +89,11 @@ class user extends Model
         return $this->hasMany('App\saved_card', 'uuid', 'uuid');
     }
 
+    public function colors()
+    {
+        return $this->hasMany('App\color', 'user_uuid', 'uuid');
+    }
+
     public function saved_analysis(){
         return $this->belongsToMany('App\analysis','saved_card', 'uuid', 'uuid');
     }

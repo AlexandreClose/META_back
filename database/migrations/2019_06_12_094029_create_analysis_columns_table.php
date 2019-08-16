@@ -20,7 +20,7 @@ class CreateAnalysisColumnsTable extends Migration
             $table->string('color_code')->nullable;
             $table->string('usage');
             $table->timestamps();
-            $table->primary(['column_id', 'analysis_id', 'databaseName']);
+            $table->primary(['field', 'analysis_id', 'databaseName']);
         });
     }
 

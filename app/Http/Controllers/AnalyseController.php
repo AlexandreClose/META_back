@@ -22,8 +22,11 @@ class AnalyseController extends Controller
         }
         $analyse->$representation;
         $analyse->shared = $request->get('shared');
+        $analyse->isStats = $request->get('isStats');
         $analyse->owner_id = $user->uuid;
         $analyse->description = $request->get('description');
+        $analyse->body = $request->get('body');
+        $analyse->usage = $request->get('usage');
         $analyse->visibility = $request->get('name');
         $theme_name = theme::where('name', $request->get('theme_name'))->first();
         if($theme_name == null){
