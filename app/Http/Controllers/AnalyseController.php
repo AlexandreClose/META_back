@@ -34,7 +34,7 @@ class AnalyseController extends Controller
             error_log("missing theme");
             abort(400, "missing theme or theme don't exist");
         }
-        error_log($request->get('visibility'));
+        error_log($analyse->visibility);
         $analyse->save();
         
         $analyse = analysis::where('name')->first();
