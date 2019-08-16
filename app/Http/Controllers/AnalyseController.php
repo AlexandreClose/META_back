@@ -15,13 +15,14 @@ class AnalyseController extends Controller
         $user = $request->get('user');
         $analyse = new analysis();
         $analyse->name = $request->get('name');
-        $representation = representation_type::where('name', $request->get('representation'))->first();
+        $representation = representation_type::where('name', $request->get('representation_type'))->first();
         if($representation == null){
             error_log("missing representation");
-            abort(409);
+            abort(400, "bad representation");
         }
         $analyse->$representation;
         $analyse->shared = $request->get('shared');
+        $analyse->visibility = $request->get('visibility');
         $analyse->isStats = $request->get('isStats');
         $analyse->owner_id = $user->uuid;
         $analyse->description = $request->get('description');
@@ -31,7 +32,7 @@ class AnalyseController extends Controller
         $theme_name = theme::where('name', $request->get('theme_name'))->first();
         if($theme_name == null){
             error_log("missing theme");
-            abort(409);
+            abort(400, "missing theme or theme don't exist");
         }
         $analyse->save();
         
