@@ -20,7 +20,7 @@ class AnalyseController extends Controller
             error_log("missing representation");
             abort(400, "bad representation");
         }
-        $analyse->representation = $request->get('representation_type');
+        $analyse->representation_type = $request->get('representation_type');
         $analyse->shared = $request->get('shared');
         $analyse->visibility = $request->get('visibility');
         $analyse->isStats = $request->get('isStats');
