@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use DateTime;
 use Elasticsearch\ClientBuilder;
+use Exception as ExceptionAlias;
 use Illuminate\Http\Request;
 use App\column;
 use App\dataset;
@@ -11,6 +13,7 @@ use App\data_type;
 use App\user;
 use App\colauth_users;
 use Elasticsearch;
+use InfluxDB\Client;
 
 class ColumnController extends Controller
 {
@@ -140,6 +143,12 @@ class ColumnController extends Controller
             abort(403);
         }
 
+        if ((bool)dataset::select('realtime')->where('databaseName', $name)->first()["realtime"]) {
+            $request["columns"] = $columns;
+            $data = $this::getStatsInflux($request);
+            return response($data, 200);
+        }
+
         $body = [];
         $date_col = $request->get('date_col');
         $group_by_column = $request->get('groupby');
@@ -194,5 +203,76 @@ class ColumnController extends Controller
             "body" => $body]);
 
         return response($data, 200);
+    }
+
+    private function getStatsInflux(Request $request)
+    {
+        $host = env("INFLUXDB_HOST");
+        $port = env("INFLUXDB_PORT");
+        $dbname = env("INFLUXDB_DBNAME");
+        $client = new Client($host, $port);
+
+        $select = '"' . implode('","', $request["columns"]) . '"';
+
+        $from = $request["name"];
+
+        $where = "";
+        $startDate = $request->get("start_date");
+        $endDate = $request->get("end_date");
+        if (($startDate and $endDate)) {
+            $where = "WHERE (time > '" . explode("+", $startDate)[0] . "Z' and 
+            time < '" . explode("+", $endDate)[0] . "Z')";
+        }
+
+        /** @noinspection PhpUnhandledExceptionInspection */
+        $result = $client->query($dbname, 'SELECT ' . $select . 'FROM ' . $from . ' ' . $where)->getPoints();
+
+        $weekdays = $request->get("weekdays");
+        if ($weekdays) {
+            $newResult = [];
+            foreach ($result as $element) {
+                try {
+                    $d = new DateTime($element["time"]);
+                } catch (ExceptionAlias $e) {
+                    abort(400);
+                }
+                $weekday = date('w', $d->getTimestamp());
+                if (in_array($weekday, $weekdays)) {
+                    array_push($newResult, $element);
+                }
+            }
+            $result = $newResult;
+        }
+
+        $start_minute = $request->get("start_minute");
+        $end_minute = $request->get("end_minute");
+        if ($start_minute != null and $end_minute != null) {
+            $newResult = [];
+            foreach ($result as $element) {
+                try {
+                    $d = new DateTime($element["time"]);
+                } catch (ExceptionAlias $e) {
+                    abort(400);
+                }
+                $minutes = (date('H', $d->getTimestamp()) * 60) + date('i', $d->getTimestamp());
+                if ($minutes > $start_minute and ($minutes < $end_minute)) {
+                    array_push($newResult, $element);
+                }
+            }
+            $result = $newResult;
+        }
+
+        $column = ["pivot" => $request->get("groupby"), "isDate" => false, "data" => $request["columns"]];
+        $stats = (new IndexController)->do_stats($column, $result);
+
+        $hits = [];
+        foreach (array_keys($stats) as $key) {
+            $hit = $stats[$key]["stats"];
+            $hit["key"] = $key;
+            array_push($hits, $hit);
+        }
+
+        $result = ["hits" => ["total" => sizeof($result), "hits" => []], "aggregations" => ["codes" => ["buckets" => $hits]]];
+        return $result;
     }
 }
