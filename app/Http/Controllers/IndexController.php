@@ -13,6 +13,7 @@ use Elasticsearch\ClientBuilder;
 use Exception as ExceptionAlias;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use InfluxDB\Client;
 use PhpParser\Node\Expr\Array_;
 
 use TrayLabs\InfluxDB\Facades\InfluxDB;
@@ -359,7 +360,11 @@ class IndexController extends Controller
         if (!$canAccess) {
             abort(403);
         }
-
+        if ((bool)dataset::select('realtime')->where('databaseName', $name)->first()["realtime"]) {
+            $request["columns"] = $columnFilter;
+            $data = $this::getLiteIndexInflux($request);
+            return response($data, 200);
+        }
         $body = [];
         $date_col = $request->get('date_col');
         $start_date = $request->get('start_date');
@@ -626,4 +631,71 @@ class IndexController extends Controller
         return response($result);
     }
 
+    public function getLiteIndexInflux(Request $request)
+    {
+
+
+        $host = env("INFLUXDB_HOST");
+        $port = env("INFLUXDB_PORT");
+        $dbname = env("INFLUXDB_DBNAME");
+        $client = new Client($host, $port);
+
+        $select = '"' . implode('","', $request["columns"]) . '"';
+
+        $from = $request["name"];
+
+        $where = "";
+        $startDate = $request->get("start_date");
+        $endDate = $request->get("end_date");
+        if (($startDate and $endDate)) {
+            $where = "WHERE (time > '" . explode("+", $startDate)[0] . "Z' and 
+            time < '" . explode("+", $endDate)[0] . "Z')";
+        }
+
+        /** @noinspection PhpUnhandledExceptionInspection */
+        $result = $client->query($dbname, 'SELECT ' . $select . 'FROM ' . $from . ' ' . $where)->getPoints();
+
+        $weekdays = $request->get("weekdays");
+        if ($weekdays) {
+            $newResult = [];
+            foreach ($result as $element) {
+                try {
+                    $d = new DateTime($element["time"]);
+                } catch (ExceptionAlias $e) {
+                    abort(400);
+                }
+                $weekday = date('w', $d->getTimestamp());
+                if (in_array($weekday, $weekdays)) {
+                    array_push($newResult, $element);
+                }
+            }
+            $result = $newResult;
+        }
+
+        $start_minute = $request->get("start_minute");
+        $end_minute = $request->get("end_minute");
+        if ($start_minute != null and $end_minute != null) {
+            $newResult = [];
+            foreach ($result as $element) {
+                try {
+                    $d = new DateTime($element["time"]);
+                } catch (ExceptionAlias $e) {
+                    abort(400);
+                }
+                $minutes = (date('H', $d->getTimestamp()) * 60) + date('i', $d->getTimestamp());
+                if ($minutes > $start_minute and ($minutes < $end_minute)) {
+                    array_push($newResult, $element);
+                }
+            }
+            $result = $newResult;
+        }
+
+        $hits = [];
+        foreach ($result as $element) {
+            $hit = ["_index" => $from, "_source" => $element];
+            array_push($hits, $hit);
+        }
+        $result = ["hits" => ["total" => sizeof($result), "hits" => $hits]];
+        return $result;
+    }
 }
