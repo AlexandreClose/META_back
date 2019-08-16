@@ -15,7 +15,7 @@ class AnalyseController extends Controller
         $user = $request->get('user');
         $analyse = new analysis();
         $analyse->name = $request->get('name');
-        $representation = representation_type::where('name', $request->get('representation'))->first();
+        $representation = representation_type::where('name', $request->get('representation_type'))->first();
         if($representation == null){
             error_log("missing representation");
             abort(400, "bad representation");
