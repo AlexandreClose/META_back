@@ -28,7 +28,6 @@ class AnalyseController extends Controller
         $analyse->description = $request->get('description');
         $analyse->body = $request->get('body');
         $analyse->usage = $request->get('usage');
-        $analyse->visibility = $request->get('name');
         $theme_name = theme::where('name', $request->get('theme_name'))->first();
         if($theme_name == null){
             error_log("missing theme");
