@@ -18,6 +18,7 @@ class CreateAnalysesTable extends Migration
             $table->string('name',45)->unique();
             $table->string('representation_type',25);
             $table->boolean('shared');
+            $table->boolean('isStats');
             $table->uuid('owner_id');
             $table->mediumText('description');
             $table->mediumText('body');
