@@ -18,7 +18,7 @@ class AnalyseController extends Controller
         $representation = representation_type::where('name', $request->get('representation'))->first();
         if($representation == null){
             error_log("missing representation");
-            abort(400);
+            abort(400, "bad representation");
         }
         $analyse->$representation;
         $analyse->shared = $request->get('shared');
@@ -31,7 +31,7 @@ class AnalyseController extends Controller
         $theme_name = theme::where('name', $request->get('theme_name'))->first();
         if($theme_name == null){
             error_log("missing theme");
-            abort(400);
+            abort(400, "missing theme or theme don't exist");
         }
         $analyse->save();
         
