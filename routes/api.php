@@ -67,7 +67,7 @@ Route::post('/user/create', 'UserController@addUser');
 Route::post('/user/theme', 'UserController@addUserTheme');
 Route::delete('/user/theme', 'UserController@deleteUserTheme');
 Route::get('/user/block/{uuid}', 'UserController@blockUser');
-Route::get('/user/unblock/{uuid}', 'UserController@blockUser');
+Route::get('/user/unblock/{uuid}', 'UserController@unblockUser');
 Route::get('/user/color', 'UserController@getAllUserColor');
 Route::post('user/color', 'UserController@addColorToUser');
 Route::delete('user/color', 'UserController@removeColorFromUser');
