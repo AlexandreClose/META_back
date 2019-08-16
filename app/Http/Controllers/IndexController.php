@@ -425,11 +425,16 @@ class IndexController extends Controller
         foreach ($columns["data"] as $column) {
             $occurrences = [];
             foreach ($data as $element) {
-                $pathPivot = $element;
                 $pathData = $element;
-                foreach (explode(".", $columns["pivot"]) as $field) {
-                    $pathPivot = $pathPivot[$field];
+                $tmp = [];
+                foreach (explode("+", $columns["pivot"]) as $col) {
+                    $pathPivot = $element;
+                    foreach (explode(".", $col) as $field) {
+                        $pathPivot = $pathPivot[$field];
+                    }
+                    array_push($tmp, $pathPivot);
                 }
+                $pathPivot = implode("+", $tmp);
 
                 if ($columns["isDate"]) {
                     try {
