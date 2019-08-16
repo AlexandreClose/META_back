@@ -33,7 +33,7 @@ class AnalyseController extends Controller
             error_log("missing theme");
             abort(400, "missing theme or theme don't exist");
         }
-        $analyse->theme_name = $theme_name;
+        $analyse->theme_name = $request->get('theme_name');
         error_log($analyse->visibility);
         $analyse->save();
         
