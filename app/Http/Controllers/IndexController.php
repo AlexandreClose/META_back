@@ -419,7 +419,7 @@ class IndexController extends Controller
         return ["Count" => $i, "Occurrences" => $occurrences];
     }
 
-    private function do_stats(array $columns, array $data)
+    public function do_stats(array $columns, array $data)
     {
         $stats = [];
         foreach ($columns["data"] as $column) {
@@ -631,7 +631,7 @@ class IndexController extends Controller
         return response($result);
     }
 
-    public function getLiteIndexInflux(Request $request)
+    private function getLiteIndexInflux(Request $request)
     {
 
 
