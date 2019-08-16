@@ -98,11 +98,6 @@ class DatasetController extends Controller
         $dataset->validated = true;
         $result = $dataset->save();
 
-        $client = ClientBuilder::create()->setHosts([env("ELASTICSEARCH_HOST") . ":" . env("ELASTICSEARCH_PORT")])->build();
-        $paramsSettings = ['index' => $dataset->databaseName,
-            'body' => ["index.max_result_window" => 5000000]];
-        $client->indices()->putSettings($paramsSettings);
-
         $dataset = dataset::where('id', $request->get('id'))->first();
         $tags = json_decode($tags);
         if ($tags != null) {
@@ -151,6 +146,11 @@ class DatasetController extends Controller
             $auth_users->save();
         }
         error_log("last foreach passed");
+
+        $client = ClientBuilder::create()->setHosts([env("ELASTICSEARCH_HOST") . ":" . env("ELASTICSEARCH_PORT")])->build();
+        $paramsSettings = ['index' => $dataset->databaseName,
+            'body' => ["index.max_result_window" => 5000000]];
+        $client->indices()->putSettings($paramsSettings);
 
     }
 
@@ -305,7 +305,7 @@ class DatasetController extends Controller
         }
         $where = $where . "ORDER BY created_date DESC";
         $query = $querybase . $where;
-        error_log($query);
+        //error_log($query);
         $datasets = array_merge($datasets, DB::select($query));
         foreach ($datasets as $dataset) {
             $fromBase = Dataset::where('id', $dataset->id)->first();
