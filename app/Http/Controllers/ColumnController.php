@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Services\ElasticSearchService;
 use App\Http\Services\IndexService;
 use App\Http\Services\InfluxDBService;
 use DateTime;
@@ -113,6 +114,7 @@ class ColumnController extends Controller
     {
         $checkRights = (new IndexService)->checkRights($request);
         if ($checkRights == false) {
+            $columns = null;
             abort(403);
         } else {
             $columns = $checkRights;
@@ -125,49 +127,21 @@ class ColumnController extends Controller
             return response($data, 200);
         }
 
-        $body = [];
-        $date_col = $request->get('date_col');
-        $group_by_column = $request->get('groupby');
-        $start_date = $request->get('start_date');
-        $end_date = $request->get('end_date');
-        $week_day = $request->get('weekdays');
-        $emptyDayQuery = "doc['" . $date_col . "'].date.dayOfWeek == ";
-        $fullDayQuery = "";
-        $start_minute = $request->get('start_minute');
-        $end_minute = $request->get('end_minute');
-        if ($start_minute != null && $start_minute != null) {
-            $minuteQuery = "(doc['" . $date_col . "'].date.getMinuteOfDay() >= " . $start_minute . " && doc['" . $date_col . "'].date.getMinuteOfDay() < " . $end_minute . ")";
-        }
-        if ($week_day != null) {
-            foreach ($week_day as $day) {
-                $fullDayQuery .= $emptyDayQuery . $day . " || ";
-            }
-            $fullDayQuery = str_replace(" || )", ")", "(" . $fullDayQuery . ")");
-        }
 
+        $ElasticSearchService = new ElasticSearchService($request);
 
-        if ($date_col != null) {
-            $body = ['sort' => [[$date_col => ['order' => 'desc']]]];
-            if ($date_col != null && $start_date != null && $end_date == null) {
-                $body["query"]["bool"]["must"] = ['range' => [$date_col => ['gte' => $start_date, 'lte' => $start_date]]];
-            } elseif ($date_col != null && $start_date != null && $end_date != null) {
-                $body["query"]["bool"]["must"] = ['range' => [$date_col => ['gte' => $start_date, 'lte' => $end_date]]];
-            }
+        $minuteQuery = $ElasticSearchService->getMinuteFilter();
+        $fullDayQuery = $ElasticSearchService->getWeekdayFilter();
 
-            if ($week_day != null && ($start_minute != null && $end_minute != null)) {
-                $body["query"]["bool"]["filter"] = ['script' => ['script' => "(" . $fullDayQuery . " && " . $minuteQuery . ")"]];
-            } elseif ($week_day != null && ($start_minute == null && $end_minute == null)) {
-                $body["query"]["bool"]["filter"] = ['script' => ['script' => $fullDayQuery]];
-            } elseif ($week_day == null && ($start_minute != null && $end_minute != null)) {
-                $body["query"]["bool"]["filter"] = ['script' => ['script' => $minuteQuery]];
-            }
-        }
+        $body = $ElasticSearchService->getTimeFilter([],$minuteQuery,$fullDayQuery);
+
 
         $aggs = [];
         foreach ($columns as $column) {
             $aggs[$column] = ["stats" => ["field" => $column]];
         }
 
+        $group_by_column = $request->get('groupby');
         if ($group_by_column) {
             $body["aggs"] = ["codes" => ["terms" => ["field" => $group_by_column, "size" => 10000], "aggs" => $aggs]];
         } else {
