@@ -20,7 +20,7 @@ class AnalyseController extends Controller
             error_log("missing representation");
             abort(400, "bad representation");
         }
-        $analyse->$representation;
+        $analyse->representation_type = $request->get('representation_type');
         $analyse->shared = $request->get('shared');
         $analyse->visibility = $request->get('visibility');
         $analyse->isStats = $request->get('isStats');
@@ -28,17 +28,18 @@ class AnalyseController extends Controller
         $analyse->description = $request->get('description');
         $analyse->body = $request->get('body');
         $analyse->usage = $request->get('usage');
-        $analyse->visibility = $request->get('name');
         $theme_name = theme::where('name', $request->get('theme_name'))->first();
         if($theme_name == null){
             error_log("missing theme");
             abort(400, "missing theme or theme don't exist");
         }
+        $analyse->theme_name = $request->get('theme_name');
+        error_log($analyse->visibility);
         $analyse->save();
         
         $analyse = analysis::where('name')->first();
 
-        createAnalysisColumn($request, $id);
+        AnalyseController::createAnalysisColumn($request, $analyse->id);
 
         return response($analyse)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
     }

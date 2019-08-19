@@ -23,6 +23,7 @@ class CreateAnalysesTable extends Migration
             $table->mediumText('description');
             $table->mediumText('body');
             $table->string('visibility');
+            $table->string('theme_name');
             $table->timestamps();
         });
     }
