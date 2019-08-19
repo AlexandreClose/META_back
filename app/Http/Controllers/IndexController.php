@@ -638,8 +638,6 @@ class IndexController extends Controller
 
     private function getLiteIndexInflux(Request $request)
     {
-
-
         $host = env("INFLUXDB_HOST");
         $port = env("INFLUXDB_PORT");
         $dbname = env("INFLUXDB_DBNAME");
@@ -702,5 +700,55 @@ class IndexController extends Controller
         }
         $result = ["hits" => ["total" => sizeof($result), "hits" => $hits]];
         return $result;
+    }
+
+    public function getLast(Request $request)
+    {
+        $name = $request->get('name');
+        $datasets = DatasetController::getAllAccessibleDatasets($request, $request->get('user'), false);
+        $canAccess = false;
+        $datasetId = null;
+        $dataset = null;
+
+        foreach ($datasets as $data) {
+            if ($name === $data->databaseName) {
+                $dataset = $data;
+                $canAccess = true;
+                break;
+            }
+        }
+
+        if (!$canAccess) {
+            abort(403);
+        }
+
+        $columns = DatasetController::getAllAccessibleColumnsFromADataset($request, dataset::where('databaseName', $name)->first());
+        $columnFilter = [];
+        $canAccess = false;
+
+        if ($request->get('columns') != null) {
+            foreach ($columns as $column) {
+                if (in_array($column->name, $request->get('columns'))) {
+                    array_push($columnFilter, $column->name);
+                    $canAccess = true;
+                }
+            }
+        }
+        if (!$canAccess) {
+            abort(403);
+        }
+        $host = env("INFLUXDB_HOST");
+        $port = env("INFLUXDB_PORT");
+        $dbname = env("INFLUXDB_DBNAME");
+        $client = new Client($host, $port);
+
+        $select = 'last("' . implode('"), last("', $request["columns"]) . '")';
+        $from = $request["name"];
+        $groupBy = '"' . implode('", "', explode("+", $request["groupby"])) . '"';
+
+        /** @noinspection PhpUnhandledExceptionInspection */
+        $result = $client->query($dbname, 'SELECT ' . $select . ' FROM ' . $from . ' GROUP BY ' . $groupBy)->getPoints();
+
+        return response($result, 200);
     }
 }
