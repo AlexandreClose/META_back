@@ -224,7 +224,7 @@ class DatasetController extends Controller
         $datasets = DatasetController::getAllAccessibleDatasets($request);
 
         $filter_datasets = [];
-        foreach($dataset as $datasets){
+        foreach($datasets as $dataset){
             if($dataset['update_frequency'] != 'Production unique' && $dataset['GEOJSON'] == '0'){
                 array_push($filter_datasets, $dataset);
             }

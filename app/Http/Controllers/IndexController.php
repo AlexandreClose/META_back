@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\column;
 
+use App\Http\Services\IndexService;
+use App\Http\Services\InfluxDBService;
 use DateTime;
 use Elasticsearch;
 use App\Http\Functions;
@@ -327,39 +329,14 @@ class IndexController extends Controller
 
     public function getLiteIndex(Request $request)
     {
-        $name = $request->get('name');
-        $datasets = DatasetController::getAllAccessibleDatasets($request, $request->get('user'), false);
-        $canAccess = false;
-        $datasetId = null;
-        $dataset = null;
-
-        foreach ($datasets as $data) {
-            if ($name === $data->databaseName) {
-                $dataset = $data;
-                $canAccess = true;
-                break;
-            }
-        }
-
-        if (!$canAccess) {
+        $checkRights = (new IndexService)->checkRights($request);
+        if ($checkRights == false) {
             abort(403);
+        } else {
+            $columnFilter = $checkRights;
         }
 
-        $columns = DatasetController::getAllAccessibleColumnsFromADataset($request, dataset::where('databaseName', $name)->first());
-        $columnFilter = [];
-        $canAccess = false;
-
-        if ($request->get('columns') != null) {
-            foreach ($columns as $column) {
-                if (in_array($column->name, $request->get('columns'))) {
-                    array_push($columnFilter, $column->name);
-                    $canAccess = true;
-                }
-            }
-        }
-        if (!$canAccess) {
-            abort(403);
-        }
+        $name = $request->get("name");
         if ((bool)dataset::select('realtime')->where('databaseName', $name)->first()["realtime"]) {
             $request["columns"] = $columnFilter;
             $data = $this::getLiteIndexInflux($request);
@@ -539,49 +516,21 @@ class IndexController extends Controller
 
     public function getInPointInPolygon(Request $request)
     {
-        $name = $request->get('name');
+        $checkRights = (new IndexService)->checkRights($request);
+        if ($checkRights == false) {
+            abort(403);
+        } else {
+            $columns = $checkRights;
+        }
+
+
         $nameFilter = $request->get('nameFilter');
-        $doStats = (bool)$request->get('stats')["do_stats"];
-        $doJoin = (bool)$request->get('join')["do_join"];
-        $datasets = DatasetController::getAllAccessibleDatasets($request, $request->get('user'), false);
-        $canAccess = false;
-        $datasetId = null;
-        $dataset = null;
-
-        foreach ($datasets as $data) {
-            if ($name === $data->databaseName or $nameFilter === $data->databaseName) {
-                $dataset = $data;
-                $canAccess = true;
-                break;
-            }
-        }
-        if (!$canAccess) {
-            abort(403);
-        }
-
-        $columns = [];
-        $AccessibleColumns = DatasetController::getAllAccessibleColumnsFromADataset($request, dataset::where('databaseName', $name)->first());
-        $canAccess = false;
-
-
-        $columnToTest = $request->get('columns');
-        array_push($columnToTest, $request->get('targetColumn'));
-        if ($request->get('columns') != null) {
-            foreach ($AccessibleColumns as $column) {
-                if (in_array($column->name, $columnToTest)) {
-                    array_push($columns, $column->name);
-                    $canAccess = true;
-                }
-            }
-        }
-        if (!$canAccess) {
-            abort(403);
-        }
 
         $dataFilters = Elasticsearch::search(['index' => $nameFilter, '_source' => $request->get('filterColumn'),
             'size' => $request->get('size'),
             "from" => $request->get('offset')])["hits"]["hits"];
 
+        $doStats = (bool)$request->get('stats')["do_stats"];
         $result = [];
         $keyId = 1;
         foreach ($dataFilters as $dataFilter) {
@@ -596,10 +545,12 @@ class IndexController extends Controller
                 "filter" => ["geo_polygon" => ["geometry.coordinates" => ["points" => $polygon]]]]]];
 
 
+            $name = $request->get('name');
             $data = Elasticsearch::search(['index' => $name, '_source' => $columns,
                 'size' => $request->get('size'),
                 "from" => $request->get('offset'),
                 "body" => $body]);
+
 
             if ($doStats) {
                 foreach ($data["hits"]["hits"] as $element) {
@@ -619,6 +570,7 @@ class IndexController extends Controller
             }
         }
 
+        $doJoin = (bool)$request->get('join')["do_join"];
         if ($doJoin) {
             $subRequest = $request["join"]["request"];
             $subRequest["stats"]["do_stats"] = false;
@@ -638,64 +590,11 @@ class IndexController extends Controller
 
     private function getLiteIndexInflux(Request $request)
     {
-        $host = env("INFLUXDB_HOST");
-        $port = env("INFLUXDB_PORT");
-        $dbname = env("INFLUXDB_DBNAME");
-        $client = new Client($host, $port);
-
-        $select = '"' . implode('","', $request["columns"]) . '"';
-
-        $from = $request["name"];
-
-        $where = "";
-        $startDate = $request->get("start_date");
-        $endDate = $request->get("end_date");
-        if (($startDate and $endDate)) {
-            $where = "WHERE (time > '" . explode("+", $startDate)[0] . "Z' and 
-            time < '" . explode("+", $endDate)[0] . "Z')";
-        }
-
-        /** @noinspection PhpUnhandledExceptionInspection */
-        $result = $client->query($dbname, 'SELECT ' . $select . 'FROM ' . $from . ' ' . $where)->getPoints();
-
-        $weekdays = $request->get("weekdays");
-        if ($weekdays) {
-            $newResult = [];
-            foreach ($result as $element) {
-                try {
-                    $d = new DateTime($element["time"]);
-                } catch (ExceptionAlias $e) {
-                    abort(400);
-                }
-                $weekday = date('w', $d->getTimestamp());
-                if (in_array($weekday, $weekdays)) {
-                    array_push($newResult, $element);
-                }
-            }
-            $result = $newResult;
-        }
-
-        $start_minute = $request->get("start_minute");
-        $end_minute = $request->get("end_minute");
-        if ($start_minute != null and $end_minute != null) {
-            $newResult = [];
-            foreach ($result as $element) {
-                try {
-                    $d = new DateTime($element["time"]);
-                } catch (ExceptionAlias $e) {
-                    abort(400);
-                }
-                $minutes = (date('H', $d->getTimestamp()) * 60) + date('i', $d->getTimestamp());
-                if ($minutes > $start_minute and ($minutes < $end_minute)) {
-                    array_push($newResult, $element);
-                }
-            }
-            $result = $newResult;
-        }
+        $result = (new InfluxDBService)->doFullQuery($request);
 
         $hits = [];
         foreach ($result as $element) {
-            $hit = ["_index" => $from, "_source" => $element];
+            $hit = ["_index" => $request["name"], "_source" => $element];
             array_push($hits, $hit);
         }
         $result = ["hits" => ["total" => sizeof($result), "hits" => $hits]];
@@ -704,50 +603,18 @@ class IndexController extends Controller
 
     public function getLast(Request $request)
     {
-        $name = $request->get('name');
-        $datasets = DatasetController::getAllAccessibleDatasets($request, $request->get('user'), false);
-        $canAccess = false;
-        $datasetId = null;
-        $dataset = null;
-
-        foreach ($datasets as $data) {
-            if ($name === $data->databaseName) {
-                $dataset = $data;
-                $canAccess = true;
-                break;
-            }
-        }
-
-        if (!$canAccess) {
+        if ((new IndexService)->checkRights($request) == false) {
             abort(403);
         }
 
-        $columns = DatasetController::getAllAccessibleColumnsFromADataset($request, dataset::where('databaseName', $name)->first());
-        $columnFilter = [];
-        $canAccess = false;
-
-        if ($request->get('columns') != null) {
-            foreach ($columns as $column) {
-                if (in_array($column->name, $request->get('columns'))) {
-                    array_push($columnFilter, $column->name);
-                    $canAccess = true;
-                }
-            }
-        }
-        if (!$canAccess) {
-            abort(403);
-        }
-        $host = env("INFLUXDB_HOST");
-        $port = env("INFLUXDB_PORT");
-        $dbname = env("INFLUXDB_DBNAME");
-        $client = new Client($host, $port);
+        $client = (new InfluxDBService)->getClient();
 
         $select = 'last("' . implode('"), last("', $request["columns"]) . '")';
         $from = $request["name"];
         $groupBy = '"' . implode('", "', explode("+", $request["groupby"])) . '"';
 
         /** @noinspection PhpUnhandledExceptionInspection */
-        $result = $client->query($dbname, 'SELECT ' . $select . ' FROM ' . $from . ' GROUP BY ' . $groupBy)->getPoints();
+        $result = $client->query(env("INFLUXDB_DBNAME"), 'SELECT ' . $select . ' FROM ' . $from . ' GROUP BY ' . $groupBy)->getPoints();
 
         return response($result, 200);
     }
