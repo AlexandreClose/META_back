@@ -92,7 +92,7 @@ class UserController extends Controller
         if($role == null){
             abort(400, "Role does not exist ! ");
         }
-        $user->role = $postbody["role"];
+        $user->role = $role;
         $user->firstname = $postbody["firstname"];
         $user->lastname = $postbody["lastname"];
         $service = service::where('service',$postbody["service"])->first();
@@ -109,10 +109,6 @@ class UserController extends Controller
         $user->phone = $postbody["phone"];
         $user->tid = $postbody["tid"];
         $user->save();
-
-        return response("success", 200);
-
-
     }
 
     public function addUser(Request $request)
