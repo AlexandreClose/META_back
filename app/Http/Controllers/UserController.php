@@ -75,7 +75,7 @@ class UserController extends Controller
         if (count($request->json()->all())) {
             $postbody = $request->json()->all();
         } else {
-            abort(400);
+            abort(400, "bad json");
         }
 
         //$user = new  user();
@@ -97,12 +97,12 @@ class UserController extends Controller
         $user->lastname = $postbody["lastname"];
         $service = service::where('service',$postbody["service"])->first();
         if($service == null){
-            abort(400);
+            abort(400, "No service or does not exist");
         }
         $user->service = $postbody["service"];
         $direction = direction::where('direction',$postbody["direction"])->first();
         if($direction == null){
-            abort(400);
+            abort(400, "No direction or does not exist");
         }
         $user->direction = $postbody["direction"];
         $user->mail = $postbody["mail"];
