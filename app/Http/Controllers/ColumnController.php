@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Services\ElasticSearchService;
+use App\Http\Services\IndexService;
+use App\Http\Services\InfluxDBService;
 use DateTime;
 use Elasticsearch\ClientBuilder;
 use Exception as ExceptionAlias;
@@ -109,89 +112,36 @@ class ColumnController extends Controller
 
     public function getStats(Request $request)
     {
+        $checkRights = (new IndexService)->checkRights($request);
+        if ($checkRights == false) {
+            $columns = null;
+            abort(403);
+        } else {
+            $columns = $checkRights;
+        }
+
         $name = $request->get('name');
-        $datasets = DatasetController::getAllAccessibleDatasets($request, $request->get('user'), false);
-        $canAccess = false;
-        $datasetId = null;
-        $dataset = null;
-
-        foreach ($datasets as $data) {
-            if ($name === $data->databaseName) {
-                $dataset = $data;
-                $canAccess = true;
-                break;
-            }
-        }
-        if (!$canAccess) {
-            abort(403);
-        }
-
-        $AccessibleColumns = DatasetController::getAllAccessibleColumnsFromADataset($request, dataset::where('databaseName', $name)->first());
-
-        $columns = [];
-        $canAccess = false;
-
-        if ($request->get('columns') != null) {
-            foreach ($AccessibleColumns as $column) {
-                if (in_array($column->name, $request->get('columns'))) {
-                    array_push($columns, $column->name);
-                    $canAccess = true;
-                }
-            }
-        }
-        if (!$canAccess) {
-            abort(403);
-        }
-
         if ((bool)dataset::select('realtime')->where('databaseName', $name)->first()["realtime"]) {
             $request["columns"] = $columns;
             $data = $this::getStatsInflux($request);
             return response($data, 200);
         }
 
-        $body = [];
-        $date_col = $request->get('date_col');
-        $group_by_column = $request->get('groupby');
-        $start_date = $request->get('start_date');
-        $end_date = $request->get('end_date');
-        $week_day = $request->get('weekdays');
-        $emptyDayQuery = "doc['" . $date_col . "'].date.dayOfWeek == ";
-        $fullDayQuery = "";
-        $start_minute = $request->get('start_minute');
-        $end_minute = $request->get('end_minute');
-        if ($start_minute != null && $start_minute != null) {
-            $minuteQuery = "(doc['" . $date_col . "'].date.getMinuteOfDay() >= " . $start_minute . " && doc['" . $date_col . "'].date.getMinuteOfDay() < " . $end_minute . ")";
-        }
-        if ($week_day != null) {
-            foreach ($week_day as $day) {
-                $fullDayQuery .= $emptyDayQuery . $day . " || ";
-            }
-            $fullDayQuery = str_replace(" || )", ")", "(" . $fullDayQuery . ")");
-        }
 
+        $ElasticSearchService = new ElasticSearchService($request);
 
-        if ($date_col != null) {
-            $body = ['sort' => [[$date_col => ['order' => 'desc']]]];
-            if ($date_col != null && $start_date != null && $end_date == null) {
-                $body["query"]["bool"]["must"] = ['range' => [$date_col => ['gte' => $start_date, 'lte' => $start_date]]];
-            } elseif ($date_col != null && $start_date != null && $end_date != null) {
-                $body["query"]["bool"]["must"] = ['range' => [$date_col => ['gte' => $start_date, 'lte' => $end_date]]];
-            }
+        $minuteQuery = $ElasticSearchService->getMinuteFilter();
+        $fullDayQuery = $ElasticSearchService->getWeekdayFilter();
 
-            if ($week_day != null && ($start_minute != null && $end_minute != null)) {
-                $body["query"]["bool"]["filter"] = ['script' => ['script' => "(" . $fullDayQuery . " && " . $minuteQuery . ")"]];
-            } elseif ($week_day != null && ($start_minute == null && $end_minute == null)) {
-                $body["query"]["bool"]["filter"] = ['script' => ['script' => $fullDayQuery]];
-            } elseif ($week_day == null && ($start_minute != null && $end_minute != null)) {
-                $body["query"]["bool"]["filter"] = ['script' => ['script' => $minuteQuery]];
-            }
-        }
+        $body = $ElasticSearchService->getTimeFilter([],$minuteQuery,$fullDayQuery);
+
 
         $aggs = [];
         foreach ($columns as $column) {
             $aggs[$column] = ["stats" => ["field" => $column]];
         }
 
+        $group_by_column = $request->get('groupby');
         if ($group_by_column) {
             $body["aggs"] = ["codes" => ["terms" => ["field" => $group_by_column, "size" => 10000], "aggs" => $aggs]];
         } else {
@@ -207,60 +157,7 @@ class ColumnController extends Controller
 
     private function getStatsInflux(Request $request)
     {
-        $host = env("INFLUXDB_HOST");
-        $port = env("INFLUXDB_PORT");
-        $dbname = env("INFLUXDB_DBNAME");
-        $client = new Client($host, $port);
-
-        $select = '"' . implode('","', $request["columns"]) . '"';
-
-        $from = $request["name"];
-
-        $where = "";
-        $startDate = $request->get("start_date");
-        $endDate = $request->get("end_date");
-        if (($startDate and $endDate)) {
-            $where = "WHERE (time > '" . explode("+", $startDate)[0] . "Z' and 
-            time < '" . explode("+", $endDate)[0] . "Z')";
-        }
-
-        /** @noinspection PhpUnhandledExceptionInspection */
-        $result = $client->query($dbname, 'SELECT ' . $select . 'FROM ' . $from . ' ' . $where)->getPoints();
-
-        $weekdays = $request->get("weekdays");
-        if ($weekdays) {
-            $newResult = [];
-            foreach ($result as $element) {
-                try {
-                    $d = new DateTime($element["time"]);
-                } catch (ExceptionAlias $e) {
-                    abort(400);
-                }
-                $weekday = date('w', $d->getTimestamp());
-                if (in_array($weekday, $weekdays)) {
-                    array_push($newResult, $element);
-                }
-            }
-            $result = $newResult;
-        }
-
-        $start_minute = $request->get("start_minute");
-        $end_minute = $request->get("end_minute");
-        if ($start_minute != null and $end_minute != null) {
-            $newResult = [];
-            foreach ($result as $element) {
-                try {
-                    $d = new DateTime($element["time"]);
-                } catch (ExceptionAlias $e) {
-                    abort(400);
-                }
-                $minutes = (date('H', $d->getTimestamp()) * 60) + date('i', $d->getTimestamp());
-                if ($minutes > $start_minute and ($minutes < $end_minute)) {
-                    array_push($newResult, $element);
-                }
-            }
-            $result = $newResult;
-        }
+        $result = (new InfluxDBService)->doFullQuery($request);
 
         $column = ["pivot" => $request->get("groupby"), "isDate" => false, "data" => $request["columns"]];
         $stats = (new IndexController)->do_stats($column, $result);
