@@ -10,24 +10,40 @@ use Illuminate\Http\Request;
 
 class IndexService
 {
-    public function checkRights(Request $request)
+    public function checkRights(Request $request, bool $validate)
+    {
+        $dataset = $this->checkRightsOnDataset($request, $validate);
+        $columns = $this->checkRightsOnColumns($request);
+        if (!($dataset and $columns)) {
+            return false;
+        }
+        return $columns;
+    }
+
+    public function checkRightsOnDataset(Request $request, bool $validate)
     {
         $name = $request->get('name');
-        $datasets = DatasetController::getAllAccessibleDatasets($request, $request->get('user'), false);
+        $datasets = DatasetController::getAllAccessibleDatasets($request, $request->get('user'), $validate);
         $canAccess = false;
         $datasetId = null;
         $dataset = null;
 
         foreach ($datasets as $data) {
             if ($name === $data->databaseName) {
+                $datasetId = $dataset->id;
                 $canAccess = true;
                 break;
             }
         }
         if (!$canAccess) {
-            abort(false);
+            return (false);
         }
+        return $dataset;
+    }
 
+    public function checkRightsOnColumns(Request $request)
+    {
+        $name = $request->get('name');
         $AccessibleColumns = DatasetController::getAllAccessibleColumnsFromADataset($request, dataset::where('databaseName', $name)->first());
 
         $columns = [];
@@ -41,9 +57,8 @@ class IndexService
             }
         }
         if (!$canAccess) {
-            abort(false);
+            return (false);
         }
-
         return $columns;
     }
 }

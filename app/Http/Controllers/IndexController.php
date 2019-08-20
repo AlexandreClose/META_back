@@ -32,25 +32,15 @@ class IndexController extends Controller
 
     public function getAllDateFieldsFromAnIndexFromItsName(Request $request, $name)
     {
-        $user = $request->get('user');
-        $datasets = DatasetController::getAllAccessibleDatasets($request, $user, false);
-        $canAccess = false;
-        $datasetId;
-        foreach ($datasets as $dataset) {
-            if ($name === $dataset->databaseName) {
-                $datasetId = $dataset->id;
-                $canAccess = true;
-            }
+        $checkRights = (new IndexService)->checkRightsOnDataset($request, false);
+        if ($checkRights == false) {
+            $columns = null;
+            abort(403);
         }
 
-        $datasets = DatasetController::getAllAccessibleDatasets($request, $user, true);
-        foreach ($datasets as $dataset) {
-            if ($name === $dataset->databaseName) {
-                $datasetId = $dataset->id;
-                $canAccess = true;
-            }
-        }
-        if (!$canAccess) {
+        $checkRights = (new IndexService)->checkRightsOnDataset($request, true);
+        if ($checkRights == false) {
+            $columns = null;
             abort(403);
         }
 
@@ -172,18 +162,12 @@ class IndexController extends Controller
 
     public function getAllAccessibleFieldsFromIndexByName(Request $request, $name)
     {
-        $user = $request->get('user');
-        $canAccess = false;
-        $datasets = DatasetController::getAllAccessibleDatasets($request, $user, false);
-        foreach ($datasets as $dataset) {
-            if ($name === $dataset->databaseName) {
-                $datasetId = $dataset->id;
-                $canAccess = true;
-            }
-        }
-        if (!$canAccess) {
+        $checkRights = (new IndexService)->checkRightsOnDataset($request, false);
+        if ($checkRights == false) {
+            $columns = null;
             abort(403);
         }
+
 
         $data = [
             'index' => $name
@@ -330,7 +314,7 @@ class IndexController extends Controller
 
     public function getLiteIndex(Request $request)
     {
-        $checkRights = (new IndexService)->checkRights($request);
+        $checkRights = (new IndexService)->checkRights($request, false);
         if ($checkRights == false) {
             $columnFilter = null;
             abort(403);
@@ -350,7 +334,7 @@ class IndexController extends Controller
         $minuteQuery = $ElasticSearchService->getMinuteFilter();
         $fullDayQuery = $ElasticSearchService->getWeekdayFilter();
 
-        $body = $ElasticSearchService->getTimeFilter([],$minuteQuery,$fullDayQuery);
+        $body = $ElasticSearchService->getTimeFilter([], $minuteQuery, $fullDayQuery);
 
 
         $data = Elasticsearch::search(['index' => $name, '_source' => $columnFilter,
@@ -490,7 +474,7 @@ class IndexController extends Controller
 
     public function getInPointInPolygon(Request $request)
     {
-        $checkRights = (new IndexService)->checkRights($request);
+        $checkRights = (new IndexService)->checkRights($request, false);
         if ($checkRights == false) {
             abort(403);
         } else {
@@ -577,7 +561,7 @@ class IndexController extends Controller
 
     public function getLast(Request $request)
     {
-        if ((new IndexService)->checkRights($request) == false) {
+        if ((new IndexService)->checkRights($request, false) == false) {
             abort(403);
         }
 

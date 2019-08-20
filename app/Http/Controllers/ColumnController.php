@@ -112,7 +112,7 @@ class ColumnController extends Controller
 
     public function getStats(Request $request)
     {
-        $checkRights = (new IndexService)->checkRights($request);
+        $checkRights = (new IndexService)->checkRights($request, false);
         if ($checkRights == false) {
             $columns = null;
             abort(403);
