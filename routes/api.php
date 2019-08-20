@@ -33,8 +33,14 @@ Route::get('/index/get/{name}/{quantity?}/{offset?}/{date_col?}/{start_date?}/{e
 Route::get('/index/file/{name}', 'IndexController@getIndexFile');
 Route::post('/index/geo', 'IndexController@getIndexFromCoordinatesInShape');
 Route::post('/liteIndex', 'IndexController@getLiteIndex');
+
+//Index routes: Elasticsearch and InfluxDB
 Route::post('/index/join', 'IndexController@join');
 Route::post('/index/fromPolygon','IndexController@getInPointInPolygon');
+
+//Index routes: InfluxDB
+Route::post('/index/last','IndexController@getLast');
+
 
 //Analyse routes : Mysql
 Route::post('/analyse/save', 'AnalyseController@saveAnalyse');
