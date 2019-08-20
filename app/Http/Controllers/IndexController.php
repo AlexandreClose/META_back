@@ -314,139 +314,16 @@ class IndexController extends Controller
 
     public function getLiteIndex(Request $request)
     {
-        $checkRights = (new IndexService)->checkRights($request, false);
-        if ($checkRights == false) {
-            $columnFilter = null;
-            abort(403);
-        } else {
-            $columnFilter = $checkRights;
-        }
-
-        $name = $request->get("name");
-        if ((bool)dataset::select('realtime')->where('databaseName', $name)->first()["realtime"]) {
-            $request["columns"] = $columnFilter;
-            $data = $this::getLiteIndexInflux($request);
-            return response($data, 200);
-        }
-
-        $ElasticSearchService = new ElasticSearchService($request);
-
-        $minuteQuery = $ElasticSearchService->getMinuteFilter();
-        $fullDayQuery = $ElasticSearchService->getWeekdayFilter();
-
-        $body = $ElasticSearchService->getTimeFilter([], $minuteQuery, $fullDayQuery);
-
-
-        $data = Elasticsearch::search(['index' => $name, '_source' => $columnFilter,
-            'size' => $request->get('size'),
-            "from" => $request->get('offset'),
-            "body" => $body]);
-
-        return response($data, 200);
+        #todo validation
+        return (new IndexService)->liteIndexService($request);
     }
 
-    private function diff_occurrences(array $occurrences, $element, $i)
-    {
-        if (!in_array($element, $occurrences)) {
-            array_push($occurrences, $element);
-            $i++;
-        }
-        return ["Count" => $i, "Occurrences" => $occurrences];
-    }
-
-    public function do_stats(array $columns, array $data)
-    {
-        $stats = [];
-        foreach ($columns["data"] as $column) {
-            $occurrences = [];
-            foreach ($data as $element) {
-                $pathData = $element;
-                $tmp = [];
-                foreach (explode("+", $columns["pivot"]) as $col) {
-                    $pathPivot = $element;
-                    foreach (explode(".", $col) as $field) {
-                        $pathPivot = $pathPivot[$field];
-                    }
-                    array_push($tmp, $pathPivot);
-                }
-                $pathPivot = implode("+", $tmp);
-
-                if ($columns["isDate"]) {
-                    try {
-                        $d = new DateTime($pathPivot);
-                        $pathPivot = date('Y-m-d\TH:i:s.Z\Z', floor($d->getTimestamp() / ($columns["step"] * 3600)) * ($columns["step"] * 3600));
-                    } catch (ExceptionAlias $e) {
-                    }
-                }
-
-                foreach (explode(".", $column) as $field) {
-                    $pathData = $pathData[$field];
-                }
-                $pathData = (float)$pathData;
-                if (!array_key_exists($pathPivot, $stats) or !array_key_exists($column, $stats[$pathPivot]["stats"])) {
-                    if (array_key_exists($pathPivot, $stats)) {
-                        $element = $stats[$pathPivot];
-                    }
-                    $occurrences[$pathPivot] = [];
-                    $result = $this->diff_occurrences($occurrences[$pathPivot], $pathData, 0);
-                    $occurrences[$pathPivot] = $result["Occurrences"];
-
-                    $element["stats"][$column] = [
-                        "min" => $pathData,
-                        "max" => $pathData,
-                        "avg" => $pathData,
-                        "sum" => $pathData,
-                        "count" => 1,
-                        "DiffOcc" => $result["Count"]];
-                    $stats[$pathPivot] = $element;
-
-                } else {
-                    $s = $stats[$pathPivot];
-                    $oldStats = $s["stats"][$column];
-                    array_merge_recursive($stats[$pathPivot], $element);
-
-                    $result = $this->diff_occurrences($occurrences[$pathPivot], $pathData, $oldStats["DiffOcc"]);
-                    $occurrences[$pathPivot] = $result["Occurrences"];
-
-                    $stats[$pathPivot]["stats"][$column] = [
-                        "min" => min($pathData, $oldStats["min"]),
-                        "max" => max($pathData, $oldStats["max"]),
-                        "avg" => ($pathData + $oldStats["avg"]) / 2,
-                        "sum" => ($pathData + $oldStats["sum"]),
-                        "count" => ($oldStats["count"] + 1),
-                        "DiffOcc" => ($result["Count"])];
-                }
-            }
-        }
-        return $stats;
-    }
-
-    private function do_join(int $i, array $data, array $columns)
-    {
-        $newData = [];
-        foreach ($data[$i - 1] as $entry) {
-            $path = $entry;
-            foreach (explode(".", $columns[0]) as $field) {
-                $path = $path[$field];
-            }
-            foreach ($data[$i] as $newEntry) {
-                $newPath = $newEntry;
-                foreach (explode(".", $columns[1]) as $field) {
-                    $newPath = $newPath[$field];
-                }
-                if ($path == $newPath) {
-                    array_push($newData, array_replace($entry, $newEntry));
-                }
-            }
-        }
-        $data[$i] = $newData;
-        return $data;
-    }
 
     public function join(Request $request)
     {
         $data = [];
         $datasets = $request["datasets"];
+        $indexService = new IndexService;
 
         for ($i = 0; $i < sizeof($datasets); $i++) {
             $body = $datasets[$i];
@@ -460,14 +337,14 @@ class IndexController extends Controller
             array_push($data, $temp);
             if ($i >= 1) {
                 $columns = $request["joining"][$i - 1];
-                $data = $this::do_join($i, $data, $columns);
+                $data = $indexService->do_join($i, $data, $columns);
             }
         }
 
         if (!$request["stats"]["do_stats"]) {
             return response($data[sizeof($datasets) - 1], 200);
         } else {
-            return response($this::do_stats($request["stats"]["columns"]
+            return response($indexService->do_stats($request["stats"]["columns"]
                 , $data[sizeof($datasets) - 1]), 200);
         }
     }
@@ -488,9 +365,11 @@ class IndexController extends Controller
             'size' => $request->get('size'),
             "from" => $request->get('offset')])["hits"]["hits"];
 
-        $doStats = (bool)$request->get('stats')["do_stats"];
-        $result = [];
+
         $keyId = 1;
+        $result = [];
+        $indexService = new IndexService();
+        $doStats = (bool)$request->get('stats')["do_stats"];
         foreach ($dataFilters as $dataFilter) {
             $path = $dataFilter["_source"];
             foreach (explode(".", $request->get('targetColumn')) as $field) {
@@ -535,45 +414,20 @@ class IndexController extends Controller
             $subRequest["user"] = $request->get("user");
             $subRequest = new Request($subRequest);
             $subResult = $this::join($subRequest)->getOriginalContent();
-            $result = $this::do_join(1, [$subResult, $result], $request["join"]["joining"])[1];
+            $result = $indexService->do_join(1, [$subResult, $result], $request["join"]["joining"])[1];
         }
         if ($doStats) {
             $columns = $request->get("stats")["columns"];
             $columns["pivot"] = "KeyId";
             $columns["isDate"] = false;
-            $result = $this::do_stats($columns, $result);
+            $result = $indexService->do_stats($columns, $result);
         }
         return response($result);
     }
 
-    private function getLiteIndexInflux(Request $request)
-    {
-        $result = (new InfluxDBService)->doFullQuery($request);
-
-        $hits = [];
-        foreach ($result as $element) {
-            $hit = ["_index" => $request["name"], "_source" => $element];
-            array_push($hits, $hit);
-        }
-        $result = ["hits" => ["total" => sizeof($result), "hits" => $hits]];
-        return $result;
-    }
-
     public function getLast(Request $request)
     {
-        if ((new IndexService)->checkRights($request, false) == false) {
-            abort(403);
-        }
-
-        $client = (new InfluxDBService)->getClient();
-
-        $select = 'last("' . implode('"), last("', $request["columns"]) . '")';
-        $from = $request["name"];
-        $groupBy = '"' . implode('", "', explode("+", $request["groupby"])) . '"';
-
-        /** @noinspection PhpUnhandledExceptionInspection */
-        $result = $client->query(env("INFLUXDB_DBNAME"), 'SELECT ' . $select . ' FROM ' . $from . ' GROUP BY ' . $groupBy)->getPoints();
-
-        return response($result, 200);
+        #todo validation
+        return (new IndexService)->getLast($request);
     }
 }

@@ -160,7 +160,7 @@ class ColumnController extends Controller
         $result = (new InfluxDBService)->doFullQuery($request);
 
         $column = ["pivot" => $request->get("groupby"), "isDate" => false, "data" => $request["columns"]];
-        $stats = (new IndexController)->do_stats($column, $result);
+        $stats = (new IndexService)->do_stats($column, $result);
 
         $hits = [];
         foreach (array_keys($stats) as $key) {
