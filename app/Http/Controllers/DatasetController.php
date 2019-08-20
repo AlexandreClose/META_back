@@ -247,7 +247,7 @@ class DatasetController extends Controller
         LEFT JOIN metacity.user_saved_datasets usd 
         ON ds.id = usd.id 
         WHERE (usd.uuid = '" . $user->uuid . "'
-        OR usd.uuid IS NULL)".($id != null ? " AND ds.id == ".$id : "")."
+        OR usd.uuid IS NULL)".($id != null ? " AND ds.id = ".$id : "")."
          ORDER BY created_date DESC");
         $querybase = "SELECT ds.*, IF(usd.id IS NULL, 0, 1) as saved, IFNULL(usd.favorite, 0) as favorite
         FROM metacity.datasets ds 
@@ -256,7 +256,7 @@ class DatasetController extends Controller
         $where = "WHERE " . ($saved || $favorite ? "usd.uuid = '" . $user->uuid . "'" : "(usd.uuid = '" . $user->uuid . "' OR usd.uuid IS NULL)") . "
         AND ds.validated = " . ($validate ? 0 : 1) . "
         AND ds.conf_ready = 1"
-        .($id != null ? " AND ds.id == ".$id." " : "")."
+        .($id != null ? " AND ds.id = ".$id." " : "")."
         AND upload_ready = 1\n";
         $where = $where . ($saved || $favorite ? "AND usd.favorite = " . ($favorite ? 1 : 0) . "\n" : "");
         //$where = "";
