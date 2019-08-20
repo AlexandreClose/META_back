@@ -233,7 +233,7 @@ class DatasetController extends Controller
         return $filter_datasets;
     }
 
-    public static function getAllAccessibleDatasets(Request $request, user $user = null, bool $validate = false, bool $saved = false, bool $favorite = false)
+    public static function getAllAccessibleDatasets(Request $request, user $user = null, bool $validate = false, bool $saved = false, bool $favorite = false, $id = null)
     {
         if ($user == null) {
             $user = $request->get('user');
@@ -247,7 +247,7 @@ class DatasetController extends Controller
         LEFT JOIN metacity.user_saved_datasets usd 
         ON ds.id = usd.id 
         WHERE (usd.uuid = '" . $user->uuid . "'
-        OR usd.uuid IS NULL)
+        OR usd.uuid IS NULL)".($id != null ? " AND ds.id == ".$id : "")."
         ORDER BY created_date DESC");
         $querybase = "SELECT ds.*, IF(usd.id IS NULL, 0, 1) as saved, IFNULL(usd.favorite, 0) as favorite
         FROM metacity.datasets ds 
@@ -255,7 +255,8 @@ class DatasetController extends Controller
         ON ds.id = usd.id\n";
         $where = "WHERE " . ($saved || $favorite ? "usd.uuid = '" . $user->uuid . "'" : "(usd.uuid = '" . $user->uuid . "' OR usd.uuid IS NULL)") . "
         AND ds.validated = " . ($validate ? 0 : 1) . "
-        AND ds.conf_ready = 1
+        AND ds.conf_ready = 1"
+        .($id != null ? " AND ds.id == ".$id : "")."
         AND upload_ready = 1\n";
         $where = $where . ($saved || $favorite ? "AND usd.favorite = " . ($favorite ? 1 : 0) . "\n" : "");
         //$where = "";
@@ -419,5 +420,10 @@ class DatasetController extends Controller
     {
         $data = DatasetController::getAllAccessibleDatasets($request, $request->get('user'), false, false, true);
         return response($data)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
+    }
+
+    public function getDatasetById(Request $request, $id){
+        $data = DatasetController::getAllAccessibleDatasets($request, $request->get('user'), false, false, false, $id);
+        return response($data[0])->header('Content-Type', 'application/json')->header('charset', 'utf-8');
     }
 }
