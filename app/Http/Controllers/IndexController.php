@@ -318,111 +318,16 @@ class IndexController extends Controller
         return (new IndexService)->liteIndexService($request);
     }
 
-
     public function join(Request $request)
     {
-        $data = [];
-        $datasets = $request["datasets"];
-        $indexService = new IndexService;
-
-        for ($i = 0; $i < sizeof($datasets); $i++) {
-            $body = $datasets[$i];
-            $body["user"] = $request["user"];
-            $subRequest = new Request($body);
-            $results = $this::getLiteIndex($subRequest)->getOriginalContent()["hits"]["hits"];
-            $temp = [];
-            foreach ($results as $result) {
-                array_push($temp, $result["_source"]);
-            }
-            array_push($data, $temp);
-            if ($i >= 1) {
-                $columns = $request["joining"][$i - 1];
-                $data = $indexService->do_join($i, $data, $columns);
-            }
-        }
-
-        if (!$request["stats"]["do_stats"]) {
-            return response($data[sizeof($datasets) - 1], 200);
-        } else {
-            return response($indexService->do_stats($request["stats"]["columns"]
-                , $data[sizeof($datasets) - 1]), 200);
-        }
+        #todo validation
+        return (new IndexService)->joinService($request);
     }
 
     public function getInPointInPolygon(Request $request)
     {
-        $checkRights = (new IndexService)->checkRights($request, false);
-        if ($checkRights == false) {
-            abort(403);
-        } else {
-            $columns = $checkRights;
-        }
-
-
-        $nameFilter = $request->get('nameFilter');
-
-        $dataFilters = Elasticsearch::search(['index' => $nameFilter, '_source' => $request->get('filterColumn'),
-            'size' => $request->get('size'),
-            "from" => $request->get('offset')])["hits"]["hits"];
-
-
-        $keyId = 1;
-        $result = [];
-        $indexService = new IndexService();
-        $doStats = (bool)$request->get('stats')["do_stats"];
-        foreach ($dataFilters as $dataFilter) {
-            $path = $dataFilter["_source"];
-            foreach (explode(".", $request->get('targetColumn')) as $field) {
-                $path = $path[$field];
-            }
-            $polygon = $path[0][0];
-
-            $body = ["query" => ["bool" => [
-                "must" => ["match_all" => (object)null],
-                "filter" => ["geo_polygon" => ["geometry.coordinates" => ["points" => $polygon]]]]]];
-
-
-            $name = $request->get('name');
-            $data = Elasticsearch::search(['index' => $name, '_source' => $columns,
-                'size' => $request->get('size'),
-                "from" => $request->get('offset'),
-                "body" => $body]);
-
-
-            if ($doStats) {
-                foreach ($data["hits"]["hits"] as $element) {
-                    $element = $element["_source"];
-                    $element["KeyId"] = $keyId;
-                    $element["geometry"]["coordinates"] = $polygon;
-                    array_push($result, $element);
-                }
-                $keyId++;
-            } else {
-                $NewData = [];
-                foreach ($data["hits"]["hits"] as $element) {
-                    $element = $element["_source"];
-                    array_push($NewData, $element);
-                }
-                array_push($result, $NewData);
-            }
-        }
-
-        $doJoin = (bool)$request->get('join')["do_join"];
-        if ($doJoin) {
-            $subRequest = $request["join"]["request"];
-            $subRequest["stats"]["do_stats"] = false;
-            $subRequest["user"] = $request->get("user");
-            $subRequest = new Request($subRequest);
-            $subResult = $this::join($subRequest)->getOriginalContent();
-            $result = $indexService->do_join(1, [$subResult, $result], $request["join"]["joining"])[1];
-        }
-        if ($doStats) {
-            $columns = $request->get("stats")["columns"];
-            $columns["pivot"] = "KeyId";
-            $columns["isDate"] = false;
-            $result = $indexService->do_stats($columns, $result);
-        }
-        return response($result);
+        #todo validation
+        return (new IndexService)->getInPointInPolygonService($request);
     }
 
     public function getLast(Request $request)
