@@ -424,6 +424,6 @@ class DatasetController extends Controller
 
     public function getDatasetById(Request $request, $id){
         $data = DatasetController::getAllAccessibleDatasets($request, $request->get('user'), false, false, false, $id);
-        return response($data[0])->header('Content-Type', 'application/json')->header('charset', 'utf-8');
+        return response($data)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
     }
 }
