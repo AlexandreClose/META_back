@@ -1,4 +1,6 @@
-<?php
+<?php /** @noinspection PhpUnusedAliasInspection */
+
+/** @noinspection PhpUndefinedClassInspection */
 
 
 namespace App\Http\Services;
@@ -10,7 +12,7 @@ use Elasticsearch;
 
 class ColumnService
 {
-    public function getStatsService(Request $request)
+    public static function getStatsService(Request $request)
     {
         $checkRights = (new IndexService)->checkRights($request, false);
         if ($checkRights == false) {
@@ -22,19 +24,19 @@ class ColumnService
 
         $name = $request->get('name');
         if ((bool)dataset::select('realtime')->where('databaseName', $name)->first()["realtime"]) {
-            $data = $this::getStatsInflux($request);
+            $data = ColumnService::getStatsInflux($request);
         } else {
-            $data = $this::getStatsElastic($request);
+            $data = ColumnService::getStatsElastic($request);
         }
         return response($data, 200);
     }
 
-    private function getStatsInflux(Request $request)
+    private static function getStatsInflux(Request $request)
     {
         $result = (new InfluxDBService)->doFullQuery($request);
 
         $column = ["pivot" => $request->get("groupby"), "isDate" => false, "data" => $request["columns"]];
-        $stats = (new IndexService)->do_stats($column, $result);
+        $stats = IndexColumnService::do_stats($column, $result);
 
         $hits = [];
         foreach (array_keys($stats) as $key) {
@@ -47,7 +49,7 @@ class ColumnService
         return $result;
     }
 
-    private function getStatsElastic(Request $request)
+    private static function getStatsElastic(Request $request)
     {
 
         $ElasticSearchService = new ElasticSearchService($request);

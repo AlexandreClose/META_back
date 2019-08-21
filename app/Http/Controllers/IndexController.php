@@ -1,4 +1,6 @@
-<?php
+<?php /** @noinspection PhpUnused */
+
+/** @noinspection PhpUndefinedClassInspection */
 
 namespace App\Http\Controllers;
 
@@ -32,13 +34,13 @@ class IndexController extends Controller
 
     public function getAllDateFieldsFromAnIndexFromItsName(Request $request, $name)
     {
-        $checkRights = (new IndexService)->checkRightsOnDataset($request, false);
+        $checkRights = IndexService::checkRightsOnDataset($request, false);
         if ($checkRights == false) {
             $columns = null;
             abort(403);
         }
 
-        $checkRights = (new IndexService)->checkRightsOnDataset($request, true);
+        $checkRights = IndexService::checkRightsOnDataset($request, true);
         if ($checkRights == false) {
             $columns = null;
             abort(403);
@@ -162,7 +164,7 @@ class IndexController extends Controller
 
     public function getAllAccessibleFieldsFromIndexByName(Request $request, $name)
     {
-        $checkRights = (new IndexService)->checkRightsOnDataset($request, false);
+        $checkRights = IndexService::checkRightsOnDataset($request, false);
         if ($checkRights == false) {
             $columns = null;
             abort(403);
@@ -315,19 +317,19 @@ class IndexController extends Controller
     public function getLiteIndex(Request $request)
     {
         #todo validation
-        return (new IndexService)->liteIndexService($request);
+        return IndexService::liteIndexService($request);
     }
 
     public function join(Request $request)
     {
         #todo validation
-        return (new IndexService)->joinService($request);
+        return IndexService::joinService($request);
     }
 
     public function getInPointInPolygon(Request $request)
     {
         #todo validation
-        return (new IndexService)->getInPointInPolygonService($request);
+        return IndexService::getInPointInPolygonService($request);
     }
 
     public function getLast(Request $request)

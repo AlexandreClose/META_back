@@ -114,6 +114,6 @@ class ColumnController extends Controller
     public function getStats(Request $request)
     {
         #todo validation
-        return (new ColumnService)->getStatsService($request);
+        return ColumnService::getStatsService($request);
     }
 }
