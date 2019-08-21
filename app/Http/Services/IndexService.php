@@ -92,19 +92,21 @@ class IndexService
         return response($result);
     }
 
-    public static function checkRights(Request $request, bool $validate)
+    public static function checkRights(Request $request, bool $validate, $name)
     {
         $dataset = IndexService::checkRightsOnDataset($request, $validate);
-        $columns = IndexService::checkRightsOnColumns($request);
+        $columns = IndexService::checkRightsOnColumns($request, $name);
         if (!($dataset and $columns)) {
             return false;
         }
         return $columns;
     }
 
-    public static function checkRightsOnDataset(Request $request, bool $validate)
+    public static function checkRightsOnDataset(Request $request, bool $validate, String $name = null)
     {
-        $name = $request->get('name');
+        if($name == null){
+            $name = $request->get('name');
+        }
         $datasets = DatasetController::getAllAccessibleDatasets($request, $request->get('user'), $validate);
         $canAccess = false;
         $datasetId = null;
