@@ -1,9 +1,8 @@
-<?php
+<?php /** @noinspection PhpUnused */
 
 namespace App\Http\Controllers;
 
 use App\theme;
-use App\user;
 use App\user_theme;
 use App\dataset;
 use App\analysis;
@@ -13,12 +12,12 @@ use Illuminate\Support\Facades\DB;
 
 class ThemeController extends Controller
 {
-    function getAllThemes($quantity = null)
+    function getAllThemes()
     {
         $themes = DB::table('themes')
             ->leftJoin('user_theme', 'user_theme.name', '=', 'themes.name')
             ->select('themes.name', 'themes.description', DB::raw('count(user_theme.uuid) as user_count'))
-            ->groupBy('themes.name')    
+            ->groupBy('themes.name')
             ->get();
         return response($themes)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
     }
