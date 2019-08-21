@@ -1,4 +1,4 @@
-<?php /** @noinspection PhpUnused */
+<?php
 /** @noinspection PhpUnusedAliasInspection */
 
 /** @noinspection PhpUndefinedClassInspection */
@@ -12,7 +12,8 @@ use App\Http\Controllers\DatasetController;
 use DateTime;
 use Exception as ExceptionAlias;
 use Illuminate\Http\Request;
-use Elasticsearch;
+use /** @noinspection PhpUnused */
+    Elasticsearch;
 
 class IndexService
 {

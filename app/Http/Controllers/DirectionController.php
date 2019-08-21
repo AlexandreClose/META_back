@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpUnused */
 
 namespace App\Http\Controllers;
 
@@ -8,7 +8,8 @@ use App\direction;
 
 class DirectionController extends Controller
 {
-    public function getAllDirections(){
+    public function getAllDirections()
+    {
         $directions = DB::table('directions')
             ->leftJoin('users', 'users.direction', 'directions.direction')
             ->select('directions.direction', 'directions.description', DB::raw('count(users.uuid) as user_count'))
@@ -17,9 +18,10 @@ class DirectionController extends Controller
         return $directions;
     }
 
-    public function addDirection(Request $request){
+    public function addDirection(Request $request)
+    {
         $role = $request->get('user')->role;
-        if($role != "Administrateur") {
+        if ($role != "Administrateur") {
             abort(403);
         }
         $name = $request->get('direction');
@@ -30,28 +32,30 @@ class DirectionController extends Controller
         $direction->save();
     }
 
-    public function delDirection(Request $request, $name){
+    public function delDirection(Request $request, $name)
+    {
         $role = $request->get('user')->role;
-        if($role != "Administrateur") {
+        if ($role != "Administrateur") {
             abort(403);
         }
         $direction = direction::where('direction', $name)->first();
-        if($direction == null){
+        if ($direction == null) {
             abort(403);
         }
         $direction->delete();
     }
 
-    public function updateDirection(Request $request){
+    public function updateDirection(Request $request)
+    {
         $role = $request->get('user')->role;
-        if($role != "Administrateur") {
+        if ($role != "Administrateur") {
             abort(403);
         }
         $name = $request->get('direction');
         $newName = $request->get('newName');
         $desc = $request->get('desc');
         $direction = direction::where('direction', $name)->first();
-        if($direction == null){
+        if ($direction == null) {
             abort(403);
         }
         $direction->direction = $newName != null ? $newName : $name;

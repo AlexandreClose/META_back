@@ -1,23 +1,20 @@
 <?php
 
+/** @noinspection PhpUnused */
+
 namespace App\Http\Controllers;
 
 use App\Http\Services\ColumnService;
-use App\Http\Services\ElasticSearchService;
-use App\Http\Services\IndexService;
-use App\Http\Services\InfluxDBService;
-use DateTime;
 use Elasticsearch\ClientBuilder;
-use Exception as ExceptionAlias;
 use Illuminate\Http\Request;
 use App\column;
 use App\dataset;
 use App\theme;
-use App\data_type;
 use App\user;
 use App\colauth_users;
-use Elasticsearch;
-use InfluxDB\Client;
+use /** @noinspection PhpUnusedAliasInspection */
+    Elasticsearch;
+
 
 class ColumnController extends Controller
 {
@@ -29,17 +26,16 @@ class ColumnController extends Controller
         if ($role != "Référent-Métier" && $role != "Administrateur") {
             abort(403);
         }
-        $postbody = "";
+        $postBody = "";
         if (count($request->json()->all())) {
-            $postbody = $request->json()->all();
+            $postBody = $request->json()->all();
         } else {
             error_log("no body in requests");
             abort(400);
         }
 
 
-        $columns = [];
-        foreach ($postbody as $element) {
+        foreach ($postBody as $element) {
             $dataset = dataset::where('id', '=', $element["datasetId"])->first();
             if ($dataset === null) {
                 error_log("no dataset with that id");
@@ -51,15 +47,15 @@ class ColumnController extends Controller
                 abort(400);
             }
 
-            $verif = column::where('dataset_id', '=', $element["datasetId"])->where('name', '=', $element['name'])->get();
-            if (count($verif) > 0) {
+            $check = column::where('dataset_id', '=', $element["datasetId"])->where('name', '=', $element['name'])->get();
+            if (count($check) > 0) {
                 error_log("column already exists");
                 abort(409);
             }
             $column = new column();
             $column->name = $element["name"];
             $column->main = isset($element["main"]) ? $element['main'] : false;
-            /* Now we use directly the datatypes from elasticsearch
+            /* Now we use directly the dataTypes from elasticsearch
             $datatype = data_type::where('name', $element['datatype']);
             if ($datatype == null) {
                 error_log($datatype);

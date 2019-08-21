@@ -1,27 +1,16 @@
-<?php /** @noinspection PhpUnused */
+<?php
+/** @noinspection PhpUnused */
 
 /** @noinspection PhpUndefinedClassInspection */
 
 namespace App\Http\Controllers;
 
-use App\column;
 
-use App\Http\Services\ElasticSearchService;
 use App\Http\Services\IndexService;
-use App\Http\Services\InfluxDBService;
-use DateTime;
-use Elasticsearch;
-use App\Http\Functions;
 use App\dataset;
-use App\user;
-use Elasticsearch\ClientBuilder;
-use Exception as ExceptionAlias;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
-use InfluxDB\Client;
-use PhpParser\Node\Expr\Array_;
-
-use TrayLabs\InfluxDB\Facades\InfluxDB;
+use /** @noinspection PhpUnusedAliasInspection */
+    Elasticsearch;
 
 class IndexController extends Controller
 {
@@ -78,7 +67,6 @@ class IndexController extends Controller
 
         foreach ($datasets as $dataset) {
             if ($name === $dataset->databaseName) {
-                $datasetId = $dataset->id;
                 $canAccess = true;
             }
         }
@@ -135,7 +123,6 @@ class IndexController extends Controller
         $datasets = DatasetController::getAllAccessibleDatasets($request, $user, true);
         foreach ($datasets as $dataset) {
             if ($name === $dataset->databaseName) {
-                $datasetId = $dataset->id;
                 $canAccess = true;
             }
         }
@@ -223,7 +210,7 @@ class IndexController extends Controller
         $user = $request->get('user');
         $datasets = DatasetController::getAllAccessibleDatasets($request, $user, false);
         $canAccess = false;
-        $datasetId;
+        $datasetId = null;
         foreach ($datasets as $dataset) {
             if ($name === $dataset->databaseName) {
                 $datasetId = $dataset->id;

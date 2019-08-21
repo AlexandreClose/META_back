@@ -30,13 +30,13 @@ class ThemeController extends Controller
         }
 
         $theme = new Theme();
-        $postbody = $request->all();
-        if (!$theme->validate($postbody)) {
+        $postBody = $request->all();
+        if (!$theme->validate($postBody)) {
             abort(400);
         }
 
-        $theme->name = $postbody["name"];
-        $theme->description = $postbody["description"];
+        $theme->name = $postBody["name"];
+        $theme->description = $postBody["description"];
         $theme->save();
 
         return response("", 200);
@@ -59,30 +59,31 @@ class ThemeController extends Controller
 
         $theme->delete();
 
-        return response('',200);
+        return response('', 200);
     }
 
-    public function updateTheme(Request $request){
+    public function updateTheme(Request $request)
+    {
         $role = $request->get('user')->role;
-        if($role != "Administrateur") {
+        if ($role != "Administrateur") {
             abort(403);
         }
         $name = $request->get('name');
         $newName = $request->get('newName');
         $desc = $request->get('desc');
         $theme = theme::where('name', $name)->first();
-        if($theme == null){
+        if ($theme == null) {
             abort(403);
         }
 
-        if($newName != null){
+        if ($newName != null) {
             user_theme::where('name', '=', $theme->name)->update(['name' => $newName]);
             dataset::where('themeName', '=', $theme->name)->update(['themeName' => $newName]);
             column::where('themeName', '=', $theme->name)->update(['themeName' => $newName]);
             analysis::where('theme_name', '=', $theme->name)->update(['theme_name' => $newName]);
             $theme->name = $newName;
         }
-        if ($desc != null){
+        if ($desc != null) {
             $theme->description = $desc;
         }
         $theme->save();

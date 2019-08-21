@@ -1,8 +1,8 @@
-<?php
+<?php /** @noinspection PhpUnused */
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+
 use App\data_type;
 
 class DataTypesController extends Controller
