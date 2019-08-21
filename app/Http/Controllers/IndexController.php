@@ -164,7 +164,7 @@ class IndexController extends Controller
 
     public function getAllAccessibleFieldsFromIndexByName(Request $request, $name)
     {
-        $checkRights = IndexService::checkRightsOnDataset($request, false);
+        $checkRights = IndexService::checkRightsOnDataset($request, false, $name);
         if ($checkRights == false) {
             $columns = null;
             abort(403);
