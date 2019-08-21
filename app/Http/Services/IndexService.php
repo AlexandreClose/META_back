@@ -92,7 +92,7 @@ class IndexService
         return response($result);
     }
 
-    public static function checkRights(Request $request, bool $validate, $name)
+    public static function checkRights(Request $request, bool $validate, String $name = null)
     {
         $dataset = IndexService::checkRightsOnDataset($request, $validate);
         $columns = IndexService::checkRightsOnColumns($request, $name);
@@ -125,9 +125,11 @@ class IndexService
         return $datasetId;
     }
 
-    private static function checkRightsOnColumns(Request $request)
+    private static function checkRightsOnColumns(Request $request, String $name = null)
     {
-        $name = $request->get('name');
+        if($name == null){
+            $name = $request->get('name');
+        }
         $AccessibleColumns = DatasetController::getAllAccessibleColumnsFromADataset($request, dataset::where('databaseName', $name)->first());
 
         $columns = [];
