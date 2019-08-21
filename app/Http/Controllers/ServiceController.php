@@ -1,4 +1,4 @@
-<?php
+<?php /** @noinspection PhpUnused */
 
 namespace App\Http\Controllers;
 
@@ -8,7 +8,8 @@ use App\service;
 
 class ServiceController extends Controller
 {
-    public function getAllServices(){
+    public function getAllServices()
+    {
         $services = DB::table('services')
             ->leftJoin('users', 'users.service', 'services.service')
             ->select('services.service', 'services.description', DB::raw('count(users.uuid) as user_count'))
@@ -17,9 +18,10 @@ class ServiceController extends Controller
         return $services;
     }
 
-    public function addService(Request $request){
+    public function addService(Request $request)
+    {
         $role = $request->get('user')->role;
-        if($role != "Administrateur") {
+        if ($role != "Administrateur") {
             abort(403);
         }
         $name = $request->get('service');
@@ -30,28 +32,30 @@ class ServiceController extends Controller
         $service->save();
     }
 
-    public function delService(Request $request, $name){
+    public function delService(Request $request, $name)
+    {
         $role = $request->get('user')->role;
-        if($role != "Administrateur") {
+        if ($role != "Administrateur") {
             abort(403);
         }
         $service = service::where('service', $name)->first();
-        if($service == null){
+        if ($service == null) {
             abort(403);
         }
         $service->delete();
     }
 
-    public function updateService(Request $request){
+    public function updateService(Request $request)
+    {
         $role = $request->get('user')->role;
-        if($role != "Administrateur") {
+        if ($role != "Administrateur") {
             abort(403);
         }
         $name = $request->get('service');
         $newName = $request->get('newName');
         $desc = $request->get('desc');
         $service = service::where('service', $name)->first();
-        if($service == null){
+        if ($service == null) {
             abort(403);
         }
         $service->service = $newName != null ? $newName : $name;

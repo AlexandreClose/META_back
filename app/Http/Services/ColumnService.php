@@ -1,4 +1,4 @@
-<?php /** @noinspection PhpUnusedAliasInspection */
+<?php
 
 /** @noinspection PhpUndefinedClassInspection */
 
@@ -8,7 +8,8 @@ namespace App\Http\Services;
 
 use App\dataset;
 use Illuminate\Http\Request;
-use Elasticsearch;
+use /** @noinspection PhpUnusedAliasInspection */
+    Elasticsearch;
 
 class ColumnService
 {

@@ -60,7 +60,7 @@ class IndexColumnService
                     $oldStats = $s["stats"][$column];
                     array_merge_recursive($stats[$pathPivot], $element);
 
-                    $result =  IndexColumnService::diff_occurrences($occurrences[$pathPivot], $pathData, $oldStats["DiffOcc"]);
+                    $result = IndexColumnService::diff_occurrences($occurrences[$pathPivot], $pathData, $oldStats["DiffOcc"]);
                     $occurrences[$pathPivot] = $result["Occurrences"];
 
                     $stats[$pathPivot]["stats"][$column] = [

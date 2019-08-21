@@ -1,17 +1,17 @@
-<?php
+<?php /** @noinspection PhpUnused */
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+
 use App\data_type;
 
 class DataTypesController extends Controller
 {
-    function getAllDataTypes($quantity = 0){
-        if($quantity == 0){
+    function getAllDataTypes($quantity = 0)
+    {
+        if ($quantity == 0) {
             $dataTypes = data_type::all();
-        }
-        else{
+        } else {
             $dataTypes = data_type::all()->take($quantity);
         }
 
