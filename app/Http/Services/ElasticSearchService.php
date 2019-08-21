@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 
 class ElasticSearchService
 {
-
     private $start_date;
     private $date_col;
     private $end_date;
