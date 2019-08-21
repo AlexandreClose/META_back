@@ -53,6 +53,7 @@ Route::delete('/analyse/{id}', 'AnalyseController@deleteAnalysis');
 Route::get('/datasets/data/validate', 'DatasetController@getDatasetsToValidate');
 Route::get('/datasets/all/{quantity?}/{offset?}', 'DatasetController@getAllDatasets');
 Route::get('/datasets/representations/{id}', 'DatasetController@getRepresentationsOfDataset');
+Route::get('/dataset/{id}', "DatasetController@getDatasetById");
 Route::post('/datasets/update', "DatasetController@updateDataset");
 Route::post('/datasets/upload', 'DatasetController@uploadDataset');
 Route::get('/dataset/{id}/columns', "DatasetController@getAllColumnFromDataset");
