@@ -94,7 +94,7 @@ class IndexService
 
     public static function checkRights(Request $request, bool $validate, String $name = null)
     {
-        $dataset = IndexService::checkRightsOnDataset($request, $validate);
+        $dataset = IndexService::checkRightsOnDataset($request, $validate, $name);
         $columns = IndexService::checkRightsOnColumns($request, $name);
         if (!($dataset and $columns)) {
             return false;
@@ -104,7 +104,7 @@ class IndexService
 
     public static function checkRightsOnDataset(Request $request, bool $validate, String $name = null)
     {
-        if($name == null){
+        if ($name == null) {
             $name = $request->get('name');
         }
         $datasets = DatasetController::getAllAccessibleDatasets($request, $request->get('user'), $validate);
@@ -127,7 +127,7 @@ class IndexService
 
     private static function checkRightsOnColumns(Request $request, String $name = null)
     {
-        if($name == null){
+        if ($name == null) {
             $name = $request->get('name');
         }
         $AccessibleColumns = DatasetController::getAllAccessibleColumnsFromADataset($request, dataset::where('databaseName', $name)->first());
