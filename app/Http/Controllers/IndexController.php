@@ -23,13 +23,13 @@ class IndexController extends Controller
 
     public function getAllDateFieldsFromAnIndexFromItsName(Request $request, $name)
     {
-        $checkRights = IndexService::checkRightsOnDataset($request, false,$name);
+        $checkRights = IndexService::checkRightsOnDataset($request, false, $name);
         if ($checkRights == false) {
             $columns = null;
             abort(403);
         }
 
-        $checkRights = IndexService::checkRightsOnDataset($request, true,$name);
+        $checkRights = IndexService::checkRightsOnDataset($request, true, $name);
         if ($checkRights == false) {
             $columns = null;
             abort(403);
@@ -186,8 +186,6 @@ class IndexController extends Controller
             }
         }
 
-
-        //dd($fields);
 
         $results = [];
 

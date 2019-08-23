@@ -52,7 +52,9 @@ class IndexColumnService
                         "avg" => $pathData,
                         "sum" => $pathData,
                         "count" => 1,
-                        "DiffOcc" => $result["Count"]];
+                        "DiffOcc" => $result["Count"],
+                        "DiffSum" => $pathData,
+                        "DiffAvg" => $pathData];
                     $stats[$pathPivot] = $element;
 
                 } else {
@@ -63,13 +65,20 @@ class IndexColumnService
                     $result = IndexColumnService::diff_occurrences($occurrences[$pathPivot], $pathData, $oldStats["DiffOcc"]);
                     $occurrences[$pathPivot] = $result["Occurrences"];
 
+                    if ($result["isSum"]) {
+                        $oldStats["DiffSum"] += $pathData;
+                        $oldStats["DiffAvg"] = ($oldStats["DiffAvg"] + $pathData) / 2;
+                    }
+
                     $stats[$pathPivot]["stats"][$column] = [
                         "min" => min($pathData, $oldStats["min"]),
                         "max" => max($pathData, $oldStats["max"]),
                         "avg" => ($pathData + $oldStats["avg"]) / 2,
                         "sum" => ($pathData + $oldStats["sum"]),
                         "count" => ($oldStats["count"] + 1),
-                        "DiffOcc" => ($result["Count"])];
+                        "DiffOcc" => ($result["Count"]),
+                        "DiffSum" => $oldStats["DiffSum"],
+                        "DiffAvg" => $oldStats["DiffAvg"]];
                 }
             }
         }
@@ -78,10 +87,12 @@ class IndexColumnService
 
     private static function diff_occurrences(array $occurrences, $element, $i)
     {
+        $isSum = false;
         if (!in_array($element, $occurrences)) {
             array_push($occurrences, $element);
             $i++;
+            $isSum = true;
         }
-        return ["Count" => $i, "Occurrences" => $occurrences];
+        return ["Count" => $i, "isSum" => $isSum, "Occurrences" => $occurrences];
     }
 }
