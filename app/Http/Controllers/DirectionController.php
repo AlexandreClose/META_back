@@ -26,6 +26,7 @@ class DirectionController extends Controller
         }
         $name = $request->get('direction');
         $desc = $request->get('desc');
+        error_log($name);
         $direction = new direction();
         $direction->direction = $name;
         $direction->description = $desc;
