@@ -24,13 +24,9 @@ class IndexController extends Controller
     public function getAllDateFieldsFromAnIndexFromItsName(Request $request, $name)
     {
         $checkRights = IndexService::checkRightsOnDataset($request, false, $name);
-        if ($checkRights == false) {
-            $columns = null;
-            abort(403);
-        }
+        $checkRightsValidate = IndexService::checkRightsOnDataset($request, true, $name);
 
-        $checkRights = IndexService::checkRightsOnDataset($request, true, $name);
-        if ($checkRights == false) {
+        if ($checkRights == false and $checkRightsValidate == false) {
             $columns = null;
             abort(403);
         }
