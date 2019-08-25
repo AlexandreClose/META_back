@@ -107,6 +107,7 @@ class IndexService
         if ($name == null) {
             $name = $request->get('name');
         }
+
         $datasets = DatasetController::getAllAccessibleDatasets($request, $request->get('user'), $validate);
         $canAccess = false;
         $datasetId = null;
@@ -191,7 +192,6 @@ class IndexService
         $name = $request->get("name");
         if ((bool)dataset::select('realtime')->where('databaseName', $name)->first()["realtime"]) {
             $data = IndexService::getLiteIndexInflux($request);
-
         } else {
             $data = IndexService::getLiteIndexElastic($request);
         }
@@ -245,6 +245,7 @@ class IndexService
                 }
             }
         }
+        array_unique($newData, SORT_REGULAR);
         $data[$i] = $newData;
         return $data;
     }

@@ -69,7 +69,6 @@ class IndexColumnService
                         $oldStats["DiffSum"] += $pathData;
                         $oldStats["DiffAvg"] = ($oldStats["DiffAvg"] + $pathData) / 2;
                     }
-
                     $stats[$pathPivot]["stats"][$column] = [
                         "min" => min($pathData, $oldStats["min"]),
                         "max" => max($pathData, $oldStats["max"]),
