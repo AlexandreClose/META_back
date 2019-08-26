@@ -14,6 +14,7 @@ class IndexColumnService
         $stats = [];
         foreach ($columns["data"] as $column) {
             $occurrences = [];
+            $filterOccurrences = [];
             foreach ($data as $element) {
                 $pathData = $element;
                 $tmp = [];
@@ -52,11 +53,29 @@ class IndexColumnService
                         "avg" => $pathData,
                         "sum" => $pathData,
                         "count" => 1,
-                        "DiffOcc" => $result["Count"],
+                        "DiffOcc" => 1,
                         "DiffSum" => $pathData,
                         "DiffAvg" => $pathData];
-                    $stats[$pathPivot] = $element;
 
+                    if (array_key_exists("filter", $columns)) {
+                        $filterData = $element;
+                        foreach (explode(".", $columns["filter"]) as $field) {
+                            $filterData = $filterData[$field];
+                        }
+                        $param = [];
+                        $filterDataResult = IndexColumnService::is_new_filterData($param, $filterData);
+                        $filterOccurrences[$pathPivot] = $filterDataResult[1];
+                        if ($filterDataResult[0]) {
+                            $mergedArray = array_merge_recursive($element["stats"][$column], [
+                                "FilCount" => 1,
+                                "FilSum" => $pathData,
+                                "FilAvg" => $pathData]);
+                            $element["stats"][$column] = $mergedArray;
+                        }
+
+                    }
+
+                    $stats[$pathPivot] = $element;
                 } else {
                     $s = $stats[$pathPivot];
                     $oldStats = $s["stats"][$column];
@@ -78,11 +97,43 @@ class IndexColumnService
                         "DiffOcc" => ($result["Count"]),
                         "DiffSum" => $oldStats["DiffSum"],
                         "DiffAvg" => $oldStats["DiffAvg"]];
+                    if (array_key_exists("filter", $columns)) {
+                        $filterData = $element;
+                        foreach (explode(".", $columns["filter"]) as $field) {
+                            $filterData = $filterData[$field];
+                        }
+                        $param = $filterOccurrences[$pathPivot];
+                        $filterDataResult = IndexColumnService::is_new_filterData($param, $filterData);
+                        $filterOccurrences[$pathPivot] = $filterDataResult[1];
+                        if ($filterDataResult[0]) {
+                            $newArray = [
+                                "FilCount" => $oldStats["FilCount"] + 1,
+                                "FilSum" => $oldStats["FilSum"] + $pathData,
+                                "FilAvg" => $oldStats["FilAvg"]];
+                        } else {
+                            $newArray = [
+                                "FilCount" => $oldStats["FilCount"],
+                                "FilSum" => $oldStats["FilSum"],
+                                "FilAvg" => ($pathData + $oldStats["FilAvg"]) / 2];
+                        }
+                        $mergedArray = array_merge_recursive($stats[$pathPivot]["stats"][$column], $newArray);
+                        $stats[$pathPivot]["stats"][$column] = $mergedArray;
+                    }
                 }
             }
         }
         return $stats;
     }
+
+    private static function is_new_filterData(Array $filter, $filterData)
+    {
+        if (!in_array($filterData, $filter)) {
+            array_push($filter, $filterData);
+            return [true, $filter];
+        }
+        return [false, $filter];
+    }
+
 
     private static function diff_occurrences(array $occurrences, $element, $i)
     {
