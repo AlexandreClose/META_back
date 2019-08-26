@@ -11,10 +11,12 @@ use Illuminate\Support\Facades\Validator;
  */
 class user_theme extends Model
 {
+    /*
     public $table = "user_theme";
     protected $primaryKey = ['uuid','name'];
     public $incrementing = false;
     protected $keyType = 'string';
+    */
 
     private $rules = array(
         'uuid' => 'required|min:3',
