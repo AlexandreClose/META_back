@@ -45,8 +45,9 @@ class IndexController extends Controller
             }
             if (gettype($field_data) == "array" && !array_key_exists('type', $field_data) && $field != "geometry") {
                 foreach ($field_data['properties'] as $inner_field => $inner_field_data) {
-                    array_push($date_fields, $field . "." . $inner_field);
-
+                    if (array_key_exists('type', $field_data) && $field_data['type'] == "date") {
+                        array_push($date_fields, $field);
+                    }
                 }
             }
         }
