@@ -18,7 +18,7 @@ class AnalyseController extends Controller
         $representation = representation_type::where('name', $request->get('representation_type'))->first();
         if($representation == null){
             error_log("missing representation");
-            abort(400, "bad representation");
+            abort(400, "bad representation : "+ $request->get('representation_type'));
         }
         $analyse->representation_type = $request->get('representation_type');
         $analyse->shared = $request->get('shared');
