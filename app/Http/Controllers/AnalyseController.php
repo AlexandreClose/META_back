@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use App\analysis;
 use App\representation_type;
 use App\theme;
-use App\analyse_column;
+use App\analysis_column;
 use App\DatasetController;
 
 class AnalyseController extends Controller
@@ -18,7 +18,7 @@ class AnalyseController extends Controller
         $representation = representation_type::where('name', $request->get('representation_type'))->first();
         if($representation == null){
             error_log("missing representation");
-            abort(400, "bad representation : "+ $request->get('representation_type'));
+            abort(400, "bad representation");
         }
         $analyse->representation_type = $request->get('representation_type');
         $analyse->shared = $request->get('shared');
@@ -26,7 +26,7 @@ class AnalyseController extends Controller
         $analyse->isStats = $request->get('isStats');
         $analyse->owner_id = $user->uuid;
         $analyse->description = $request->get('description');
-        $analyse->body = $request->get('body');
+        $analyse->body = json_encode($request->get('body'));
         $analyse->usage = $request->get('usage');
         $theme_name = theme::where('name', $request->get('theme_name'))->first();
         if($theme_name == null){
@@ -34,10 +34,11 @@ class AnalyseController extends Controller
             abort(400, "missing theme or theme don't exist");
         }
         $analyse->theme_name = $request->get('theme_name');
-        error_log($analyse->visibility);
+
         $analyse->save();
         
-        $analyse = analysis::where('name')->first();
+        $analyse = analysis::where('name', $request->get('name'))->first();
+
 
         AnalyseController::createAnalysisColumn($request, $analyse->id);
 
@@ -48,15 +49,22 @@ class AnalyseController extends Controller
         $user = $request->get('user');
         $analyse = analysis::where('id', $id);
         $analysis_columns = [];
-        $analysis_columns_data = json_decode($request->get('analysis_columns'));
-        foreach($analysis_columns as $analysis_column_data){
-            $analysis_column = new analyse_column();
-            $analysis_column->field = $analysis_column_data['field'];
-            $analysis_column->analysis_id = $analysis_column_data['analysis_id'];
-            $analysis_column->databaseName = $analysis_column_data['databaseName'];
-            $analysis_column->color_code = $analysis_column_data['color_code'];
-            $analysis_column->usage = $analysis_column_data['usage'];
-            $analysis_column->save();
+        $analysis_columns = $request->get('analysis_column');
+        error_log('FOR');
+        for($i = 0; $i < count($analysis_columns); $i++){
+            $analysis_column = new analysis_column();
+            $analysis_column->field = $analysis_columns[$i]['field'];
+            $analysis_column->analysis_id = $id;
+            $analysis_column->databaseName = $analysis_columns[$i]['databaseName'];
+            error_log($analysis_columns[$i]['databaseName']);
+            $analysis_column->color_code = $analysis_columns[$i]['color_code'] == null ? '' : $analysis_columns[$i]['color_code'];
+            error_log($analysis_columns[$i]['usage']);
+            $analysis_column->usage = $analysis_columns[$i]['usage'];
+            try {
+                $analysis_column->save();
+            } catch(Exception $e) {
+                error_log('error');
+            }
         }
     }
 
