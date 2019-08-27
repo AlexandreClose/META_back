@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\dataset;
 use Illuminate\Http\Request;
 use App\analysis;
 use App\representation_type;
 use App\theme;
 use App\analysis_column;
 use App\DatasetController;
+
 
 class AnalyseController extends Controller
 {
@@ -38,7 +40,6 @@ class AnalyseController extends Controller
         $analyse->save();
         
         $analyse = analysis::where('name', $request->get('name'))->first();
-
 
         AnalyseController::createAnalysisColumn($request, $analyse->id);
 
@@ -72,7 +73,7 @@ class AnalyseController extends Controller
         $user = $request->get('user');
         $datasets = DatasetController::getAllAccessibleDatasets($request, $user, false);
         $canAccess = false;
-        
+
         $analysis = analysis::with('fields')->where('id', $id)->first();
         foreach($analysis->fields as $field){
             if(array_search(dataset::where('databaseName', $field->databaseName), $datasets) == null){
@@ -86,7 +87,7 @@ class AnalyseController extends Controller
         $user = $request->get('user');
         $datasets = DatasetController::getAllAccessibleDatasets($request, $user, false);
         $canAccess = false;
-        
+
         $analysis = analysis::where('id', $id)->first();
         if(($analysis->owner_id != $user->uuid && $user->role != "Administrateur")|| $analyse != null){
             abort(403);
@@ -108,7 +109,7 @@ class AnalyseController extends Controller
                 }
             }
         }
-        
+
         return response($analysis)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
     }
 
