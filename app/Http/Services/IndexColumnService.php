@@ -125,16 +125,6 @@ class IndexColumnService
         return $stats;
     }
 
-    private static function is_new_filterData(Array $filter, $filterData)
-    {
-        if (!in_array($filterData, $filter)) {
-            array_push($filter, $filterData);
-            return [true, $filter];
-        }
-        return [false, $filter];
-    }
-
-
     private static function diff_occurrences(array $occurrences, $element, $i)
     {
         $isSum = false;
@@ -144,5 +134,14 @@ class IndexColumnService
             $isSum = true;
         }
         return ["Count" => $i, "isSum" => $isSum, "Occurrences" => $occurrences];
+    }
+
+    private static function is_new_filterData(Array $filter, $filterData)
+    {
+        if (!in_array($filterData, $filter)) {
+            array_push($filter, $filterData);
+            return [true, $filter];
+        }
+        return [false, $filter];
     }
 }
