@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class saved_cards extends Model
+class saved_card extends Model
 {
     
     public function user()
