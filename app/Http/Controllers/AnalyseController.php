@@ -113,6 +113,10 @@ class AnalyseController extends Controller
         return response($analysis)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
     }
 
+    public function getAllAnalysis(Request $request){
+        return response(Analysis::all())->header('Content-Type', 'application/json')->header('charset', 'utf-8');
+    }
+
     public function getAllSavedAnalysis(Request $request){
         $user = $request->get('user');
         $datasets = DatasetController::getAllAccessibleDatasets($request, $user, false);
