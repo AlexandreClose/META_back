@@ -21,8 +21,8 @@ class analysis extends Model
         return $this->belongsTo('App\user', 'owner_id', 'uuid');
     }
 
-    public function fields()
+    public function analysis_columns()
     {
-        return $this->hasMany('App\analysis_columns', 'analysis_id', 'id');
+        return $this->hasMany('App\analysis_column', 'analysis_id', 'id');
     }
 }
