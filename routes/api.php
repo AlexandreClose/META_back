@@ -16,6 +16,7 @@
 //    return $request->user();
 //});
 
+use App\Http\Controllers\AnalyseController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -48,6 +49,7 @@ Route::get('/analyse/get/{id}', 'AnalyseController@getAnalysisFromId');
 Route::get('/analyse/all/{shared?}', 'AnalyseController@getAllAnalysis');
 Route::get('/analyse/saved', 'AnalyseController@getAllSavedAnalysis');
 Route::delete('/analyse/{id}', 'AnalyseController@deleteAnalysis');
+Route::get("/analyse/test",'AnalyseController@getAllAccessibleAnalysis');
 
 //Datasets routes : Mysql
 Route::get('/datasets/data/validate', 'DatasetController@getDatasetsToValidate');

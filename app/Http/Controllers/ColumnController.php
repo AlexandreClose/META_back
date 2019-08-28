@@ -20,7 +20,7 @@ class ColumnController extends Controller
 {
     function createColumn(Request $request)
     {
-        $client = ClientBuilder::create()->setHosts([env("ELASTICSEARCH_HOST") . ":" . env("ELASTICSEARCH_PORT")])->build();
+        $client = ClientBuilder::create()->setHosts([env("ELASTICSEARCH_SERVICE_HOST") . ":" . env("ELASTICSEARCH_SERVICE_PORT")])->build();
 
         $role = $request->get('user')->role;
         if ($role != "Référent-Métier" && $role != "Administrateur") {

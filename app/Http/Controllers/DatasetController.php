@@ -147,7 +147,7 @@ class DatasetController extends Controller
         }
         error_log("last foreach passed");
 
-        $client = ClientBuilder::create()->setHosts([env("ELASTICSEARCH_HOST") . ":" . env("ELASTICSEARCH_PORT")])->build();
+        $client = ClientBuilder::create()->setHosts([env("ELASTICSEARCH_SERVICE_HOST") . ":" . env("ELASTICSEARCH_SERVICE_PORT")])->build();
         $paramsSettings = ['index' => $dataset->databaseName,
             'body' => ["index.max_result_window" => 5000000]];
         $client->indices()->putSettings($paramsSettings);

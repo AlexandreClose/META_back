@@ -2,23 +2,25 @@
 
 namespace App\Http\Controllers;
 
+use App\analysis_column;
 use App\dataset;
+use App\Http\Services\IndexService;
+use App\user_theme;
 use Illuminate\Http\Request;
 use App\analysis;
 use App\representation_type;
 use App\theme;
-use App\analysis_column;
-use App\Http\DatasetController;
 
 
 class AnalyseController extends Controller
 {
-    public function saveAnalyse(Request $request) {
+    public function saveAnalyse(Request $request)
+    {
         $user = $request->get('user');
         $analyse = new analysis();
         $analyse->name = $request->get('name');
         $representation = representation_type::where('name', $request->get('representation_type'))->first();
-        if($representation == null){
+        if ($representation == null) {
             error_log("missing representation");
             abort(400, "bad representation");
         }
@@ -31,14 +33,14 @@ class AnalyseController extends Controller
         $analyse->body = json_encode($request->get('body'));
         $analyse->usage = $request->get('usage');
         $theme_name = theme::where('name', $request->get('theme_name'))->first();
-        if($theme_name == null){
+        if ($theme_name == null) {
             error_log("missing theme");
             abort(400, "missing theme or theme don't exist");
         }
         $analyse->theme_name = $request->get('theme_name');
 
         $analyse->save();
-        
+
         $analyse = analysis::where('name', $request->get('name'))->first();
 
         AnalyseController::createAnalysisColumn($request, $analyse->id);
@@ -46,13 +48,14 @@ class AnalyseController extends Controller
         return response($analyse)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
     }
 
-    public static function createAnalysisColumn($request, $id){
+    public static function createAnalysisColumn($request, $id)
+    {
         $user = $request->get('user');
         $analyse = analysis::where('id', $id);
         $analysis_columns = [];
         $analysis_columns = $request->get('analysis_column');
         error_log('FOR');
-        for($i = 0; $i < count($analysis_columns); $i++){
+        for ($i = 0; $i < count($analysis_columns); $i++) {
             $analysis_column = new analysis_column();
             $analysis_column->field = $analysis_columns[$i]['field'];
             $analysis_column->analysis_id = $id;
@@ -63,73 +66,122 @@ class AnalyseController extends Controller
             $analysis_column->usage = $analysis_columns[$i]['usage'];
             try {
                 $analysis_column->save();
-            } catch(Exception $e) {
+            } catch (Exception $e) {
                 error_log('error');
             }
         }
     }
 
-    public function getAnalysisById(Request $request, $id){
+    public function getAnalysisById(Request $request, $id)
+    {
         $user = $request->get('user');
         $datasets = DatasetController::getAllAccessibleDatasets($request, $user, false);
         $canAccess = false;
 
         $analysis = analysis::with('fields')->where('id', $id)->first();
-        foreach($analysis->fields as $field){
-            if(array_search(dataset::where('databaseName', $field->databaseName), $datasets) == null){
+        foreach ($analysis->fields as $field) {
+            if (array_search(dataset::where('databaseName', $field->databaseName), $datasets) == null) {
                 abort(403);
             }
         }
         return response($analysis)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
     }
 
-    public function deleteAnalysis(Request $request, $id){
+    public function deleteAnalysis(Request $request, $id)
+    {
         $user = $request->get('user');
         $datasets = DatasetController::getAllAccessibleDatasets($request, $user, false);
         $canAccess = false;
 
         $analysis = analysis::where('id', $id)->first();
-        if(($analysis->owner_id != $user->uuid && $user->role != "Administrateur")|| $analyse != null){
+        if (($analysis->owner_id != $user->uuid && $user->role != "Administrateur") || $analyse != null) {
             abort(403);
         }
         $analysis->delete();
     }
 
-    public function getAllAccessibleAnalysis(Request $request, $shared = false){
-        $user = $request->get('user');
-        $datasets = DatasetController::getAllAccessibleDatasets($request, $user, false);
-        $analysis = $user->analysis();
+    private function objectLiteToArray($array, string $key = "name")
+    {
+        $result = [];
+        foreach ($array as $element) {
+            array_push($result, $element[$key]);
+        }
+        return $result;
+    }
 
-        foreach($analysis as $key=>$analyse){
-            foreach($analysis->columns as $column){
-                if(!$shared && (!$analyse->shared || !array_search(dataset::where('id', $column->dataset_id), $datasets))){
-                    unset($analysis[$key]);
-                } else if($shared && !$analyse->shared && !array_search(dataset::where('id', $column->dataset_id), $datasets)){
-                    unset($analysis[$key]);
-                }
+    public function getAllAccessibleAnalysis(Request $request, $shared = false)
+    {
+        $user = $request->get('user');
+        $analysis = analysis::where(function ($query) use ($user) {
+            if ($user["role"] == "Administrateur") {
+                $query->get();
+            } else {
+                $query->where('owner_id', $user["uuid"])
+                    ->orWhere(function ($query) use ($user) {
+                        $query->where('shared', 1)
+                            ->where(function ($query) use ($user) {
+                                $query->where("visibility", "all");
+                            })->orWhere(function ($query) use ($user) {
+                                $query->where("visibility", "worker")
+                                    ->whereIn("theme_name", $this->objectLiteToArray(user_theme::where("uuid", $user["uuid"])->get("name")));
+                            })->orWhere(function ($query) use ($user) {
+                                if ($user["role"] == "Référent-Métier") {
+                                    $query->where("visibility", "job_referent")
+                                        ->whereIn("theme_name", $this->objectLiteToArray(user_theme::where("uuid", $user["uuid"])->get("name")));
+                                }
+                            });
+                    });
+            }
+        })->get();
+
+        $analysis_columns = analysis_column::whereIn("analysis_id", $this->objectLiteToArray($analysis, "id"))->get();
+        $sort_column = [];
+        foreach ($analysis_columns as $column) {
+            if (!array_key_exists($column["analysis_id"], $sort_column)) {
+                $sort_column[$column["analysis_id"]] = ["name" => $column["databaseName"], "columns" => []];
+            }
+
+            array_push($sort_column[$column["analysis_id"]]["columns"], $column["field"]);
+        }
+
+        $validatedID = [];
+        foreach (array_keys($sort_column) as $key) {
+            $columnToCheck = $sort_column[$key]["columns"];
+            $request["columns"] = $columnToCheck;
+            $AccessibleColumns = IndexService::checkRights($request, false, $sort_column[$key]["name"]);
+            if ($analysis_columns != false and count(array_intersect($columnToCheck, $AccessibleColumns)) == count($columnToCheck)) {
+                array_push($validatedID, $key);
             }
         }
 
-        return response($analysis)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
+        $result = [];
+        foreach ($analysis as $analyse) {
+            if (in_array($analyse["id"], $validatedID)) {
+                array_push($result, $analyse);
+            }
+        }
+        return $result;
     }
 
-    public function getAllAnalysis(Request $request){
+    public function getAllAnalysis(Request $request)
+    {
         $analysis = Analysis::with('analysis_columns')->get();
         return response($analysis)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
     }
 
-    public function getAllSavedAnalysis(Request $request){
+    public function getAllSavedAnalysis(Request $request)
+    {
         $user = $request->get('user');
         $datasets = DatasetController::getAllAccessibleDatasets($request, $user, false);
         $analysis = $user->saved_analysis();
-        foreach($analysis as $key=>$analyse){
-            foreach($analysis->columns as $column){
-                if(($user->uuid != $analyse->owner_id && !$analysis->shared) || !array_search(dataset::where('id', $column->dataset_id), $datasets)){
+        foreach ($analysis as $key => $analyse) {
+            foreach ($analysis->columns as $column) {
+                if (($user->uuid != $analyse->owner_id && !$analysis->shared) || !array_search(dataset::where('id', $column->dataset_id), $datasets)) {
                     unset($analysis[$key]);
                 }
             }
         }
-        
+
         return response($analysis)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
     }
 }
