@@ -10,8 +10,6 @@ use Illuminate\Http\Request;
 use App\analysis;
 use App\representation_type;
 use App\theme;
-use App\analysis_column;
-use App\Http\DatasetController;
 
 
 class AnalyseController extends Controller
@@ -42,7 +40,7 @@ class AnalyseController extends Controller
         $analyse->theme_name = $request->get('theme_name');
 
         $analyse->save();
-        
+
         $analyse = analysis::where('name', $request->get('name'))->first();
 
         AnalyseController::createAnalysisColumn($request, $analyse->id);
@@ -57,7 +55,7 @@ class AnalyseController extends Controller
         $analysis_columns = [];
         $analysis_columns = $request->get('analysis_column');
         error_log('FOR');
-        for($i = 0; $i < count($analysis_columns); $i++){
+        for ($i = 0; $i < count($analysis_columns); $i++) {
             $analysis_column = new analysis_column();
             $analysis_column->field = $analysis_columns[$i]['field'];
             $analysis_column->analysis_id = $id;
@@ -68,7 +66,7 @@ class AnalyseController extends Controller
             $analysis_column->usage = $analysis_columns[$i]['usage'];
             try {
                 $analysis_column->save();
-            } catch(Exception $e) {
+            } catch (Exception $e) {
                 error_log('error');
             }
         }
@@ -114,8 +112,8 @@ class AnalyseController extends Controller
     public function getAllAccessibleAnalysis(Request $request, $shared = false)
     {
         $user = $request->get('user');
-        $result = analysis::where(function ($query) use ($user) {
-            if (!$user["role"] == "Administrateur") {
+        $analysis = analysis::where(function ($query) use ($user) {
+            if ($user["role"] == "Administrateur") {
                 $query->get();
             } else {
                 $query->where('owner_id', $user["uuid"])
@@ -134,30 +132,45 @@ class AnalyseController extends Controller
                             });
                     });
             }
-        });
-        $analysis_columns = analysis_column::whereIn("analysis_id", $this->objectLiteToArray($result->get(), "id"))->get();
+        })->get();
+
+        $analysis_columns = analysis_column::whereIn("analysis_id", $this->objectLiteToArray($analysis, "id"))->get();
         $sort_column = [];
         foreach ($analysis_columns as $column) {
-            if (!array_key_exists($column["databaseName"], $sort_column)) {
-                $sort_column[$column["databaseName"]] = [];
+            if (!array_key_exists($column["analysis_id"], $sort_column)) {
+                $sort_column[$column["analysis_id"]] = ["name" => $column["databaseName"], "columns" => []];
             }
-            array_push($sort_column[$column["databaseName"]], $column["field"]);
+
+            array_push($sort_column[$column["analysis_id"]]["columns"], $column["field"]);
         }
 
+        $validatedID = [];
         foreach (array_keys($sort_column) as $key) {
-            $request["columns"] = $sort_column[$key];
-            return IndexService::checkRights($request, false, $key);
+            $columnToCheck = $sort_column[$key]["columns"];
+            $request["columns"] = $columnToCheck;
+            $AccessibleColumns = IndexService::checkRights($request, false, $sort_column[$key]["name"]);
+            if ($analysis_columns != false and count(array_intersect($columnToCheck, $AccessibleColumns)) == count($columnToCheck)) {
+                array_push($validatedID, $key);
+            }
         }
 
-        return $sort_column;
+        $result = [];
+        foreach ($analysis as $analyse) {
+            if (in_array($analyse["id"], $validatedID)) {
+                array_push($result, $analyse);
+            }
+        }
+        return $result;
     }
 
-    public function getAllAnalysis(Request $request){
+    public function getAllAnalysis(Request $request)
+    {
         $analysis = Analysis::with('analysis_columns')->get();
         return response($analysis)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
     }
 
-    public function getAllSavedAnalysis(Request $request){
+    public function getAllSavedAnalysis(Request $request)
+    {
         $user = $request->get('user');
         $datasets = DatasetController::getAllAccessibleDatasets($request, $user, false);
         $analysis = $user->saved_analysis();
