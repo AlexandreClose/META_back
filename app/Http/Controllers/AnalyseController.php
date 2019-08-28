@@ -8,7 +8,7 @@ use App\analysis;
 use App\representation_type;
 use App\theme;
 use App\analysis_column;
-use App\DatasetController;
+use App\Http\DatasetController;
 
 
 class AnalyseController extends Controller
