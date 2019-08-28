@@ -24,7 +24,7 @@ class AnalyseController extends Controller
         }
         $analyse->representation_type = $request->get('representation_type');
         $analyse->shared = $request->get('shared');
-        $analyse->visibility = $request->get('visibility');
+        $analyse->visibility = $request->get('visibility') != null ? $request->get('visibility') : 'all';
         $analyse->isStats = $request->get('isStats');
         $analyse->owner_id = $user->uuid;
         $analyse->description = $request->get('description');
