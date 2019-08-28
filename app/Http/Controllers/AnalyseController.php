@@ -114,7 +114,8 @@ class AnalyseController extends Controller
     }
 
     public function getAllAnalysis(Request $request){
-        return response(Analysis::all())->header('Content-Type', 'application/json')->header('charset', 'utf-8');
+        $analysis = Analysis::with('analysis_columns')->get();
+        return response($analysis)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
     }
 
     public function getAllSavedAnalysis(Request $request){
