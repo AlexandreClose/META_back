@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\analysis;
+use App\colauth_users;
+use App\user_theme;
 use Elasticsearch\ClientBuilder;
 use http\Env\Response;
 use Illuminate\Http\Request;
@@ -215,12 +218,13 @@ class DatasetController extends Controller
         return response($data)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
     }
 
-    public function getFilterDatasets(Request $request){
+    public function getFilterDatasets(Request $request)
+    {
         $datasets = DatasetController::getAllAccessibleDatasets($request);
 
         $filter_datasets = [];
-        foreach($datasets as $dataset){
-            if($dataset['update_frequency'] != 'Production unique' && $dataset['GEOJSON'] == '0'){
+        foreach ($datasets as $dataset) {
+            if ($dataset['update_frequency'] != 'Production unique' && $dataset['GEOJSON'] == '0') {
                 array_push($filter_datasets, $dataset);
             }
         }
@@ -228,88 +232,57 @@ class DatasetController extends Controller
         return $filter_datasets;
     }
 
-    public static function getAllAccessibleDatasets(Request $request, user $user = null, bool $validate = false, bool $saved = false, bool $favorite = false, $id = null)
+    private static function objectLiteToArray($array, string $key = "name")
+    {
+        $result = [];
+        foreach ($array as $element) {
+            array_push($result, $element[$key]);
+        }
+        return $result;
+    }
+
+    public static function getAllAccessibleDatasets(Request $request, user $user = null, bool $validate = false, bool $saved = false, bool $favorite = false, int $id = null)
     {
         if ($user == null) {
             $user = $request->get('user');
         }
-        $themes = $user->themes;
-        $role = $user->role;
-        $directdatasets = DB::select("SELECT ds.*, IF(usd.id IS NULL, 0, 1) as saved, IFNULL(usd.favorite, 0) as favorite
-        FROM metacity.datasets ds 
-        JOIN metacity.auth_users au
-        ON au.id = ds.id
-        LEFT JOIN metacity.user_saved_datasets usd 
-        ON ds.id = usd.id 
-        WHERE (usd.uuid = '" . $user->uuid . "'
-        OR usd.uuid IS NULL)".($id != null ? " AND ds.id = ".$id : "")."
-         ORDER BY created_date DESC");
-        $querybase = "SELECT ds.*, IF(usd.id IS NULL, 0, 1) as saved, IFNULL(usd.favorite, 0) as favorite
-        FROM metacity.datasets ds 
-        LEFT JOIN metacity.user_saved_datasets usd 
-        ON ds.id = usd.id\n";
-        $where = "WHERE " . ($saved || $favorite ? "usd.uuid = '" . $user->uuid . "'" : "(usd.uuid = '" . $user->uuid . "' OR usd.uuid IS NULL)") . "
-        AND ds.validated = " . ($validate ? 0 : 1) . "
-        AND ds.conf_ready = 1"
-        .($id != null ? " AND ds.id = ".$id." " : "")."
-        AND upload_ready = 1\n";
-        $where = $where . ($saved || $favorite ? "AND usd.favorite = " . ($favorite ? 1 : 0) . "\n" : "");
-        //$where = "";
-        switch ($user->role) {
-            case "Administrateur":
-                $datasets = [];
-                break;
-            case "Référent-Métier":
-                $where = $where . "AND ((ds.visibility IN ('worker', 'job_referent') AND ds.themeName = '" . $user->theme . "') OR ds.visibility = 'all')\n";
-                $datasets = $directdatasets;
-                $datasets = array_merge($datasets, (DB::select("SELECT ds.*, IF(usd.id IS NULL, 0, 1) as saved, IFNULL(usd.favorite, 0) as favorite
-                                            FROM (SELECT dsi.* 
-                                            FROM metacity.datasets dsi 
-                                            JOIN metacity.columns c 
-                                            ON c.dataset_id = dsi.id 
-                                            LEFT OUTER JOIN metacity.colauth_users 
-                                            ON c.id = colauth_users.id 
-                                            WHERE colauth_users.uuid = '" . $user->uuid . "'
-                                            OR (colauth_users.uuid  IS NULL 
-                                            AND (c.visibility IN ('worker', 'job_referent') AND c.themeName = '" . $user->theme . "') 
-                                            OR c.visibility = 'all')
-                                            GROUP BY dsi.id) ds 
-                LEFT JOIN metacity.user_saved_datasets usd 
-                ON ds.id = usd.id\n" . $where . "ORDER BY created_date DESC")));
-                break;
-            case "Utilisateur":
-                $where = $where . "AND ((ds.visibility IN ('worker') AND ds.themeName = '" . $user->theme . "') OR ds.visibility = 'all')\n";
-                $datasets = $directdatasets;
-                $datasets = array_merge($datasets, (DB::select("SELECT ds.*, IF(usd.id IS NULL, 0, 1) as saved, IFNULL(usd.favorite, 0) as favorite
-                    FROM (SELECT dsi.* 
-                                            FROM metacity.datasets dsi 
-                                            JOIN metacity.columns c 
-                                            ON c.dataset_id = dsi.id 
-                                            LEFT OUTER JOIN metacity.colauth_users 
-                                            ON c.id = colauth_users.id 
-                                            WHERE colauth_users.uuid = '" . $user->uuid . "'
-                                            OR (colauth_users.uuid  IS NULL 
-                                            AND (c.visibility IN ('worker') AND c.themeName = '" . $user->theme . "') 
-                                            OR c.visibility = 'all')
-                                            GROUP BY dsi.id) ds 
-                    LEFT JOIN metacity.user_saved_datasets usd 
-                    ON ds.id = usd.id\n" . $where . "ORDER BY created_date DESC")));
-                break;
-            default:
-                $datasets = [];
-                return $datasets;
+
+        $datasets = dataset::where(function ($query) use ($user) {
+            if ($user["role"] == "Administrateur") {
+                $query->get();
+            } else {
+                $userThemes = DatasetController::objectLiteToArray(user_theme::where("uuid", $user["uuid"])->get("name"));
+
+                $idColumnsByAuth = DatasetController::objectLiteToArray(colauth_users::where("uuid", $user["uuid"])->get("id"), "id");
+                $idColumnsByVisibility = DatasetController::objectLiteToArray(column::where(function ($query) use ($user, $userThemes) {
+                    $query->where("visibility", "all");
+                    $query->orWhere("visibility", "worker")->whereIn("themeName", $userThemes);
+                    if ($user["role"] == "Référent-Métier") {
+                        $query->orWhere("visibility", "job_referent")->whereIn("themeName", $userThemes);
+                    }
+                })->get("id"), "id");
+
+                $idDatasetByAuth = DatasetController::objectLiteToArray(auth_users::where("uuid", $user["uuid"])->get("id"), "id");
+                $idDatasetByIdColumns = DatasetController::objectLiteToArray(column::whereIn("id", array_merge_recursive($idColumnsByAuth, $idColumnsByVisibility))->get("dataset_id"), "dataset_id");
+
+                $query->whereIn("id", array_merge_recursive($idDatasetByAuth, $idDatasetByIdColumns));
+                $query->orWhere("visibility", "all");
+                $query->orWhere("visibility", "worker")->whereIn("themeName", $userThemes);
+                if ($user["role"] == "Référent-Métier") {
+                    $query->orWhere("visibility", "job_referent")->whereIn("themeName", $userThemes);
+                }
+            }
+        })->where("validated", !$validate)
+            ->where(function ($query) use ($user, $saved, $favorite) {
+                if ($saved) {
+                    $query->whereIn("id", DatasetController::objectLiteToArray(user_saved_dataset::where("uuid", $user["uuid"])
+                        ->where("favorite", $favorite)->get("id"), "id"));
+                }
+            });
+        if ($id != null) {
+            $datasets->where("id", $id);
         }
-        $where = $where . "ORDER BY created_date DESC";
-        $query = $querybase . $where;
-        //error_log($query);
-        $datasets = array_merge($datasets, DB::select($query));
-        foreach ($datasets as $dataset) {
-            $fromBase = Dataset::where('id', $dataset->id)->first();
-            //dd($dataset);
-            $dataset->representations = $fromBase->representations;
-            $dataset->tags = $fromBase->tags;
-        }
-        return $datasets;
+        return ($datasets->get());
     }
 
     public function getRepresentationsOfDataset($id)
@@ -413,11 +386,12 @@ class DatasetController extends Controller
 
     public function getAllAccessibleFavoriteDatasets(Request $request)
     {
-        $data = DatasetController::getAllAccessibleDatasets($request, $request->get('user'), false, false, true);
+        $data = DatasetController::getAllAccessibleDatasets($request, $request->get('user'), false, true, true);
         return response($data)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
     }
 
-    public function getDatasetById(Request $request, $id){
+    public function getDatasetById(Request $request, $id)
+    {
         $data = DatasetController::getAllAccessibleDatasets($request, $request->get('user'), false, false, false, $id);
         return response($data)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
     }
