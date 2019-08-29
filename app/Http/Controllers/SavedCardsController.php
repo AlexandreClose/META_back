@@ -11,7 +11,7 @@ class SavedCardsController extends Controller
         $user = $request->get('user');
         $saved_cards = saved_card::with('analysis')->where('uuid', $user->uuid)->get();
         foreach ($saved_cards as $saved_card) {
-            $saved_card->analysis->analysis_columns = $saved_card->analysis->analysis_columns;
+            $saved_card->analysis->analysis_column = $saved_card->analysis->analysis_columns;
         }
 
         return response($saved_cards)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
