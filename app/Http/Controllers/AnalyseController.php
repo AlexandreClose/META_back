@@ -147,7 +147,7 @@ class AnalyseController extends Controller
             $columnToCheck = $sort_column[$key]["columns"];
             $request["columns"] = $columnToCheck;
             $AccessibleColumns = IndexService::checkRights($request, false, $sort_column[$key]["name"]);
-            if ($analysis_columns != false and count(array_intersect($columnToCheck, $AccessibleColumns)) == count($columnToCheck)) {
+            if ($AccessibleColumns  != false and count(array_intersect($columnToCheck, $AccessibleColumns)) == count($columnToCheck)) {
                 array_push($validatedID, $key);
             }
         }
