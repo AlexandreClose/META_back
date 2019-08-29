@@ -46,10 +46,10 @@ Route::post('/index/last','IndexController@getLast');
 //Analyse routes : Mysql
 Route::post('/analyse/save', 'AnalyseController@saveAnalyse');
 Route::get('/analyse/get/{id}', 'AnalyseController@getAnalysisFromId');
-Route::get('/analyse/all/{shared?}', 'AnalyseController@getAllAnalysis');
+Route::get('/analyse/all', 'AnalyseController@getAllAccessibleAnalysis');
 Route::get('/analyse/saved', 'AnalyseController@getAllSavedAnalysis');
 Route::delete('/analyse/{id}', 'AnalyseController@deleteAnalysis');
-Route::get("/analyse/test",'AnalyseController@getAllAccessibleAnalysis');
+
 
 //Datasets routes : Mysql
 Route::get('/datasets/data/validate', 'DatasetController@getDatasetsToValidate');
