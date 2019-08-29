@@ -9,7 +9,10 @@ class SavedCardsController extends Controller
 {
     public function getAllSavedCards(Request $request){
         $user = $request->get('user');
-        $saved_cards = saved_card::where('uuid', $user->uuid)->get();
+        $saved_cards = saved_card::with('analysis')->where('uuid', $user->uuid)->get();
+        foreach ($saved_cards as $saved_card) {
+            $saved_card->analysis->analysis_columns = $saved_card->analysis->analysis_columns;
+        }
 
         return response($saved_cards)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
     }
