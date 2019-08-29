@@ -109,7 +109,7 @@ class AnalyseController extends Controller
         return $result;
     }
 
-    public function getAllAccessibleAnalysis(Request $request, $shared = false)
+    public function getAllAccessibleAnalysis(Request $request)
     {
         $user = $request->get('user');
         $analysis = analysis::where(function ($query) use ($user) {
@@ -121,12 +121,10 @@ class AnalyseController extends Controller
                         $query->where('shared', 1)
                             ->where(function ($query) use ($user) {
                                 $query->where("visibility", "all");
-                            })->orWhere(function ($query) use ($user) {
-                                $query->where("visibility", "worker")
+                                $query->orWhere("visibility", "worker")
                                     ->whereIn("theme_name", $this->objectLiteToArray(user_theme::where("uuid", $user["uuid"])->get("name")));
-                            })->orWhere(function ($query) use ($user) {
                                 if ($user["role"] == "Référent-Métier") {
-                                    $query->where("visibility", "job_referent")
+                                    $query->orWhere("visibility", "job_referent")
                                         ->whereIn("theme_name", $this->objectLiteToArray(user_theme::where("uuid", $user["uuid"])->get("name")));
                                 }
                             });
@@ -163,11 +161,6 @@ class AnalyseController extends Controller
         return $result;
     }
 
-    public function getAllAnalysis(Request $request)
-    {
-        $analysis = Analysis::with('analysis_columns')->get();
-        return response($analysis)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
-    }
 
     public function getAllSavedAnalysis(Request $request)
     {
