@@ -73,8 +73,7 @@ class DatasetController extends Controller
 
         $visibility = $request->get('visibility');
         $theme = $request->get('theme');
-        $JSON = (bool)$request->get('JSON');
-        $GEOJSON = (bool)$request->get('GEOJSON');
+
 
         $dataset->name = $name;
         $dataset->description = $description;
@@ -161,8 +160,6 @@ class DatasetController extends Controller
         $name = $request->get('name');
         $tags = $request->get('tag');
         $metier = $request->get('metier');
-        $JSON = $request->get('JSON');
-        $GEOJSON = $request->get('GEOJSON');
         //$util = $request->get('utils');
         $visualisations = $request->get('visualisations');
         $visualisations = json_decode($visualisations);
