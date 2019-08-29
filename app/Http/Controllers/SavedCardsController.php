@@ -35,7 +35,7 @@ class SavedCardsController extends Controller
     public function updateCard(Request $request){
         $user = $request->get('user');
 
-        $card = saved_card::where('uuid', $user->uuid);
+        $card = saved_card::where('uuid', $user->uuid)->where('id', $request->get('id'))->first();
         $card->id = $request->get('id');
         $card->position = $request->get('position');
         $card->size = $request->get('size');
