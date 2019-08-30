@@ -133,8 +133,7 @@ class AnalyseController extends Controller
             }
         })->where(function ($query) use ($user, $saved) {
             if ($saved) {
-                $query->where("id", $this->objectLiteToArray(saved_card::where("uuid", $user["uuid"])->get("id"), "id"))
-                    ->leftJoin("saved_card", "analyses.id", "=", "saved_card.id");
+                $query->whereIn("id", $this->objectLiteToArray(saved_card::where("uuid", $user["uuid"])->get("id"), "id"));
             }
         })->get();
 
@@ -168,10 +167,18 @@ class AnalyseController extends Controller
         return $result;
     }
 
-
     public function getAllSavedAnalysis(Request $request)
     {
-        $result = $this->getAllAccessibleAnalysis($request, true);
+        $user = $request->get('user');
+        $analysis = $this->getAllAccessibleAnalysis($request, true);
+        $savedCards = saved_card::where("uuid", $user["uuid"])->whereIn("id", $this->objectLiteToArray($analysis, "id"))->get();
+
+        $result = [];
+        foreach ($savedCards as $savedCard) {
+            $key = array_search($savedCard["id"], array_column($analysis, 'id'));
+            $savedCard["analysis"] = $analysis[$key];
+            array_push($result, $savedCard);
+        }
         return $result;
     }
 }
