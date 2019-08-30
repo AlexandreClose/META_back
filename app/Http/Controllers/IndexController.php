@@ -57,17 +57,10 @@ class IndexController extends Controller
 
     public static function getFieldsAndType(Request $request, $name)
     {
-        $user = $request->get('user');
-        $canAccess = false;
-        $datasets = DatasetController::getAllAccessibleDatasets($request, $user, true);
-        $datasets = (object)array_merge((array)$datasets, (array)DatasetController::getAllAccessibleDatasets($request, $user, false));
-
-        foreach ($datasets as $dataset) {
-            if ($name === $dataset->databaseName) {
-                $canAccess = true;
-            }
-        }
-        if (!$canAccess) {
+        $checkRights = IndexService::checkRightsOnDataset($request, false, $name);
+        $checkRightsValidate = IndexService::checkRightsOnDataset($request, true, $name);
+        if (!($checkRights != false or $checkRightsValidate != false)) {
+            $columns = null;
             abort(403);
         }
 

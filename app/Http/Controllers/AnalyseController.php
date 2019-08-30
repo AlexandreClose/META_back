@@ -134,7 +134,7 @@ class AnalyseController extends Controller
         })->where(function ($query) use ($user, $saved) {
             if ($saved) {
                 $query->where("id", $this->objectLiteToArray(saved_card::where("uuid", $user["uuid"])->get("id"), "id"))
-                    ->leftJoin("saved_card", "analyses.id", "=", "saved_card.id")->select('analysis.id');
+                    ->leftJoin("saved_card", "analyses.id", "=", "saved_card.id");
             }
         })->get();
 
