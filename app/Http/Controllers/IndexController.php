@@ -155,7 +155,7 @@ class IndexController extends Controller
         $dataset = Dataset::where('databaseName', $name)->first();
         //dd($return);
         $accessibleFields = DatasetController::getAllAccessibleColumnsFromADataset($request, $dataset);
-        //dd($accessibleFields);
+        // dd($accessibleFields);
         $fields = [];
         foreach ($return[$name]['mappings']['doc']['properties'] as $field => $field_data) {
             if (gettype($field_data) == "array" && !array_key_exists('type', $field_data) && $field != "geometry") {
@@ -170,7 +170,7 @@ class IndexController extends Controller
                     }
                 }
             } else if ($field != "geometry") {
-                array_push($fields, [$field, "array"]);
+                array_push($fields, [$field, $field_data['type']]);
             } else {
                 array_push($fields, [$field, array_key_exists('properties', $field_data) ? $field_data['properties']["type"]["type"] : "array"]);
             }
