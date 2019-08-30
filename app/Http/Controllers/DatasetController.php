@@ -301,11 +301,8 @@ class DatasetController extends Controller
     {
         $user = $request->get('user');
         $role = $user->role;
-        $themes = [];
 
-        foreach ($user['themes'] as $t) {
-            array_push($themes, $t['name']);
-        }
+        $themes = DatasetController::objectLiteToArray(user_theme::where("uuid", $user["uuid"]));
 
         switch ($role) {
             case "Administrateur":
