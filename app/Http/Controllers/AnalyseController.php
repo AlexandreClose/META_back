@@ -132,11 +132,12 @@ class AnalyseController extends Controller
                     });
             }
         })->where(function ($query) use ($user, $saved) {
-            if($saved){
-                $query->where("id",$this->objectLiteToArray(saved_card::where("uuid",$user["uuid"])->get(),"id"));
-                $query->join();
+            if ($saved) {
+                $query->where("id", $this->objectLiteToArray(saved_card::where("uuid", $user["uuid"])->get("id"), "id"))
+                    ->leftJoin("saved_card", "analyses.id", "=", "saved_card.id")->select('analysis.id');
             }
         })->get();
+
 
         $analysis_columns = analysis_column::whereIn("analysis_id", $this->objectLiteToArray($analysis, "id"))->get();
         $sort_column = [];
@@ -170,7 +171,7 @@ class AnalyseController extends Controller
 
     public function getAllSavedAnalysis(Request $request)
     {
-        $result = $this->getAllAccessibleAnalysis($request,true);
+        $result = $this->getAllAccessibleAnalysis($request, true);
         return $result;
     }
 }

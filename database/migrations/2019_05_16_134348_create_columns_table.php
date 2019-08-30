@@ -17,7 +17,6 @@ class CreateColumnsTable extends Migration
             $table->bigIncrements('id');
             $table->string('name');
             $table->integer('dataset_id');
-            $table->string('data_type_name',25)->nullable;
             $table->boolean('main');
             $table->string('themeName')->nullable();
             $table->enum('visibility',['admin_only','job_referent','worker', 'all'])->nullable();
