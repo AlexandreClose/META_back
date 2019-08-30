@@ -1,34 +1,87 @@
-<?php
+<?php /** @noinspection PhpUnused */
 
 namespace App\Http\Controllers;
 
-use App\analysis;
+
+use App\auth_users;
 use App\colauth_users;
-use App\user_theme;
-use Elasticsearch\ClientBuilder;
-use http\Env\Response;
-use Illuminate\Http\Request;
+use App\column;
 use App\dataset;
-use Illuminate\Support\Carbon;
-use App\representation_type;
 use App\dataset_has_representation;
+use App\dataset_has_tag;
+use App\representation_type;
+use App\tag;
 use App\theme;
 use App\user;
-use App\auth_users;
-use App\column;
-use App\dataset_has_tag;
-use App\tag;
 use App\user_saved_dataset;
+use App\user_theme;
+use Elasticsearch\ClientBuilder;
+use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\DB;
-use GuzzleHttp;
+
 
 class DatasetController extends Controller
 {
-    function getAllDatasets(Request $request, $quantity = null, $offset = null)
+    function getAllDatasets(Request $request)
     {
         $data = DatasetController::getAllAccessibleDatasets($request, $request->get('user'), false);
         return response($data)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
+    }
+
+    public static function getAllAccessibleDatasets(Request $request, user $user = null, bool $validate = false, bool $saved = false, bool $favorite = false, int $id = null)
+    {
+        if ($user == null) {
+            $user = $request->get('user');
+        }
+
+        $datasets = dataset::where(function ($query) use ($user) {
+            if ($user["role"] == "Administrateur") {
+                $query->get();
+            } else {
+                $userThemes = DatasetController::objectLiteToArray(user_theme::where("uuid", $user["uuid"])->get("name"));
+
+                $idColumnsByAuth = DatasetController::objectLiteToArray(colauth_users::where("uuid", $user["uuid"])->get("id"), "id");
+                $idColumnsByVisibility = DatasetController::objectLiteToArray(column::where(function ($query) use ($user, $userThemes) {
+                    $query->where("visibility", "all");
+                    $query->orWhere("visibility", "worker")->whereIn("themeName", $userThemes);
+                    if ($user["role"] == "Référent-Métier") {
+                        $query->orWhere("visibility", "job_referent")->whereIn("themeName", $userThemes);
+                    }
+                })->get("id"), "id");
+
+                $idDatasetByAuth = DatasetController::objectLiteToArray(auth_users::where("uuid", $user["uuid"])->get("id"), "id");
+                $idDatasetByIdColumns = DatasetController::objectLiteToArray(column::whereIn("id", array_merge_recursive($idColumnsByAuth, $idColumnsByVisibility))->get("dataset_id"), "dataset_id");
+
+                $query->whereIn("id", array_merge_recursive($idDatasetByAuth, $idDatasetByIdColumns));
+                $query->orWhere("visibility", "all");
+                $query->orWhere("visibility", "worker")->whereIn("themeName", $userThemes);
+                if ($user["role"] == "Référent-Métier") {
+                    $query->orWhere("visibility", "job_referent")->whereIn("themeName", $userThemes);
+                }
+            }
+        })
+            ->where("validated", !$validate)
+            ->where(function ($query) use ($user, $saved, $favorite, $id) {
+                if ($saved) {
+                    $query->whereIn("id", DatasetController::objectLiteToArray(user_saved_dataset::where("uuid", $user["uuid"])
+                        ->where("favorite", $favorite)->get("id"), "id"));
+                }
+                if ($id != null) {
+                    $query->where("id", $id);
+                }
+            })->get();
+
+        return ($datasets);
+    }
+
+    private static function objectLiteToArray($array, string $key = "name")
+    {
+        $result = [];
+        foreach ($array as $element) {
+            array_push($result, $element[$key]);
+        }
+        return $result;
     }
 
     public function updateDataset(Request $request)
@@ -38,10 +91,10 @@ class DatasetController extends Controller
             abort(403);
         }
         /*
-        $postbody='';
+        $postBody='';
         // Check for presence of a body in the request
         if (count($request->json()->all())) {
-            $postbody = $request->json()->all();
+            $postBody = $request->json()->all();
         }
         else{
             error_log("")
@@ -59,7 +112,7 @@ class DatasetController extends Controller
         }
 
         /*
-        if(!$dataset->validate($postbody)){
+        if(!$dataset->validate($postBody)){
             error_log("not validated dataset format");
             abort(400);
         }*/
@@ -95,10 +148,8 @@ class DatasetController extends Controller
             abort(400);
         }
 
-        $dataset->GEOJSON = $GEOJSON;
-        $dataset->JSON = $JSON;
+
         $dataset->validated = true;
-        $result = $dataset->save();
 
         $dataset = dataset::where('id', $request->get('id'))->first();
         $tags = json_decode($tags);
@@ -156,22 +207,18 @@ class DatasetController extends Controller
 
     }
 
-
     public function uploadDataset(Request $request)
     {
         $description = $request->get('description');
         $name = $request->get('name');
-        $tags = $request->get('tag');
+
         $metier = $request->get('metier');
-        //$util = $request->get('utils');
-        $visualisations = $request->get('visualisations');
-        $visualisations = json_decode($visualisations);
-        $date = $request->get('date');
+
+
         $creator = $request->get('creator');
         $contributor = $request->get('contributor');
         $dataset = new dataset();
         $dataset->name = $name;
-        //$dataset->util = $util;
         $dataset->validated = false;
         $dataset->description = $description;
         $dataset->creator = $creator;
@@ -198,7 +245,6 @@ class DatasetController extends Controller
             abort(400);
         }
         $dataset->save();
-        $dataset = dataset::where('name', $name)->first();
         /*
         foreach($visualisations as $visualisation){
             $type = representation_type::where('name', $visualisation)->first();
@@ -230,59 +276,6 @@ class DatasetController extends Controller
         }
 
         return $filter_datasets;
-    }
-
-    private static function objectLiteToArray($array, string $key = "name")
-    {
-        $result = [];
-        foreach ($array as $element) {
-            array_push($result, $element[$key]);
-        }
-        return $result;
-    }
-
-    public static function getAllAccessibleDatasets(Request $request, user $user = null, bool $validate = false, bool $saved = false, bool $favorite = false, int $id = null)
-    {
-        if ($user == null) {
-            $user = $request->get('user');
-        }
-
-        $datasets = dataset::where(function ($query) use ($user) {
-            if ($user["role"] == "Administrateur") {
-                $query->get();
-            } else {
-                $userThemes = DatasetController::objectLiteToArray(user_theme::where("uuid", $user["uuid"])->get("name"));
-
-                $idColumnsByAuth = DatasetController::objectLiteToArray(colauth_users::where("uuid", $user["uuid"])->get("id"), "id");
-                $idColumnsByVisibility = DatasetController::objectLiteToArray(column::where(function ($query) use ($user, $userThemes) {
-                    $query->where("visibility", "all");
-                    $query->orWhere("visibility", "worker")->whereIn("themeName", $userThemes);
-                    if ($user["role"] == "Référent-Métier") {
-                        $query->orWhere("visibility", "job_referent")->whereIn("themeName", $userThemes);
-                    }
-                })->get("id"), "id");
-
-                $idDatasetByAuth = DatasetController::objectLiteToArray(auth_users::where("uuid", $user["uuid"])->get("id"), "id");
-                $idDatasetByIdColumns = DatasetController::objectLiteToArray(column::whereIn("id", array_merge_recursive($idColumnsByAuth, $idColumnsByVisibility))->get("dataset_id"), "dataset_id");
-
-                $query->whereIn("id", array_merge_recursive($idDatasetByAuth, $idDatasetByIdColumns));
-                $query->orWhere("visibility", "all");
-                $query->orWhere("visibility", "worker")->whereIn("themeName", $userThemes);
-                if ($user["role"] == "Référent-Métier") {
-                    $query->orWhere("visibility", "job_referent")->whereIn("themeName", $userThemes);
-                }
-            }
-        })->where("validated", !$validate)
-            ->where(function ($query) use ($user, $saved, $favorite) {
-                if ($saved) {
-                    $query->whereIn("id", DatasetController::objectLiteToArray(user_saved_dataset::where("uuid", $user["uuid"])
-                        ->where("favorite", $favorite)->get("id"), "id"));
-                }
-            });
-        if ($id != null) {
-            $datasets->where("id", $id);
-        }
-        return ($datasets->get());
     }
 
     public function getRepresentationsOfDataset($id)
@@ -331,8 +324,8 @@ class DatasetController extends Controller
                 break;
         }
         $array = [];
-        $directcolumns = $user->columns;
-        foreach ($directcolumns as $dc) {
+        $directColumns = $user->columns;
+        foreach ($directColumns as $dc) {
             if ($dc->dataset_id == $dataset->id) {
                 array_push($array, $dc);
             }
@@ -341,6 +334,12 @@ class DatasetController extends Controller
         return $columns;
     }
 
+    public function saveDataset(Request $request, $id)
+    {
+        $dataset = dataset::where('id', $id)->first();
+        $user = $request->get('user');
+        DatasetController::saveAndFavoriteDataset($user, $dataset);
+    }
 
     public static function saveAndFavoriteDataset(user $user, dataset $dataset, $favorite = false)
     {
@@ -354,13 +353,6 @@ class DatasetController extends Controller
         $saved_ds->save();
     }
 
-    public function saveDataset(Request $request, $id)
-    {
-        $dataset = dataset::where('id', $id)->first();
-        $user = $request->get('user');
-        DatasetController::saveAndFavoriteDataset($user, $dataset);
-    }
-
     public function favoriteDataset(Request $request, $id)
     {
         $dataset = dataset::where('id', $id)->first();
@@ -368,7 +360,7 @@ class DatasetController extends Controller
         DatasetController::saveAndFavoriteDataset($user, $dataset, true);
     }
 
-    public function unsaveDataset(Request $request, $id)
+    public function unSaveDataset(Request $request, $id)
     {
         $dataset = dataset::where('id', $id)->first();
         $user = $request->get('user');

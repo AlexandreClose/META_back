@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\analysis_column;
 use App\dataset;
 use App\Http\Services\IndexService;
+use App\saved_card;
 use App\user_theme;
 use Illuminate\Http\Request;
 use App\analysis;
@@ -109,7 +110,7 @@ class AnalyseController extends Controller
         return $result;
     }
 
-    public function getAllAccessibleAnalysis(Request $request)
+    public function getAllAccessibleAnalysis(Request $request, bool $saved = false)
     {
         $user = $request->get('user');
         $analysis = analysis::where(function ($query) use ($user) {
@@ -130,6 +131,11 @@ class AnalyseController extends Controller
                             });
                     });
             }
+        })->where(function ($query) use ($user, $saved) {
+            if($saved){
+                $query->where("id",$this->objectLiteToArray(saved_card::where("uuid",$user["uuid"])->get(),"id"));
+                $query->join();
+            }
         })->get();
 
         $analysis_columns = analysis_column::whereIn("analysis_id", $this->objectLiteToArray($analysis, "id"))->get();
@@ -147,7 +153,7 @@ class AnalyseController extends Controller
             $columnToCheck = $sort_column[$key]["columns"];
             $request["columns"] = $columnToCheck;
             $AccessibleColumns = IndexService::checkRights($request, false, $sort_column[$key]["name"]);
-            if ($AccessibleColumns  != false and count(array_intersect($columnToCheck, $AccessibleColumns)) == count($columnToCheck)) {
+            if ($AccessibleColumns != false and count(array_intersect($columnToCheck, $AccessibleColumns)) == count($columnToCheck)) {
                 array_push($validatedID, $key);
             }
         }
@@ -164,17 +170,7 @@ class AnalyseController extends Controller
 
     public function getAllSavedAnalysis(Request $request)
     {
-        $user = $request->get('user');
-        $datasets = DatasetController::getAllAccessibleDatasets($request, $user, false);
-        $analysis = $user->saved_analysis();
-        foreach ($analysis as $key => $analyse) {
-            foreach ($analysis->columns as $column) {
-                if (($user->uuid != $analyse->owner_id && !$analysis->shared) || !array_search(dataset::where('id', $column->dataset_id), $datasets)) {
-                    unset($analysis[$key]);
-                }
-            }
-        }
-
-        return response($analysis)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
+        $result = $this->getAllAccessibleAnalysis($request,true);
+        return $result;
     }
 }
