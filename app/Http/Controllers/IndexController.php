@@ -88,7 +88,7 @@ class IndexController extends Controller
             } else if ($field != "geometry") {
                 $fields[$field] = "array";
             } else {
-                $fields[$field] = $field_data['properties']["type"]["type"];
+                $fields[$field] = array_key_exists("properties", $field_data) ? $field_data['properties']["type"]["type"] : "array";
             }
         }
         return $fields;
@@ -172,7 +172,7 @@ class IndexController extends Controller
             } else if ($field != "geometry") {
                 array_push($fields, [$field, "array"]);
             } else {
-                array_push($fields, [$field, $field_data['properties']["type"]["type"]]);
+                array_push($fields, [$field, array_key_exists('properties', $field_data) ? $field_data['properties']["type"]["type"] : "array"]);
             }
         }
 

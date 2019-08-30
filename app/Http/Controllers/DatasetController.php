@@ -150,6 +150,7 @@ class DatasetController extends Controller
 
 
         $dataset->validated = true;
+        $dataset->save();
 
         $dataset = dataset::where('id', $request->get('id'))->first();
         $tags = json_decode($tags);
@@ -301,11 +302,8 @@ class DatasetController extends Controller
     {
         $user = $request->get('user');
         $role = $user->role;
-        $themes = [];
 
-        foreach ($user['themes'] as $t) {
-            array_push($themes, $t['name']);
-        }
+        $themes = DatasetController::objectLiteToArray(user_theme::where("uuid", $user["uuid"])->get("name"));
 
         switch ($role) {
             case "Administrateur":
