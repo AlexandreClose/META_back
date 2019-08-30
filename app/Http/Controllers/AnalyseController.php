@@ -113,7 +113,7 @@ class AnalyseController extends Controller
     public function getAllAccessibleAnalysis(Request $request, bool $saved = false)
     {
         $user = $request->get('user');
-        $analysis = analysis::where(function ($query) use ($user) {
+        $analysis = analysis::with('analysis_columns')->where(function ($query) use ($user) {
             if ($user["role"] == "Administrateur") {
                 $query->get();
             } else {
