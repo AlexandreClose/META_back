@@ -150,7 +150,8 @@ class DatasetController extends Controller
 
 
         $dataset->validated = true;
-
+        $dataset->save();
+        
         $dataset = dataset::where('id', $request->get('id'))->first();
         $tags = json_decode($tags);
         if ($tags != null) {
