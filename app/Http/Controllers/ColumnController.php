@@ -34,10 +34,13 @@ class ColumnController extends Controller
             abort(400);
         }
 
-
-        foreach ($postBody as $element) {
+        foreach (array_keys($postBody) as $key) {
+            $element = $postBody[$key];
             $dataset = dataset::where('id', '=', $element["datasetId"])->first();
             if ($dataset === null) {
+                if ($key = "user") {
+                    break;
+                }
                 error_log("no dataset with that id");
                 abort(404);
             }
@@ -79,17 +82,20 @@ class ColumnController extends Controller
             }
 
             $column->save();
-            $users = $element['users'];
-            $column = column::where('name', $element["name"])->where('dataset_id', $element["datasetId"])->first();
-            foreach ($users as $user_id) {
-                $auth_user = user::where('uuid', $user_id)->first();
-                if ($auth_user == null) {
-                    continue;
+            if (isset($element['users'])) {
+                $users = $element['users'];
+                $column = column::where('name', $element["name"])->where('dataset_id', $element["datasetId"])->first();
+                foreach ($users as $user_id) {
+                    $auth_user = user::where('uuid', $user_id)->first();
+                    if ($auth_user == null) {
+                        continue;
+                    }
+                    $auth_users = new colauth_users();
+                    $auth_users->id = $column->id;
+                    $auth_users->uuid = $auth_user->uuid;
+                    $auth_users->save();
                 }
-                $auth_users = new colauth_users();
-                $auth_users->id = $column->id;
-                $auth_users->uuid = $auth_user->uuid;
-                $auth_users->save();
+
             }
 
             $fields = IndexController::getFieldsAndType($request, $dataset->databaseName);
