@@ -43,10 +43,9 @@ class AnalyseController extends Controller
         $analyse->save();
 
         $analyse = analysis::where('name', $request->get('name'))->first();
-        $analysis_columns = $request->get('analyse_columns');
-        if( $analysis_columns != null ) {
-            AnalyseController::createAnalysisColumn($request, $analyse->id);
-        }
+        $analysis_columns = $request->get('analyse_column');
+        AnalyseController::createAnalysisColumn($request, $analyse->id);
+
         return response($analyse)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
     }
 
