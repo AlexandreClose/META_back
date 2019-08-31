@@ -51,7 +51,6 @@ class AnalyseController extends Controller
 
     public static function createAnalysisColumn($analysis_columns, $id)
     {
-        $user = $request->get('user');
         $analyse = analysis::where('id', $id);
         for ($i = 0; $i < count($analysis_columns); $i++) {
             $analysis_column = new analysis_column();
