@@ -113,6 +113,7 @@ class AnalyseController extends Controller
         $user = $request->get('user');
         $analysis = analysis::with('analysis_columns')->where(function ($query) use ($user) {
             if ($user["role"] == "Administrateur") {
+                error_log('admin');
                 $query->get();
             } else {
                 $query->where('owner_id', $user["uuid"])
