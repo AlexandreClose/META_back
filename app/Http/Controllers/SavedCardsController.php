@@ -14,7 +14,7 @@ class SavedCardsController extends Controller
         foreach ($saved_cards as $saved_card) {
             $analysis = analysis::where('id', $saved_card->analysis_id);
             $saved_card->analysis = $analysis;
-            $saved_card->analysis->analysis_column = $analysis->analysis_columns;
+            $saved_card->analysis->analysis_columns = $analysis->analysis_column;
         }
 
         return response($saved_cards)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
