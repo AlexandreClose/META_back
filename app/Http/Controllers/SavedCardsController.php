@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\saved_card;
+use App\analysis;
 
 class SavedCardsController extends Controller
 {
