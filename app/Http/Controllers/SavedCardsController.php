@@ -15,7 +15,7 @@ class SavedCardsController extends Controller
         $saved_cards = saved_card::where('uuid', $user->uuid)->get();
         foreach ($saved_cards as $saved_card) {
             $analysis = analysis::where('id', $saved_card->id)->first();
-            $analysis->analysis_column = analysis_column::where('id', $saved_card->id)->get();
+            $analysis->analysis_column = analysis_column::where('analysis_id', $saved_card->id)->get();
             $saved_card->analysis = $analysis;
         }
 
