@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\saved_card;
 use App\analysis;
+use App\analysis_column;
+
 
 class SavedCardsController extends Controller
 {
@@ -13,8 +15,8 @@ class SavedCardsController extends Controller
         $saved_cards = saved_card::where('user_uuid', $user->uuid)->get();
         foreach ($saved_cards as $saved_card) {
             $analysis = analysis::where('id', $saved_card->analysis_id);
+            $analysis->analysis_columns = analysis_column::where('analysis_id', $analysis->id);
             $saved_card->analysis = $analysis;
-            $saved_card->analysis->analysis_columns = $analysis->analysis_column;
         }
 
         return response($saved_cards)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
