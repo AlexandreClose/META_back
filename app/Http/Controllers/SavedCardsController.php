@@ -21,9 +21,9 @@ class SavedCardsController extends Controller
         $user = $request->get('user');
 
         $card = new saved_card();
-        $card->id = $request->get('id');
-        $card->uuid = $user->uuid;
-        $card->position = saved_card::where('uuid', $user->uuid)->count();
+        $card->analysis_id = $request->get('id');
+        $card->user_uuid = $user->uuid;
+        $card->position = saved_card::where('user_uuid', $user->uuid)->count();
         $card->size = $request->get('size');
         $card->displayed = null != $request->get('displayed') ? $request->get('displayed') : false;
 
