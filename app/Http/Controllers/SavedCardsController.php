@@ -12,10 +12,10 @@ class SavedCardsController extends Controller
 {
     public function getAllSavedCards(Request $request){
         $user = $request->get('user');
-        $saved_cards = saved_card::where('user_uuid', $user->uuid)->get();
+        $saved_cards = saved_card::where('uuid', $user->uuid)->get();
         foreach ($saved_cards as $saved_card) {
             $analysis = analysis::where('id', $saved_card->analysis_id)->first();
-            $analysis->analysis_column = analysis_column::where('analysis_id', $analysis->id)->get();
+            $analysis->analysis_column = analysis_column::where('id', $analysis->id)->get();
             $saved_card->analysis = $analysis;
         }
 
