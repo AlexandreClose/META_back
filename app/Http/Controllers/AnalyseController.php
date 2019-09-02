@@ -29,6 +29,7 @@ class AnalyseController extends Controller
         $analyse->shared = $request->get('shared');
         $analyse->visibility = $request->get('visibility') != null ? $request->get('visibility') : 'all';
         $analyse->isStats = $request->get('isStats');
+        $analyse->isMap = $request->get('isMap');
         $analyse->owner_id = $user->uuid;
         $analyse->description = $request->get('description');
         $analyse->body = json_encode($request->get('body'));
