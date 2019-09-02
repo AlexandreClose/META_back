@@ -9,11 +9,11 @@ class saved_card extends Model
     
     public function user()
     {
-        return $this->hasOne('App\user', 'uuid', 'uuid');
+        return $this->hasOne('App\user', 'user_uuid', 'uuid');
     }
 
     public function analysis()
     {
-        return $this->hasOne('App\analysis', 'id', 'id');
+        return $this->hasOne('App\analysis', 'analysis_id', 'id');
     }
 }
