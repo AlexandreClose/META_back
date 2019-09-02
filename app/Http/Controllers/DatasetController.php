@@ -19,6 +19,7 @@ use Elasticsearch\ClientBuilder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\DB;
 
 
 class DatasetController extends Controller
@@ -285,7 +286,9 @@ class DatasetController extends Controller
         if ($dataset == null) {
             abort(404);
         }
-        $representations = $dataset->representations;
+        $representations = DB::table('dataset_has_representations')
+                     ->join('representation_types', 'dataset_has_representations.representationName', '=', 'representation_types.name')
+                     ->where('dataset_has_representations.datasetId', $id)->get();
         return response($representations)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
 
     }

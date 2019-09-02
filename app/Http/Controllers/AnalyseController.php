@@ -43,19 +43,15 @@ class AnalyseController extends Controller
         $analyse->save();
 
         $analyse = analysis::where('name', $request->get('name'))->first();
-
-        AnalyseController::createAnalysisColumn($request, $analyse->id);
+        $analysis_columns = $request->get('analysis_column');
+        AnalyseController::createAnalysisColumn($analysis_columns, $analyse->id);
 
         return response($analyse)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
     }
 
-    public static function createAnalysisColumn($request, $id)
+    public static function createAnalysisColumn($analysis_columns, $id)
     {
-        $user = $request->get('user');
         $analyse = analysis::where('id', $id);
-        $analysis_columns = [];
-        $analysis_columns = $request->get('analysis_column');
-        error_log('FOR');
         for ($i = 0; $i < count($analysis_columns); $i++) {
             $analysis_column = new analysis_column();
             $analysis_column->field = $analysis_columns[$i]['field'];
@@ -115,6 +111,7 @@ class AnalyseController extends Controller
         $user = $request->get('user');
         $analysis = analysis::with('analysis_columns')->where(function ($query) use ($user) {
             if ($user["role"] == "Administrateur") {
+                error_log('admin');
                 $query->get();
             } else {
                 $query->where('owner_id', $user["uuid"])
