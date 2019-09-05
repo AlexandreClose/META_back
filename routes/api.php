@@ -25,22 +25,22 @@ Route::get('/', function () {
 
 
 //Index routes : Elasticsearch
-Route::get('/index/{quantity?}', 'IndexController@getAllIndex');
-Route::get('/index/date/{name}', 'IndexController@getAllDateFieldsFromAnIndexFromItsName');
-Route::get('/index/fields/{name}', 'IndexController@getAllFieldsFromIndexByName');
-Route::get('/index/accessiblefields/{name}', 'IndexController@getAllAccessibleFieldsFromIndexByName');
+Route::get('/index/{quantity?}', 'IndexController@getAllIndex'); # doc OK
+Route::get('/index/date/{name}', 'IndexController@getAllDateFieldsFromAnIndexFromItsName'); # doc OK
+Route::get('/index/fields/{name}', 'IndexController@getAllFieldsFromIndexByName'); # doc OK
+Route::get('/index/accessiblefields/{name}', 'IndexController@getAllAccessibleFieldsFromIndexByName'); # doc OK
 
-Route::get('/index/get/{name}/{quantity?}/{offset?}/{date_col?}/{start_date?}/{end_date?}', 'IndexController@getIndexByName');
-Route::get('/index/file/{name}', 'IndexController@getIndexFile');
-Route::post('/index/geo', 'IndexController@getIndexFromCoordinatesInShape');
-Route::post('/liteIndex', 'IndexController@getLiteIndex');
+//Route::get('/index/get/{name}/{quantity?}/{offset?}/{date_col?}/{start_date?}/{end_date?}', 'IndexController@getIndexByName');
+//Route::get('/index/file/{name}', 'IndexController@getIndexFile');
+//Route::post('/index/geo', 'IndexController@getIndexFromCoordinatesInShape');
+Route::post('/liteIndex', 'IndexController@getLiteIndex'); # doc OK
 
 //Index routes: Elasticsearch and InfluxDB
-Route::post('/index/join', 'IndexController@join');
-Route::post('/index/fromPolygon','IndexController@getInPointInPolygon');
+Route::post('/index/join', 'IndexController@join'); # doc OK
+Route::post('/index/fromPolygon', 'IndexController@getInPointInPolygon'); # doc OK
 
 //Index routes: InfluxDB
-Route::post('/index/last','IndexController@getLast');
+Route::post('/index/last', 'IndexController@getLast'); # doc OK
 
 
 //Analyse routes : Mysql

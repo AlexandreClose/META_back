@@ -1,0 +1,20 @@
+type: object
+properties:
+    count:
+        type: integer
+        example: 1195
+    fields:
+        type: string
+        example:
+            - "@timestamp"
+            - "@version"
+            - "geometry"
+            - "message"
+            - "properties.ARC_ID"
+            - "properties.CTF_ID"
+            - "properties.PTM_LIB"
+            - "properties.PTM_NB_VOIES"
+            - "properties.PTM_NUMERO"
+            - "properties.PTM_SEUIL_JAUNE"
+            - "properties.PTM_SEUIL_ROUGE"
+            - "type"

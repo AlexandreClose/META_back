@@ -11,27 +11,140 @@ servers:
                 enum:
                     - "8000"
                 default: "8000"
-    - url: https://api-iadata.applis.toulouse-metropole.fr/api/
+    -   url: https://api-iadata.applis.toulouse-metropole.fr/api/
 
 paths:
+
     /column/stats:
         post:
             tags:
                 - column
             summary: "Statistique sur un jeu de données"
+            description: "Cette route a pour fonction de faire des statistique sur des colonne du jeu de donnée spécifier."
             requestBody:
                 required: true
                 content:
                     application/json:
                         schema:
-                            $ref: "request/columnStats.yaml"
+                            $ref: "index/post/requests/columnStats.yaml"
             responses:
                 "200":
                     description: "Ok"
                     content:
                         application/json:
                             schema:
-                                $ref: "responses/columnStats.yaml"
+                                $ref: "index/post/responses/columnStats.yaml"
+                "403":
+                    description: "Forbidden"
+                "401":
+                    description: "Unauthorized"
+                "500":
+                    description: "Internal serveur Error"
+
+    /index:
+        get:
+            tags:
+                - index
+            summary: "Retourne les information BDD sur les jeux de données"
+            description: "Va chercher directement dans les BDD les information de chaque jeux de donnés"
+            responses:
+                "200":
+                    description: "Ok"
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "index/get/responses/index.yaml/"
+                "403":
+                    description: "Forbidden"
+                "401":
+                    description: "Unauthorized"
+                "500":
+                    description: "Internal serveur Error"
+
+    /index/date/{name}:
+        get:
+            tags:
+                - index
+            summary: "Retourne les colonnes date d'un Jeu de données"
+            description: "Va retourner sous forme de liste le nom de toute les colonne date d'un jeux de données"
+            parameters:
+                -   in: path
+                    name: name
+                    required: true
+                    schema:
+                        type: string
+                        example: horodateurs
+            responses:
+                "200":
+                    description: "Ok"
+                    content:
+                        application/json:
+                            schema:
+                                type: array
+                                description: "List des colonnes date trouvé"
+                                items:
+                                    type: string
+                                    example: "@timestamp"
+                "403":
+                    description: "Forbidden"
+                "401":
+                    description: "Unauthorized"
+                "500":
+                    description: "Internal serveur Error"
+
+    /index/fields/{name}:
+        get:
+            tags:
+                - index
+            summary: "Retourne les info d'un jeu de donné non validé"
+            description: "Va retourner le nom de chaque colonne présente dans le jeu de données non validée,
+                            ainsi que le nombre de donnée dans la base"
+            parameters:
+                -   in: path
+                    name: name
+                    required: true
+                    schema:
+                        type: string
+                        example: cfg_point_mesure
+            responses:
+                "200":
+                    description: "Ok"
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "index/get/responses/field.yaml"
+
+
+                "403":
+                    description: "Forbidden"
+                "401":
+                    description: "Unauthorized"
+                "500":
+                    description: "Internal serveur Error"
+
+    /index/accessiblefields/{name}:
+        get:
+            tags:
+                - index
+            summary: "Retourne les infos des colonnes accessible d'un jeu de donné"
+            description: "Va retourner le nom, le type ainsi que s'il s'agi d'une colonne pivot, pour
+                            chaque colonne accessible"
+            parameters:
+                -   in: path
+                    name: name
+                    required: true
+                    schema:
+                        type: string
+                        example: horodateurs
+            responses:
+                "200":
+                    description: "Ok"
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "index/get/responses/accessibleFields.yaml"
+
+
                 "403":
                     description: "Forbidden"
                 "401":
@@ -44,20 +157,48 @@ paths:
             tags:
                 - index
             summary: "Récupère uniquement les colonnes spécifier"
-
+            description: "Permet de récupéré uniquement les colonne choisie et donc utile."
             requestBody:
                 required: true
                 content:
                     application/json:
                         schema:
-                            $ref: "request/liteIndex.yaml"
+                            $ref: "index/post/requests/liteIndex.yaml"
             responses:
                 "200":
                     description: "Ok"
                     content:
                         application/json:
                             schema:
-                                $ref: "responses/liteIndex.yaml"
+                                $ref: "index/post/responses/liteIndex.yaml"
+                "403":
+                    description: "Forbidden"
+                "401":
+                    description: "Unauthorized"
+                "500":
+                    description: "Internal serveur Error"
+
+    /index/last:
+        post:
+            tags:
+                - index
+            summary: "Retourne les dernière entré d'un jeux de donnée"
+            description: "Va récupéré les dernière entré de chaque occurrence distinguer par
+                                une ou plusieurs colonne pivot. Cette route est faite pour fonctionné
+                                sur les jeux de donnée marquer 'realtime' en BDD"
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "index/post/requests/last.yaml"
+            responses:
+                "200":
+                    description: "Ok"
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "index/post/responses/last.yaml"
                 "403":
                     description: "Forbidden"
                 "401":
@@ -69,20 +210,21 @@ paths:
         post:
             tags:
                 - index
-            summary: "Permet la jointure et les statistique sur plusieur jeux de données"
+            summary: "Permet la jointure et les statistique sur plusieurs jeux de données"
+            description: "Permet de recouper des jeux de donnée afin de les fusionné ou de faire des statistique"
             requestBody:
                 required: true
                 content:
                     application/json:
                         schema:
-                            $ref: "request/indexJoin.yaml"
+                            $ref: "index/post/requests/indexJoin.yaml"
             responses:
                 "200":
                     description: "Ok"
                     content:
                         application/json:
                             schema:
-                                $ref: "responses/indexJoin.yaml"
+                                $ref: "index/post/responses/indexJoin.yaml"
                 "403":
                     description: "Forbidden"
                 "401":
@@ -95,19 +237,21 @@ paths:
             tags:
                 - index
             summary: "Permet le regroupement de point par forme géométrique"
+            description: "Cette route va pouvoir associer les jointure de la route index/join a un
+                            regroupement de point par polygone"
             requestBody:
                 required: true
                 content:
                     application/json:
                         schema:
-                            $ref: "request/fromPolygon.yaml"
+                            $ref: "index/post/requests/fromPolygon.yaml"
             responses:
                 "200":
                     description: "Ok"
                     content:
                         application/json:
                             schema:
-                                $ref: "responses/fromPolygon.yaml"
+                                $ref: "index/post/responses/fromPolygon.yaml"
                 "403":
                     description: "Forbidden"
                 "401":
@@ -124,7 +268,7 @@ components:
 
     schemas:
         Request_Column_Stats:
-            $ref: "request/columnStats.yaml"
+            $ref: "index/post/requests/columnStats.yaml"
 
 security:
     -   ApiKeyAuth: []
