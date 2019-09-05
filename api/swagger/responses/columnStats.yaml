@@ -1,0 +1,131 @@
+type: object
+properties:
+    took:
+        type: integer
+        example: 8991
+        description: "Donnée elasticsearch"
+    time_out:
+        type: boolean
+        example: False
+        description: "Donnée elasticsearch"
+    _shards:
+        type: object
+        properties:
+            total:
+                type: integer
+                example: 5
+            successful:
+                type: integer
+                example: 5
+            skipped:
+                type: integer
+                example: 0
+            failed:
+                type: integer
+                example: 0
+        description: "Donnée elasticsearch"
+    hits:
+        type: object
+        properties:
+            total:
+                type: integer
+                example: 30428
+                description: "Nombres de donnée trouvé"
+            max_score:
+                type: integer
+                example: 0
+            hits:
+                type: array
+                items:
+                    type: object
+    aggregations:
+        type: object
+        properties:
+            codes:
+                type: object
+                properties:
+                    doc_count_error_upper_bound:
+                        type: integer
+                        example: 0
+                        description: "Donnée elasticsearch"
+                    sum_other_doc_count:
+                        type: integer
+                        example: 0
+                        description: "Donnée elasticsearch"
+                    buckets:
+                        type: array
+                        description: "Contient la list des aggregations"
+                        items:
+                            type: object
+                            properties:
+                                key:
+                                    type: integer
+                                    example: 771
+                                    description: "Clef de distinction"
+                                doc_count:
+                                    type: integer
+                                    example: 225
+                                    description: "Nombre d'occurence"
+                                Date Horo:
+                                    type: object
+                                    description: "Contient les stats d'une colonne par sa clef"
+                                    properties:
+                                        count:
+                                            type: integer
+                                            example: 225
+                                            description: "Nombre d'occurence"
+                                        min:
+                                            type: integer
+                                            example: 1517798100000
+                                            description: "Minimum"
+                                        max:
+                                            type: integer
+                                            example: 1559043960000
+                                            description: "Maximum"
+                                        avg:
+                                            type: integer
+                                            example: 1529150952266
+                                            description: "Moyenne"
+                                        sum:
+                                            type: integer
+                                            example: 344058964260000
+                                            description: "Somme"
+                                        min_as_string:
+                                            type: string
+                                            example: "2018-02-05T02:35:00.000Z"
+                                            description: "Minimum"
+                                        max_as_string:
+                                            type: string
+                                            example: "2019-05-28T11:46:00.000Z"
+                                            description: "Maximum"
+                                        avg_as_string:
+                                            type: string
+                                            example: "2018-06-16T12:09:12.266Z"
+                                            description: "Moyenne"
+                                        sum_as_string:
+                                            type: string
+                                            example: "12872-10-16T22:31:00.000Z"
+                                            description: "Somme"
+                                Code horo:
+                                    type: object
+                                    properties:
+                                        count:
+                                            type: integer
+                                            example: 225
+                                            description: "Nombre d'occurence"
+                                        min:
+                                            type: integer
+                                            example: 771
+                                            description: "Minimum"
+                                        max:
+                                            type: integer
+                                            example: 771
+                                            description: "Maximum"
+                                        avg:
+                                            type: integer
+                                            example: 771
+                                            description: "Moyenne"
+                                        sum:
+                                            type: integer
+                                            example: 771
+                                            description: "Somme"
