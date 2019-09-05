@@ -30,7 +30,7 @@ Route::get('/index/date/{name}', 'IndexController@getAllDateFieldsFromAnIndexFro
 Route::get('/index/fields/{name}', 'IndexController@getAllFieldsFromIndexByName'); # doc OK
 Route::get('/index/accessiblefields/{name}', 'IndexController@getAllAccessibleFieldsFromIndexByName'); # doc OK
 
-//Route::get('/index/get/{name}/{quantity?}/{offset?}/{date_col?}/{start_date?}/{end_date?}', 'IndexController@getIndexByName');
+Route::get('/index/get/{name}/{quantity?}/{offset?}/{date_col?}/{start_date?}/{end_date?}', 'IndexController@getIndexByName');
 //Route::get('/index/file/{name}', 'IndexController@getIndexFile');
 //Route::post('/index/geo', 'IndexController@getIndexFromCoordinatesInShape');
 Route::post('/liteIndex', 'IndexController@getLiteIndex'); # doc OK
@@ -44,7 +44,7 @@ Route::post('/index/last', 'IndexController@getLast'); # doc OK
 
 
 //Analyse routes : Mysql
-Route::post('/analyse/save', 'AnalyseController@saveAnalyse');
+Route::post('/analyse/save', 'AnalyseController@saveAnalyse'); # doc OK
 Route::get('/analyse/get/{id}', 'AnalyseController@getAnalysisFromId');
 Route::get('/analyse/all', 'AnalyseController@getAllAccessibleAnalysis');
 Route::get('/analyse/saved', 'AnalyseController@getAllSavedAnalysis');
