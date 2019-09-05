@@ -1,0 +1,115 @@
+type: object
+properties:
+    name:
+        type: string
+        example: "horodateurs3"
+        description: "Nom du jeu de données qui sera trié en fonction du jeu filtre "
+    nameFilter:
+        type: string
+        example: "quartier_residant"
+        description: "Nom du jeu de données servant de filtre pour le trie"
+    size:
+        type: integer
+        example: 2000
+        description: "Overwrite la valuer par default des base de données"
+    columns:
+        type: string
+        description: "Colonne a récupéré dans le jeu trié"
+        example: [
+            "properties.num_machine",
+            "properties.nb_places"
+        ]
+    targetColumn:
+        type: string
+        example: geometry.coordinates
+        description: "Colonne  contenant les point à regrouper en fonction du filtre"
+    filterColumn:
+        type: string
+        example: geometry.coordinates
+        description: "Colonne contenant les polygone permettant de regrouper les point de la colonnes target "
+    join:
+        type: object
+        description: "Block contant les paramètres de lka jointure "
+        properties:
+            do_join:
+                type: boolean
+                example: true
+                description: "True si l'on souhaite faire les stats"
+            request:
+                type: object
+                properties:
+                    datasets:
+                        type: object
+                        description: "Contient une liste des object contenant les paramètres de chaque datasets voulue"
+                        required:
+                            - name
+                            - columns
+                        properties:
+                            name:
+                                type: string
+                                description: "Nom du datasets"
+                            columns:
+                                type: array
+                                items:
+                                    type: string
+                                    description: "List des column du datasets à récupéré"
+                            size:
+                                type: integer
+                                description: "Overwrite de la valeur par default des base de donnée"
+                            date_col:
+                                type: string
+                                description: "Colonne contenant une date au format ISO 8601. Sert au filtre"
+                            start_date:
+                                type: string
+                                description: "Date de debut du filtre (ISO 8601)"
+                            end_date:
+                                type: string
+                                description: "Date de fin du filtre (ISO 8601)"
+                            start_minute:
+                                type: integer
+                                description: "Début du filtre par heure (en minute) "
+                            end_minute:
+                                type: integer
+                                description: "Fin du filtre par heure (en minute)"
+                        example:
+                            -   name: "transaction_horodateurs"
+                                columns:
+                                    - "Code horo"
+                                    - "Montant"
+                                size: 10000
+                                date_col: "Date Horo"
+                                start_date: "2000-01-04T01:00:00+01:00"
+                                end_date: "2020-01-04T01:00:00+01:00"
+                                start_minute: 0
+                                "end_minute": 720
+
+            joining:
+                type: string
+                description: "Block contenant une list associant les jeux précédant par des colonnes."
+                example: [
+                    "Code horo",
+                    "properties.num_machine"
+                ]
+    stats:
+        type: object
+        properties:
+            do_stats:
+                type: boolean
+                example: true
+                description: "True si l'on souhaite faire des stats "
+            columns:
+                type: object
+                description: "Information sur les stats"
+                properties:
+                    data:
+                        type: string
+                        description: "Contient la list des colonne ou faire des stats"
+                example:
+                    isDate: true
+                    data:
+                        - "properties.num_machine"
+                        - "properties.nb_places"
+                        - "Montant"
+
+
+

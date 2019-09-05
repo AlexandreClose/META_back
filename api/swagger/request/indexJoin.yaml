@@ -1,0 +1,81 @@
+type: object
+properties:
+    datasets:
+        type: object
+        description: "Contient une liste des object contenant les paramètres de chaque datasets voulue"
+        required:
+            - name
+            - columns
+        properties:
+            name:
+                type: string
+                description: "Nom du datasets"
+            columns:
+                type: array
+                items:
+                    type: string
+                    description: "List des column du datasets à récupéré"
+            size:
+                type: integer
+                description: "Overwrite de la valeur par default des base de donnée"
+            offset:
+                type: integer
+        example:
+            -   name: "horodateurs"
+                columns:
+                    - "properties.num_quartier_residant"
+                    - "properties.num_machine"
+                    - "properties.nb_places"
+                size: 10000
+                offset: 0
+
+            -   name: "transaction_horodateurs"
+                columns:
+                    - "Montant"
+                    - "Code horo"
+                    - "Date Horo"
+                size: 10000
+                offset: 0
+    joining:
+        type: string
+        description: "Block contenant une list associant les jeux précédant par des colonnes."
+        example: [
+        ["properties.num_machine",
+         "Code horo" ]
+        ]
+    stats:
+        type: object
+        properties:
+            do_stats:
+                type: boolean
+                example: true
+                description: "True si l'on souhaite faire des stats "
+            columns:
+                type: object
+                description: "Information sur les stats"
+                properties:
+                    isDate:
+                        type: boolean
+                        description: "Indique si la colonne pivot contiens des dates"
+                    pivot:
+                        type: string
+                        description: "Colonne pivot ou groupby"
+                    step:
+                        type: integer
+                        description: "Le pas en minute si la colonne est une date"
+                    filter:
+                        type: string
+                        description: "Permet un sous-groupby pour les stats"
+                    data:
+                        type: string
+                        description: "Contient la list des colonne ou faire des stats"
+                example:
+                    isDate: true
+                    pivot: "Date Horo"
+                    step: 120
+                    filter: "Code horo"
+                    data:
+                        - "Montant"
+                        - "Code horo"
+                        - "properties.nb_places"
+
