@@ -28,7 +28,7 @@ class ElasticSearchService
 
     public function getMinuteFilter()
     {
-        if ($this->start_minute != null && $this->end_minute != null) {
+        if ($this->start_minute !== null && $this->end_minute !== null) {
             $minuteQuery = "(doc['" . $this->date_col . "'].date.getMinuteOfDay() >= " . $this->start_minute . " && doc['" . $this->date_col . "'].date.getMinuteOfDay() < " . $this->end_minute . ")";
             return $minuteQuery;
         } else {
