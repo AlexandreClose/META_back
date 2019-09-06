@@ -30,7 +30,7 @@ class IndexColumnService
                 if ($columns["isDate"]) {
                     try {
                         $d = new DateTime($pathPivot);
-                        $pathPivot = date('Y-m-d\TH:i:s.Z\Z', floor($d->getTimestamp() / ($columns["step"] * 3600)) * ($columns["step"] * 3600));
+                        $pathPivot = date('Y-m-d\TH:i:s.Z\Z', floor($d->getTimestamp() / ($columns["step"] * 60)) * ($columns["step"] * 60));
                     } catch (ExceptionAlias $e) {
                     }
                 }
