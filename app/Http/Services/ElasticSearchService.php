@@ -64,7 +64,7 @@ class ElasticSearchService
 
             if ($fullDayQuery != null && ($minuteQuery != null)) {
                 $body["query"]["bool"]["filter"] = ['script' => ['script' => "(" . $fullDayQuery . " && " . $minuteQuery . ")"]];
-            } elseif ($fullDayQuery != null && ($minuteQuery != null)) {
+            } elseif ($fullDayQuery != null && ($minuteQuery == null)) {
                 $body["query"]["bool"]["filter"] = ['script' => ['script' => $fullDayQuery]];
             } elseif ($fullDayQuery == null && ($minuteQuery != null)) {
                 $body["query"]["bool"]["filter"] = ['script' => ['script' => $minuteQuery]];
