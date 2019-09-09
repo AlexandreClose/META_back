@@ -174,8 +174,10 @@ class IndexService
         if (!$request["stats"]["do_stats"]) {
             $result = response($data[sizeof($datasets) - 1], 200);
         } else {
-            $result = response(IndexColumnService::do_stats($request["stats"]["columns"]
-                , $data[sizeof($datasets) - 1]), 200);
+            error_log("Just before stats");
+            $result = IndexColumnService::do_stats($request["stats"]["columns"]
+                , $data[sizeof($datasets) - 1]);
+            error_log("Just after stats");
         }
         error_log("End jointure");
         return $result;
