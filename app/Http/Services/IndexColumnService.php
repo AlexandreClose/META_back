@@ -31,7 +31,7 @@ class IndexColumnService
                 }
                 $pathPivot = implode("+", $tmp);
 
-                if ($columns["isDate"] == true) {
+                if ($columns["isDate"]) {
                     try {
                         $d = new DateTime($pathPivot);
                         $pathPivot = date('Y-m-d\TH:i:s.Z\Z', floor($d->getTimestamp() / ($columns["step"] * 60)) * ($columns["step"] * 60));
