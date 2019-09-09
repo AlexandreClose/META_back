@@ -36,7 +36,12 @@ class IndexColumnService
                 }
 
                 foreach (explode(".", $column) as $field) {
-                    $pathData = $pathData[$field];
+                    try {
+                        $pathData = $pathData[$field];
+                    } catch (ExceptionAlias $e) {
+                        continue;
+                    }
+
                 }
                 $pathData = (float)$pathData;
                 if (!array_key_exists($pathPivot, $stats) or !array_key_exists($column, $stats[$pathPivot]["stats"])) {
