@@ -24,14 +24,14 @@ class IndexColumnService
                         try {
                             $pathPivot = $pathPivot[$field];
                         } catch (ExceptionAlias $e) {
-                            continue 2;
+                            continue 3;
                         }
                     }
                     array_push($tmp, $pathPivot);
                 }
                 $pathPivot = implode("+", $tmp);
 
-                if ($columns["isDate"]) {
+                if ($columns["isDate"] == true) {
                     try {
                         $d = new DateTime($pathPivot);
                         $pathPivot = date('Y-m-d\TH:i:s.Z\Z', floor($d->getTimestamp() / ($columns["step"] * 60)) * ($columns["step"] * 60));
