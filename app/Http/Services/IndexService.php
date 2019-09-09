@@ -151,6 +151,7 @@ class IndexService
 
     public static function joinService(Request $request)
     {
+        error_log("start jointure");
         $data = [];
         $datasets = $request["datasets"];
 
@@ -169,13 +170,14 @@ class IndexService
                 $data = IndexService::do_join($i, $data, $columns);
             }
         }
-
+        error_log("Get brute OK");
         if (!$request["stats"]["do_stats"]) {
             $result = response($data[sizeof($datasets) - 1], 200);
         } else {
             $result = response(IndexColumnService::do_stats($request["stats"]["columns"]
                 , $data[sizeof($datasets) - 1]), 200);
         }
+        error_log("End jointure");
         return $result;
     }
 
@@ -247,6 +249,7 @@ class IndexService
         }
         array_unique($newData, SORT_REGULAR);
         $data[$i] = $newData;
+
         return $data;
     }
 
