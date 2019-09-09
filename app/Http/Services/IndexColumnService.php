@@ -11,6 +11,7 @@ class IndexColumnService
 {
     public static function do_stats(array $columns, array $data)
     {
+        error_log("start stats");
         $stats = [];
         foreach ($columns["data"] as $column) {
             $occurrences = [];
@@ -83,7 +84,6 @@ class IndexColumnService
                         }
 
                     }
-
                     $stats[$pathPivot] = $element;
                 } else {
                     $s = $stats[$pathPivot];
@@ -131,6 +131,7 @@ class IndexColumnService
                 }
             }
         }
+        error_log("End stats");
         return $stats;
     }
 
