@@ -21,7 +21,11 @@ class IndexColumnService
                 foreach (explode("+", $columns["pivot"]) as $col) {
                     $pathPivot = $element;
                     foreach (explode(".", $col) as $field) {
-                        $pathPivot = $pathPivot[$field];
+                        try {
+                            $pathPivot = $pathPivot[$field];
+                        } catch (ExceptionAlias $e) {
+                            continue 2;
+                        }
                     }
                     array_push($tmp, $pathPivot);
                 }
