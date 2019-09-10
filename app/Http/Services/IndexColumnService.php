@@ -9,6 +9,22 @@ use Exception as ExceptionAlias;
 
 class IndexColumnService
 {
+    private static function multi_implode($array, $glue)
+    {
+        $ret = '';
+        foreach ($array as $item) {
+            if (is_array($item)) {
+                $ret .= IndexColumnService::multi_implode($item, $glue) . $glue;
+            } else {
+
+                $ret .= (string)$item . $glue;
+            }
+        }
+
+        return $ret;
+    }
+
+
     public static function do_stats(array $columns, array $data)
     {
         error_log("start stats");
@@ -28,6 +44,9 @@ class IndexColumnService
                             continue 3;
                         }
                     }
+                    if (is_array($pathPivot)) {
+                        $pathPivot = IndexColumnService::multi_implode($pathPivot, "");
+                    }
                     array_push($tmp, $pathPivot);
                 }
                 $pathPivot = implode("+", $tmp);
@@ -37,6 +56,7 @@ class IndexColumnService
                         $d = new DateTime($pathPivot);
                         $pathPivot = date('Y-m-d\TH:i:s.Z\Z', floor($d->getTimestamp() / ($columns["step"] * 60)) * ($columns["step"] * 60));
                     } catch (ExceptionAlias $e) {
+                        continue 1;
                     }
                 }
 
@@ -89,9 +109,7 @@ class IndexColumnService
                     $s = $stats[$pathPivot];
                     $oldStats = $s["stats"][$column];
 
-
                     $result = IndexColumnService::diff_occurrences($occurrences[$pathPivot], $pathData, $oldStats["DiffOcc"]);
-
 
                     $occurrences[$pathPivot] = $result["Occurrences"];
 
