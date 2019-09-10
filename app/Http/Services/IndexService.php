@@ -170,13 +170,15 @@ class IndexService
                 $data = IndexService::do_join($i, $data, $columns);
             }
         }
+
+        $data = $data[sizeof($datasets) - 1];
+
         error_log("Get brute OK");
         if (!$request["stats"]["do_stats"]) {
-            $resultS = response($data[sizeof($datasets) - 1], 200);
+            $resultS = response($data, 200);
         } else {
             error_log("Just before stats");
-            $resultS = IndexColumnService::do_stats($request["stats"]["columns"]
-                , $data[sizeof($datasets) - 1]);
+            $resultS = IndexColumnService::do_stats($request["stats"]["columns"], $data);
             error_log("Just after stats");
         }
         error_log("End jointure");

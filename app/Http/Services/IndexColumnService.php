@@ -88,9 +88,11 @@ class IndexColumnService
                 } else {
                     $s = $stats[$pathPivot];
                     $oldStats = $s["stats"][$column];
-                    array_merge_recursive($stats[$pathPivot], $element);
+
 
                     $result = IndexColumnService::diff_occurrences($occurrences[$pathPivot], $pathData, $oldStats["DiffOcc"]);
+
+
                     $occurrences[$pathPivot] = $result["Occurrences"];
 
                     if ($result["isSum"]) {
