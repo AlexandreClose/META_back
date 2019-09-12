@@ -16,18 +16,15 @@ class IndexColumnService
             if (is_array($item)) {
                 $ret .= IndexColumnService::multi_implode($item, $glue) . $glue;
             } else {
-
                 $ret .= (string)$item . $glue;
             }
         }
-
         return $ret;
     }
 
 
     public static function do_stats(array $columns, array $data)
     {
-        error_log("start stats");
         $stats = [];
         foreach ($columns["data"] as $column) {
             $occurrences = [];
@@ -151,7 +148,6 @@ class IndexColumnService
                 }
             }
         }
-        error_log("End stats");
         return $stats;
     }
 
@@ -175,3 +171,5 @@ class IndexColumnService
         return [false, $filter];
     }
 }
+
+

@@ -44,9 +44,9 @@ Route::post('/index/last', 'IndexController@getLast'); # doc OK
 
 
 //Analyse routes : Mysql
-Route::post('/analyse/save', 'AnalyseController@saveAnalyse'); # doc OK
-Route::get('/analyse/get/{id}', 'AnalyseController@getAnalysisFromId');
-Route::get('/analyse/all', 'AnalyseController@getAllAccessibleAnalysis');
+Route::post('/analyse/save', 'AnalyseController@saveAnalyse');
+Route::get('/analyse/get/{id}', 'AnalyseController@getAnalysisById'); #todo review
+Route::get('/analyse/all', 'AnalyseController@getAllAccessibleAnalysis'); # doc OK
 Route::get('/analyse/saved', 'AnalyseController@getAllSavedAnalysis');
 Route::delete('/analyse/{id}', 'AnalyseController@deleteAnalysis');
 

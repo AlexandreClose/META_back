@@ -31,9 +31,9 @@ class ThemeController extends Controller
 
         $theme = new Theme();
         $postBody = $request->all();
-        if (!$theme->validate($postBody)) {
-            abort(400);
-        }
+//        if (!$theme->validate($postBody)) {
+//            abort(400);
+//        }
 
         $theme->name = $postBody["name"];
         $theme->description = $postBody["description"];
