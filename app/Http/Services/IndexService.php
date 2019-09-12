@@ -242,7 +242,7 @@ class IndexService
                     $newPath = $newPath[$field];
                 }
                 if ($path == $newPath) {
-                    array_push($newData, array_replace($entry, $newEntry));
+                    array_push($newData, array_replace_recursive($entry, $newEntry));
                 }
             }
         }
