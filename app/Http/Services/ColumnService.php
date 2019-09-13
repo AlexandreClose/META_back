@@ -57,8 +57,9 @@ class ColumnService
 
         $minuteQuery = $ElasticSearchService->getMinuteFilter();
         $fullDayQuery = $ElasticSearchService->getWeekdayFilter();
+        $matchQuery = $ElasticSearchService->getMatchFilter();
 
-        $body = $ElasticSearchService->getTimeFilter([], $minuteQuery, $fullDayQuery);
+        $body = $ElasticSearchService->getFilter([], $minuteQuery, $fullDayQuery, $matchQuery);
 
 
         $aggs = [];

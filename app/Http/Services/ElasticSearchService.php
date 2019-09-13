@@ -14,6 +14,7 @@ class ElasticSearchService
     private $week_day;
     private $start_minute;
     private $end_minute;
+    private $body;
 
 
     public function __construct(Request $request)
@@ -24,6 +25,7 @@ class ElasticSearchService
         $this->week_day = $request->get('weekdays');
         $this->start_minute = $request->get('start_minute');
         $this->end_minute = $request->get('end_minute');
+        $this->match = $request->get("match");
     }
 
     public function getMinuteFilter()
@@ -52,14 +54,24 @@ class ElasticSearchService
         }
     }
 
-    public function getTimeFilter(Array $body, $minuteQuery, $fullDayQuery)
+    public function getMatchFilter()
+    {
+        if ($this->match != null) {
+            $match = explode("=", $this->match);
+            return ["match" => [$match[0] => $match[1]]];
+        }
+        return null;
+    }
+
+    public function getFilter(Array $body, $minuteQuery, $fullDayQuery, $matchQuery)
     {
         if ($this->date_col != null) {
-            $body = ['sort' => [[$this->date_col => ['order' => 'desc']]]];
+            $body = ['sort' => [[$this->date_col => ['order' => 'desc']]], "query" => ["bool" => ["must" => []]]];
+
             if ($this->date_col != null && $this->start_date != null && $this->end_date == null) {
-                $body["query"]["bool"]["must"] = ['range' => [$this->date_col => ['gte' => $this->start_date, 'lte' => $this->start_date]]];
+                array_push($body["query"]["bool"]["must"], ['range' => [$this->date_col => ['gte' => $this->start_date, 'lte' => $this->start_date]]]);
             } elseif ($this->date_col != null && $this->start_date != null && $this->end_date != null) {
-                $body["query"]["bool"]["must"] = ['range' => [$this->date_col => ['gte' => $this->start_date, 'lte' => $this->end_date]]];
+                array_push($body["query"]["bool"]["must"], ['range' => [$this->date_col => ['gte' => $this->start_date, 'lte' => $this->end_date]]]);
             }
 
             if ($fullDayQuery != null && ($minuteQuery != null)) {
@@ -69,6 +81,11 @@ class ElasticSearchService
             } elseif ($fullDayQuery == null && ($minuteQuery != null)) {
                 $body["query"]["bool"]["filter"] = ['script' => ['script' => $minuteQuery]];
             }
+
+            if ($matchQuery != null) {
+                array_push($body["query"]["bool"]["must"], $matchQuery);
+            }
+
         }
         return $body;
     }

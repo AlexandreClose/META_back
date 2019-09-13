@@ -214,11 +214,12 @@ class IndexService
     private static function getLiteIndexElastic(Request $request)
     {
 
-        $elasticSearchService = new ElasticSearchService($request);
-        $minuteQuery = $elasticSearchService->getMinuteFilter();
-        $fullDayQuery = $elasticSearchService->getWeekdayFilter();
+        $ElasticSearchService = new ElasticSearchService($request);
+        $minuteQuery = $ElasticSearchService->getMinuteFilter();
+        $fullDayQuery = $ElasticSearchService->getWeekdayFilter();
+        $matchQuery = $ElasticSearchService->getMatchFilter();
 
-        $body = $elasticSearchService->getTimeFilter([], $minuteQuery, $fullDayQuery);
+        $body = $ElasticSearchService->getFilter([], $minuteQuery, $fullDayQuery, $matchQuery);
 
         $data = Elasticsearch::search(['index' => $request->get("name"), '_source' => $request->get("columns"),
             'size' => $request->get('size'),
