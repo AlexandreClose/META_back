@@ -111,8 +111,8 @@ class IndexColumnService
                     $occurrences[$pathPivot] = $result["Occurrences"];
 
                     if ($result["isSum"]) {
-                        $oldStats["DiffSum"] += $pathData;
-                        $oldStats["DiffAvg"] = ($oldStats["DiffAvg"] + $pathData) / 2;
+                        $oldStats["DiffSum"] += round($pathData, 2);
+                        $oldStats["DiffAvg"] = round(($oldStats["DiffAvg"] + $pathData) / 2, 2);
                     }
                     $stats[$pathPivot]["stats"][$column] = [
                         "min" => round(min($pathData, $oldStats["min"]), 2),

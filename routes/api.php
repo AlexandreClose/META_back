@@ -66,6 +66,7 @@ Route::get('/dataset/{id}/unfavorite', "DatasetController@unsaveDataset");
 Route::get('/datasets/favorite', "DatasetController@getAllAccessibleFavoriteDatasets");
 Route::get('/datasets/filters', 'DatasetController@getFilterDatasets');
 Route::get('/datasets/saved', "DatasetController@getAllAccessibleSavedDatasets");
+Route::get('/datasets/size/{type?}',"DatasetController@getDatasetsSize");
 
 //Users routes : Mysql
 Route::get('/user', 'UserController@getAllUsers');

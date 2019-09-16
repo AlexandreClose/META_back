@@ -24,13 +24,14 @@ use Illuminate\Support\Facades\DB;
 
 class DatasetController extends Controller
 {
-    function getAllDatasets(Request $request)
+    function getAllDatasets(Request $request, int $offset = 0, bool $count = false)
     {
-        $data = DatasetController::getAllAccessibleDatasets($request, $request->get('user'), false);
+        $data = DatasetController::getAllAccessibleDatasets($request, $request->get('user'), false, false, false, null, $count, $offset);
         return response($data)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
     }
 
-    public static function getAllAccessibleDatasets(Request $request, user $user = null, bool $validate = false, bool $saved = false, bool $favorite = false, int $id = null)
+    public static function getAllAccessibleDatasets(Request $request, user $user = null, bool $validate = false, bool $saved = false, bool $favorite = false, int $id = null,
+                                                    bool $count = false, int $offset = 0)
     {
         if ($user == null) {
             $user = $request->get('user');
@@ -71,9 +72,13 @@ class DatasetController extends Controller
                 if ($id != null) {
                     $query->where("id", $id);
                 }
-            })->get();
+            });
 
-        return ($datasets);
+        if ($count) {
+            return $datasets->get()->count();
+        } else {
+            return $datasets->offset($offset)->limit(10)->get();
+        }
     }
 
     private static function objectLiteToArray($array, string $key = "name")
@@ -287,8 +292,8 @@ class DatasetController extends Controller
             abort(404);
         }
         $representations = DB::table('dataset_has_representations')
-                     ->join('representation_types', 'dataset_has_representations.representationName', '=', 'representation_types.name')
-                     ->where('dataset_has_representations.datasetId', $id)->get();
+            ->join('representation_types', 'dataset_has_representations.representationName', '=', 'representation_types.name')
+            ->where('dataset_has_representations.datasetId', $id)->get();
         return response($representations)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
 
     }
@@ -371,15 +376,15 @@ class DatasetController extends Controller
         }
     }
 
-    public function getAllAccessibleSavedDatasets(Request $request)
+    public function getAllAccessibleSavedDatasets(Request $request, int $offset = 0, bool $count = false)
     {
-        $data = DatasetController::getAllAccessibleDatasets($request, $request->get('user'), false, true);
+        $data = DatasetController::getAllAccessibleDatasets($request, $request->get('user'), false, true, false, null, $count, $offset);
         return response($data)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
     }
 
-    public function getAllAccessibleFavoriteDatasets(Request $request)
+    public function getAllAccessibleFavoriteDatasets(Request $request, int $offset = 0, bool $count = false)
     {
-        $data = DatasetController::getAllAccessibleDatasets($request, $request->get('user'), false, true, true);
+        $data = DatasetController::getAllAccessibleDatasets($request, $request->get('user'), false, true, true, null, $count, $offset);
         return response($data)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
     }
 
@@ -387,5 +392,25 @@ class DatasetController extends Controller
     {
         $data = DatasetController::getAllAccessibleDatasets($request, $request->get('user'), false, false, false, $id);
         return response($data)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
+    }
+
+    public function getDatasetsSize(Request $request, $type)
+    {
+        $case = [];
+        switch ($type) {
+            case "all":
+                $case = DatasetController::getAllDatasets($request, 0, true);
+                break;
+            case "saved":
+                $case = DatasetController::getAllAccessibleSavedDatasets($request, 0, true);
+                break;
+            case "favorite":
+                $case = DatasetController::getAllAccessibleFavoriteDatasets($request, 0, true);
+                break;
+            default:
+                abort(400);
+        }
+
+        return $case;
     }
 }
