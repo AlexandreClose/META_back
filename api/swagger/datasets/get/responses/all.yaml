@@ -1,0 +1,55 @@
+type: object
+description: "List des jeux de donnée validée"
+example:
+    [
+    {
+        "id": 3,
+        "name": "Horodateurs",
+        "databaseName": "horodateurs",
+        "validated": 1,
+        "description": "Localisation des horodateurs sur le territoire de Toulouse.",
+        "creator": "Toulouse Métropole",
+        "contributor": "Toulouse Métropole",
+        "license": "ODbL",
+        "created_date": "2019-08-07 14:00:06",
+        "updated_date": "2019-08-07 14:00:06",
+        "realtime": 0,
+        "conf_ready": 1,
+        "upload_ready": 1,
+        "open_data": 0,
+        "visibility": "all",
+        "user": "Toulouse Métropole",
+        "JSON": 1,
+        "GEOJSON": 1,
+        "producer": "Toulouse Métropole",
+        "themeName": "Transport",
+        "update_frequency": "Jamais",
+        "created_at": "2019-08-07 14:00:06",
+        "updated_at": "2019-08-07 14:00:06"
+    },
+    {
+        "id": 8,
+        "name": "Quartier Residant",
+        "databaseName": "quartier_residant",
+        "validated": 1,
+        "description": "Quartier Residant",
+        "creator": "Toulouse Métropole",
+        "contributor": "Toulouse Métropole",
+        "license": "ODbL",
+        "created_date": "2019-08-07 00:00:00",
+        "updated_date": "2019-08-07 14:00:06",
+        "realtime": 0,
+        "conf_ready": 1,
+        "upload_ready": 1,
+        "open_data": 0,
+        "visibility": "all",
+        "user": "Toulouse Métropole",
+        "JSON": 1,
+        "GEOJSON": 1,
+        "producer": "Toulouse Métropole",
+        "themeName": "Transport",
+        "update_frequency": "Jamais",
+        "created_at": "2019-08-07 14:00:06",
+        "updated_at": "2019-08-30 14:35:21"
+    }
+    ]

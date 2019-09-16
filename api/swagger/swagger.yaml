@@ -299,6 +299,67 @@ paths:
                 "500":
                     description: "Internal serveur Error"
 
+    /datasets/data/validate:
+        get:
+            tags:
+                - datasets
+            sumary: "Retourne les info des jeux de données non validé"
+            description: "Retourne les colonnes de la table MySql de tout les jeux de données non validée"
+            responses:
+                "200":
+                    description: "Ok"
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "datasets/get/responses/dataValidate.yaml"
+                "403":
+                    description: "Forbidden"
+                "401":
+                    description: "Unauthorized"
+                "500":
+                    description: "Internal serveur Error"
+
+    /datasets/all:
+        get:
+            tags:
+                - datasets
+            sumary: "Retourne les info des jeux de données validé"
+            description: "Retourne les colonnes de la table MySql de tout les jeux de données validée"
+            responses:
+                "200":
+                    description: "Ok"
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "datasets/get/responses/all.yaml"
+                "403":
+                    description: "Forbidden"
+                "401":
+                    description: "Unauthorized"
+                "500":
+                    description: "Internal serveur Error"
+
+    /datasets/representations/{id}:
+        get:
+            tags:
+                - datasets
+            sumary: "Retourne les représentations d'un datasets"
+            description: "Retourne les colonnes de représentation MySql d'un jeux de donnée'"
+            responses:
+                "200":
+                    description: "Ok"
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "datasets/get/responses/representations.yaml"
+                "403":
+                    description: "Forbidden"
+                "401":
+                    description: "Unauthorized"
+                "500":
+                    description: "Internal serveur Error"
+
+
 components:
     securitySchemes:
         ApiKeyAuth:

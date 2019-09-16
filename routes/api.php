@@ -47,14 +47,14 @@ Route::post('/index/last', 'IndexController@getLast'); # doc OK
 Route::post('/analyse/save', 'AnalyseController@saveAnalyse');
 Route::get('/analyse/get/{id}', 'AnalyseController@getAnalysisById'); #todo review
 Route::get('/analyse/all', 'AnalyseController@getAllAccessibleAnalysis'); # doc OK
-Route::get('/analyse/saved', 'AnalyseController@getAllSavedAnalysis');
+Route::get('/analyse/saved', 'AnalyseController@getAllSavedAnalysis'); # doc OK
 Route::delete('/analyse/{id}', 'AnalyseController@deleteAnalysis');
 
 
 //Datasets routes : Mysql
-Route::get('/datasets/data/validate', 'DatasetController@getDatasetsToValidate');
-Route::get('/datasets/all/{quantity?}/{offset?}', 'DatasetController@getAllDatasets');
-Route::get('/datasets/representations/{id}', 'DatasetController@getRepresentationsOfDataset');
+Route::get('/datasets/data/validate', 'DatasetController@getDatasetsToValidate'); # doc Ok
+Route::get('/datasets/all/{offset?}', 'DatasetController@getAllDatasets'); # doc Ok
+Route::get('/datasets/representations/{id}', 'DatasetController@getRepresentationsOfDataset'); # doc Ok
 Route::get('/dataset/{id}', "DatasetController@getDatasetById");
 Route::post('/datasets/update', "DatasetController@updateDataset");
 Route::post('/datasets/upload', 'DatasetController@uploadDataset');
