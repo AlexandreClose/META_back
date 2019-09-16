@@ -75,14 +75,14 @@ class IndexColumnService
                     $occurrences[$pathPivot] = $result["Occurrences"];
 
                     $element["stats"][$column] = [
-                        "min" => $pathData,
-                        "max" => $pathData,
-                        "avg" => $pathData,
-                        "sum" => $pathData,
+                        "min" => round($pathData, 2),
+                        "max" => round($pathData, 2),
+                        "avg" => round($pathData, 2),
+                        "sum" => round($pathData, 2),
                         "count" => 1,
                         "DiffOcc" => 1,
-                        "DiffSum" => $pathData,
-                        "DiffAvg" => $pathData];
+                        "DiffSum" => round($pathData, 2),
+                        "DiffAvg" => round($pathData, 2)];
 
                     if (array_key_exists("filter", $columns)) {
                         $filterData = $element;
@@ -95,8 +95,8 @@ class IndexColumnService
                         if ($filterDataResult[0]) {
                             $mergedArray = array_merge_recursive($element["stats"][$column], [
                                 "FilCount" => 1,
-                                "FilSum" => $pathData,
-                                "FilAvg" => $pathData]);
+                                "FilSum" => round($pathData, 2),
+                                "FilAvg" => round($pathData, 2)]);
                             $element["stats"][$column] = $mergedArray;
                         }
 
@@ -115,14 +115,14 @@ class IndexColumnService
                         $oldStats["DiffAvg"] = ($oldStats["DiffAvg"] + $pathData) / 2;
                     }
                     $stats[$pathPivot]["stats"][$column] = [
-                        "min" => min($pathData, $oldStats["min"]),
-                        "max" => max($pathData, $oldStats["max"]),
-                        "avg" => ($pathData + $oldStats["avg"]) / 2,
-                        "sum" => ($pathData + $oldStats["sum"]),
-                        "count" => ($oldStats["count"] + 1),
-                        "DiffOcc" => ($result["Count"]),
-                        "DiffSum" => $oldStats["DiffSum"],
-                        "DiffAvg" => $oldStats["DiffAvg"]];
+                        "min" => round(min($pathData, $oldStats["min"]), 2),
+                        "max" => round(max($pathData, $oldStats["max"]), 2),
+                        "avg" => round(($pathData + $oldStats["avg"]) / 2, 2),
+                        "sum" => round(($pathData + $oldStats["sum"]), 2),
+                        "count" => round(($oldStats["count"] + 1), 2),
+                        "DiffOcc" => round(($result["Count"]), 2),
+                        "DiffSum" => round($oldStats["DiffSum"], 2),
+                        "DiffAvg" => round($oldStats["DiffAvg"], 2)];
                     if (array_key_exists("filter", $columns)) {
                         $filterData = $element;
                         foreach (explode(".", $columns["filter"]) as $field) {
@@ -133,14 +133,14 @@ class IndexColumnService
                         $filterOccurrences[$pathPivot] = $filterDataResult[1];
                         if ($filterDataResult[0]) {
                             $newArray = [
-                                "FilCount" => $oldStats["FilCount"] + 1,
-                                "FilSum" => $oldStats["FilSum"] + $pathData,
-                                "FilAvg" => $oldStats["FilAvg"]];
+                                "FilCount" => round($oldStats["FilCount"] + 1, 2),
+                                "FilSum" => round($oldStats["FilSum"] + $pathData, 2),
+                                "FilAvg" => round($oldStats["FilAvg"], 2)];
                         } else {
                             $newArray = [
-                                "FilCount" => $oldStats["FilCount"],
-                                "FilSum" => $oldStats["FilSum"],
-                                "FilAvg" => ($pathData + $oldStats["FilAvg"]) / 2];
+                                "FilCount" => round($oldStats["FilCount"], 2),
+                                "FilSum" => round($oldStats["FilSum"], 2),
+                                "FilAvg" => round(($pathData + $oldStats["FilAvg"]) / 2, 2)];
                         }
                         $mergedArray = array_merge_recursive($stats[$pathPivot]["stats"][$column], $newArray);
                         $stats[$pathPivot]["stats"][$column] = $mergedArray;
