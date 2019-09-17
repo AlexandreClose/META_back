@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\color;
+use App\direction;
+use App\role;
+use App\service;
 use App\theme;
 use App\user;
 use App\user_theme;
 use Exception;
-use App\service;
-use App\role;
-use App\color;
-use App\direction;
 use Illuminate\Http\Request;
 
 class UserController extends Controller
@@ -233,5 +233,26 @@ class UserController extends Controller
         $user = $request->get('user');
         $color = color::where([['user_uuid', $user->uuid], ['color_code', $request->get('color_code')]]);
         $color->delete();
+    }
+
+    public function updateColorUser(Request $request)
+    {
+        $user = $request->get('user');
+        $colors = $request->get('colors');
+
+        color::where('user_uuid', $user->uuid)->delete();
+
+        $data = array();
+        foreach ($colors as $color) {
+            array_push($data, array(
+                'user_uuid' => $user->uuid,
+                'color_code' => $color,
+                'created_at' => NOW(),
+                'updated_at' => NOW()
+            ));
+        }
+        color::insert($data);
+
+        return response('', 200);
     }
 }

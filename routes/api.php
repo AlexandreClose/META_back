@@ -79,6 +79,7 @@ Route::get('/user/block/{uuid}', 'UserController@blockUser');
 Route::get('/user/unblock/{uuid}', 'UserController@unblockUser');
 Route::get('/user/color', 'UserController@getAllUserColor');
 Route::post('user/color', 'UserController@addColorToUser');
+Route::post('color/update', 'UserController@updateColorUser');
 Route::delete('user/color', 'UserController@removeColorFromUser');
 
 //Datatypes routes : Mysql
