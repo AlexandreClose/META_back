@@ -252,7 +252,5 @@ class UserController extends Controller
             ));
         }
         color::insert($data);
-
-        return response('', 200);
     }
 }

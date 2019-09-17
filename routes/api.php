@@ -55,7 +55,7 @@ Route::delete('/analyse/{id}', 'AnalyseController@deleteAnalysis');
 Route::get('/datasets/data/validate', 'DatasetController@getDatasetsToValidate'); # doc Ok
 Route::get('/datasets/all/', 'DatasetController@getAllDatasets'); # doc Ok
 Route::get('/datasets/representations/{id}', 'DatasetController@getRepresentationsOfDataset'); # doc Ok
-Route::get('/dataset/{id}', "DatasetController@getDatasetById");
+Route::get('/dataset/{id}', "DatasetController@getDatasetById"); # doc Ok
 Route::post('/datasets/update', "DatasetController@updateDataset");
 Route::post('/datasets/upload', 'DatasetController@uploadDataset');
 Route::get('/dataset/{id}/columns', "DatasetController@getAllColumnFromDataset");
@@ -63,10 +63,10 @@ Route::get('/dataset/{id}/save', "DatasetController@saveDataset");
 Route::get('/dataset/{id}/favorite', "DatasetController@favoriteDataset");
 Route::get('/dataset/{id}/unsave', "DatasetController@unsaveDataset");
 Route::get('/dataset/{id}/unfavorite', "DatasetController@unsaveDataset");
-Route::get('/datasets/favorite/', "DatasetController@getAllAccessibleFavoriteDatasets");
+Route::get('/datasets/favorite/', "DatasetController@getAllAccessibleFavoriteDatasets"); # doc Ok
 Route::get('/datasets/filters', 'DatasetController@getFilterDatasets');
-Route::get('/datasets/saved/', "DatasetController@getAllAccessibleSavedDatasets");
-Route::get('/datasets/size/{type?}',"DatasetController@getDatasetsSize");
+Route::get('/datasets/saved/', "DatasetController@getAllAccessibleSavedDatasets"); # doc Ok
+Route::get('/datasets/size/{type?}', "DatasetController@getDatasetsSize");
 
 //Users routes : Mysql
 Route::get('/user', 'UserController@getAllUsers');
