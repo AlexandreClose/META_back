@@ -24,14 +24,14 @@ use Illuminate\Support\Facades\DB;
 
 class DatasetController extends Controller
 {
-    function getAllDatasets(Request $request, int $offset = 0, bool $count = false)
+    function getAllDatasets(Request $request, bool $count = false)
     {
-        $data = DatasetController::getAllAccessibleDatasets($request, $request->get('user'), false, false, false, null, $count, $offset);
+        $data = DatasetController::getAllAccessibleDatasets($request, $request->get('user'), false, false, false, null, $count, $request->get('offset'), $request->get('size'));
         return response($data)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
     }
 
     public static function getAllAccessibleDatasets(Request $request, user $user = null, bool $validate = false, bool $saved = false, bool $favorite = false, int $id = null,
-                                                    bool $count = false, int $offset = 0)
+                                                    bool $count = false, int $offset = null, int $size = null)
     {
         if ($user == null) {
             $user = $request->get('user');
@@ -77,7 +77,11 @@ class DatasetController extends Controller
         if ($count) {
             return $datasets->get()->count();
         } else {
-            return $datasets->offset($offset)->limit(10)->get();
+            if ($size != null) {
+                return $datasets->offset($offset)->limit($size)->get();
+            } else {
+                return $datasets->offset($offset)->limit(10000000)->get();
+            }
         }
     }
 
@@ -376,15 +380,15 @@ class DatasetController extends Controller
         }
     }
 
-    public function getAllAccessibleSavedDatasets(Request $request, int $offset = 0, bool $count = false)
+    public function getAllAccessibleSavedDatasets(Request $request, bool $count = false)
     {
-        $data = DatasetController::getAllAccessibleDatasets($request, $request->get('user'), false, true, false, null, $count, $offset);
+        $data = DatasetController::getAllAccessibleDatasets($request, $request->get('user'), false, true, false, null, $count, $request->get('offset'), $request->get('size'));
         return response($data)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
     }
 
-    public function getAllAccessibleFavoriteDatasets(Request $request, int $offset = 0, bool $count = false)
+    public function getAllAccessibleFavoriteDatasets(Request $request, bool $count = false)
     {
-        $data = DatasetController::getAllAccessibleDatasets($request, $request->get('user'), false, true, true, null, $count, $offset);
+        $data = DatasetController::getAllAccessibleDatasets($request, $request->get('user'), false, true, true, null, $count, $request->get('offset'), $request->get('size'));
         return response($data)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
     }
 
@@ -399,13 +403,13 @@ class DatasetController extends Controller
         $case = [];
         switch ($type) {
             case "all":
-                $case = DatasetController::getAllDatasets($request, 0, true);
+                $case = DatasetController::getAllDatasets($request, true);
                 break;
             case "saved":
-                $case = DatasetController::getAllAccessibleSavedDatasets($request, 0, true);
+                $case = DatasetController::getAllAccessibleSavedDatasets($request, true);
                 break;
             case "favorite":
-                $case = DatasetController::getAllAccessibleFavoriteDatasets($request, 0, true);
+                $case = DatasetController::getAllAccessibleFavoriteDatasets($request, true);
                 break;
             default:
                 abort(400);
