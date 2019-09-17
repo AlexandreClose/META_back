@@ -58,25 +58,25 @@ Route::get('/datasets/representations/{id}', 'DatasetController@getRepresentatio
 Route::get('/dataset/{id}', "DatasetController@getDatasetById"); # doc Ok
 Route::post('/datasets/update', "DatasetController@updateDataset");
 Route::post('/datasets/upload', 'DatasetController@uploadDataset');
-Route::get('/dataset/{id}/columns', "DatasetController@getAllColumnFromDataset");
-Route::get('/dataset/{id}/save', "DatasetController@saveDataset");
-Route::get('/dataset/{id}/favorite', "DatasetController@favoriteDataset");
-Route::get('/dataset/{id}/unsave', "DatasetController@unsaveDataset");
-Route::get('/dataset/{id}/unfavorite', "DatasetController@unsaveDataset");
+Route::get('/dataset/{id}/columns', "DatasetController@getAllColumnFromDataset"); # doc Ok
+Route::get('/dataset/{id}/save', "DatasetController@saveDataset"); # doc Ok
+Route::get('/dataset/{id}/favorite', "DatasetController@favoriteDataset"); # doc Ok
+Route::get('/dataset/{id}/unsave', "DatasetController@unsaveDataset"); # doc Ok
+Route::get('/dataset/{id}/unfavorite', "DatasetController@unsaveDataset"); # doc Ok
 Route::get('/datasets/favorite/', "DatasetController@getAllAccessibleFavoriteDatasets"); # doc Ok
 Route::get('/datasets/filters', 'DatasetController@getFilterDatasets');
 Route::get('/datasets/saved/', "DatasetController@getAllAccessibleSavedDatasets"); # doc Ok
-Route::get('/datasets/size/{type?}', "DatasetController@getDatasetsSize");
+Route::get('/datasets/size/{type?}', "DatasetController@getDatasetsSize"); # doc OK
 
 //Users routes : Mysql
-Route::get('/user', 'UserController@getAllUsers');
-Route::get('self', 'UserController@getConnectedUserData');
-Route::get('/users/name/{quantity?}', 'UserController@getUsersName');
+Route::get('/user', 'UserController@getAllUsers'); # doc Ok
+Route::get('self', 'UserController@getConnectedUserData'); # doc OK
+Route::get('/users/name/{quantity?}', 'UserController@getUsersName'); # doc Ok
 Route::post('/user/create', 'UserController@addUser');
 Route::post('/user/theme', 'UserController@addUserTheme');
 Route::delete('/user/theme', 'UserController@deleteUserTheme');
-Route::get('/user/block/{uuid}', 'UserController@blockUser');
-Route::get('/user/unblock/{uuid}', 'UserController@unblockUser');
+Route::get('/user/block/{uuid}', 'UserController@blockUser'); # doc Ok
+Route::get('/user/unblock/{uuid}', 'UserController@unblockUser'); # doc Ok
 Route::get('/user/color', 'UserController@getAllUserColor');
 Route::post('user/color', 'UserController@addColorToUser');
 Route::post('color/update', 'UserController@updateColorUser');

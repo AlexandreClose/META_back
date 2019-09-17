@@ -1,0 +1,55 @@
+type: object
+description: "List des columns trouver dans la table columns"
+example:
+    [
+    {
+        "id": 1,
+        "name": "@version",
+        "dataset_id": 3,
+        "main": 0,
+        "themeName": "Transport",
+        "visibility": "admin_only",
+        "created_at": "2019-08-30 14:04:17",
+        "updated_at": "2019-08-30 14:04:17"
+    },
+    {
+        "id": 2,
+        "name": "geometry",
+        "dataset_id": 3,
+        "main": 1,
+        "themeName": "Transport",
+        "visibility": null,
+        "created_at": "2019-08-30 14:04:18",
+        "updated_at": "2019-08-30 14:04:18"
+    },
+    {
+        "id": 3,
+        "name": "properties.Bancaire",
+        "dataset_id": 3,
+        "main": 0,
+        "themeName": "Transport",
+        "visibility": null,
+        "created_at": "2019-08-30 14:04:18",
+        "updated_at": "2019-08-30 14:04:18"
+    },
+    {
+        "id": 4,
+        "name": "properties.Clavier",
+        "dataset_id": 3,
+        "main": 0,
+        "themeName": "Transport",
+        "visibility": null,
+        "created_at": "2019-08-30 14:04:18",
+        "updated_at": "2019-08-30 14:04:18"
+    },
+    {
+        "id": 5,
+        "name": "properties.Clavier_bancaire",
+        "dataset_id": 3,
+        "main": 0,
+        "themeName": "Transport",
+        "visibility": null,
+        "created_at": "2019-08-30 14:04:18",
+        "updated_at": "2019-08-30 14:04:18"
+    }
+    ]

@@ -1,0 +1,16 @@
+type: string
+description: "List des nom et prénom trouver"
+example:
+    [
+    {
+        "uuid": "aedftrz456r4z5r4z653",
+        "firstname": "Riri",
+        "lastname": "duck"
+
+    },
+    {
+        "uuid": "sufgsuidfhsifhskfh",
+        "firstname": "Fifi",
+        "lastname": "duck"
+    }
+    ]

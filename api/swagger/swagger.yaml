@@ -303,7 +303,7 @@ paths:
         get:
             tags:
                 - datasets
-            sumary: "Retourne les info des jeux de données non validé"
+            summary: "Retourne les info des jeux de données non validé"
             description: "Retourne les colonnes de la table MySql de tout les jeux de données non validée"
             responses:
                 "200":
@@ -323,7 +323,7 @@ paths:
         get:
             tags:
                 - datasets
-            sumary: "Retourne les info des jeux de données validé"
+            summary: "Retourne les info des jeux de données validé"
             description: "Retourne les colonnes de la table MySql de tout les jeux de données validée
                 auquel l'utilisateur a accès"
             parameters:
@@ -357,7 +357,7 @@ paths:
         get:
             tags:
                 - datasets
-            sumary: "Retourne les info des jeux de données sauvegarder"
+            summary: "Retourne les info des jeux de données sauvegarder"
             description: "Retourne les colonnes de la table MySql de tout les jeux de données sauvegarder
                 auquel l'utilisateur a accès"
             parameters:
@@ -391,7 +391,7 @@ paths:
         get:
             tags:
                 - datasets
-            sumary: "Retourne les info des jeux de données favoris"
+            summary: "Retourne les info des jeux de données favoris"
             description: "Retourne les colonnes de la table MySql de tout les jeux de données favoris
                 auquel l'utilisateur a accès"
             parameters:
@@ -425,7 +425,7 @@ paths:
         get:
             tags:
                 - datasets
-            sumary: "Retourne un dataset"
+            summary: "Retourne un dataset"
             description: "Retourne les colonnes d'un jeux de donnée"
             parameters:
                 -   in: path
@@ -440,7 +440,7 @@ paths:
                     content:
                         application/json:
                             schema:
-                                $ref: "datasets/get/responses/representations.yaml"
+                                $ref: "datasets/get/responses/id.yaml"
                 "403":
                     description: "Forbidden"
                 "401":
@@ -452,7 +452,7 @@ paths:
         get:
             tags:
                 - datasets
-            sumary: "Retourne les représentations d'un datasets"
+            summary: "Retourne les représentations d'un datasets"
             description: "Retourne les colonnes de représentation MySql d'un jeux de donnée"
             parameters:
                 -   in: path
@@ -475,6 +475,265 @@ paths:
                 "500":
                     description: "Internal serveur Error"
 
+    /dataset/{id}/columns:
+        get:
+            tags:
+                - datasets
+            summary: "Retourne les columns d'un dataset"
+            description: "Retourne les données de la table MySql columns corespondent a un jeux de donnée"
+            parameters:
+                -   in: path
+                    name: id
+                    required: true
+                    schema:
+                        type: integer
+                        example: 3
+            responses:
+                "200":
+                    description: "Ok"
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "datasets/get/responses/idColumns.yaml"
+                "403":
+                    description: "Forbidden"
+                "401":
+                    description: "Unauthorized"
+                "500":
+                    description: "Internal serveur Error"
+
+    /dataset/{id}/favorite:
+        get:
+            tags:
+                - datasets
+            summary: "Ajoute un jeux au favoris"
+            description: "Sauvegarde le jeux sélectionnée en favoris "
+            parameters:
+                -   in: path
+                    name: id
+                    required: true
+                    schema:
+                        type: integer
+                        example: 3
+            responses:
+                "200":
+                    description: "Ok"
+                "403":
+                    description: "Forbidden"
+                "401":
+                    description: "Unauthorized"
+                "500":
+                    description: "Internal serveur Error"
+
+    /dataset/{id}/save:
+        get:
+            tags:
+                - datasets
+            summary: "Ajoute un jeux au jeux sauvegarder"
+            description: "Sauvegarde le jeux sélectionnée comme sauvegarder pour l'utilisateur"
+            parameters:
+                -   in: path
+                    name: id
+                    required: true
+                    schema:
+                        type: integer
+                        example: 3
+            responses:
+                "200":
+                    description: "Ok"
+                "403":
+                    description: "Forbidden"
+                "401":
+                    description: "Unauthorized"
+                "500":
+                    description: "Internal serveur Error"
+
+    /dataset/{id}/unsave:
+        get:
+            tags:
+                - datasets
+            summary: "Supprime un jeux au jeux sauvegarder"
+            description: "Supprime le jeux sélectionnée comme sauvegarder pour l'utilisateur"
+            parameters:
+                -   in: path
+                    name: id
+                    required: true
+                    schema:
+                        type: integer
+                        example: 3
+            responses:
+                "200":
+                    description: "Ok"
+                "403":
+                    description: "Forbidden"
+                "401":
+                    description: "Unauthorized"
+                "500":
+                    description: "Internal serveur Error"
+
+    /dataset/{id}/unfavorite:
+        get:
+            tags:
+                - datasets
+            summary: "Supprime un jeux au jeux sauvegarder"
+            description: "Supprime le jeux sélectionnée comme sauvegarder pour l'utilisateur"
+            parameters:
+                -   in: path
+                    name: id
+                    required: true
+                    schema:
+                        type: integer
+                        example: 3
+            responses:
+                "200":
+                    description: "Ok"
+                "403":
+                    description: "Forbidden"
+                "401":
+                    description: "Unauthorized"
+                "500":
+                    description: "Internal serveur Error"
+
+    /datasets/size/{type}:
+        get:
+            tags:
+                - datasets
+            summary: "Retourne le nombre de jeux de donnée"
+            description: "Retourne le nombre de jeux de donnée accessible. Tous, les favoris ou les sauvegarder"
+            parameters:
+                -   in: path
+                    name: type
+                    required: true
+                    schema:
+                        type: string
+                        example: all
+                        enum:
+                            - all
+                            - favorite
+                            - saved
+            responses:
+                "200":
+                    description: "Ok"
+                    example: 2
+                "403":
+                    description: "Forbidden"
+                "401":
+                    description: "Unauthorized"
+                "500":
+                    description: "Internal serveur Error"
+
+    /user:
+        get:
+            tags:
+                - users
+            summary: "Retourne la liste des utilisateurs"
+            description: "Retourne toutes les info de la table utilisateur du mysql"
+            responses:
+                "200":
+                    description: "Ok"
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "users/get/responses/user.yaml"
+                "403":
+                    description: "Forbidden"
+                "401":
+                    description: "Unauthorized"
+                "500":
+                    description: "Internal serveur Error"
+
+    /self:
+        get:
+            tags:
+                - users
+            summary: "Retourne l'utilisateur courant'"
+            description: "Retourne toutes les info de l'utilisateur courant"
+            responses:
+                "200":
+                    description: "Ok"
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "users/get/responses/self.yaml"
+                "403":
+                    description: "Forbidden"
+                "401":
+                    description: "Unauthorized"
+                "500":
+                    description: "Internal serveur Error"
+
+    /users/name/{quantity}:
+        get:
+            tags:
+                - users
+            summary: "Retourne l'utilisateur courant'"
+            description: "Retourne toutes les info de l'utilisateur courant"
+            parameters:
+                -   in: path
+                    name: quantity
+                    required: false
+                    schema:
+                        type: integer
+                        example: 2
+            responses:
+                "200":
+                    description: "Ok"
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "users/get/responses/usersName.yaml"
+                "403":
+                    description: "Forbidden"
+                "401":
+                    description: "Unauthorized"
+                "500":
+                    description: "Internal serveur Error"
+
+    /user/block/{uuid}:
+        get:
+            tags:
+                - users
+            summary: "Bloque un utilisateur"
+            description: "Change le role d'un utilisateur à déactiver afin de l'archiver"
+            parameters:
+                -   in: path
+                    name: quantity
+                    required: true
+                    schema:
+                        type: string
+                        example: 2
+            responses:
+                "200":
+                    description: "Ok"
+                "403":
+                    description: "Forbidden"
+                "401":
+                    description: "Unauthorized"
+                "500":
+                    description: "Internal serveur Error"
+
+    /user/unblock/{uuid}:
+        get:
+            tags:
+                - users
+            summary: "Débloque un utilisateur"
+            description: "Change le role d'un utilisateur à réactiver"
+            parameters:
+                -   in: path
+                    name: quantity
+                    required: true
+                    schema:
+                        type: string
+                        example: 2
+            responses:
+                "200":
+                    description: "Ok"
+                "403":
+                    description: "Forbidden"
+                "401":
+                    description: "Unauthorized"
+                "500":
+                    description: "Internal serveur Error"
 
 components:
     securitySchemes:
