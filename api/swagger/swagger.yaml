@@ -735,6 +735,118 @@ paths:
                 "500":
                     description: "Internal serveur Error"
 
+    /user/color/:
+        get:
+            tags:
+                - users
+            summary: "Retourne les couleur d'un utilisateur"
+            description: "Retourne tout les couleur de l'utilisateur"
+            responses:
+                "200":
+                    description: "Ok"
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "users/get/responses/usersName.yaml"
+                "403":
+                    description: "Forbidden"
+                "401":
+                    description: "Unauthorized"
+                "500":
+                    description: "Internal serveur Error"
+
+    /color/update/:
+        post:
+            tags:
+                - users
+            summary: "Mise a jour des couleur d'un utilisateur"
+            description: "Supprimes les ancienne couleur d'un utilisateur pour les remplacer par des nouvelle"
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "users/post/requests/colorUpdate.yaml"
+            responses:
+                "200":
+                    description: "Ok"
+                "403":
+                    description: "Forbidden"
+                "401":
+                    description: "Unauthorized"
+                "500":
+                    description: "Internal serveur Error"
+
+    /user/color:
+        post:
+            tags:
+                - users
+            summary: "Ajoute une couleur a un utilisateur"
+            description: "Ajoute une couleur liée a l'utilisateur dans la table color"
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "users/post/requests/userColor.yaml"
+            responses:
+                "200":
+                    description: "Ok"
+                "403":
+                    description: "Forbidden"
+                "401":
+                    description: "Unauthorized"
+                "500":
+                    description: "Internal serveur Error"
+        delete:
+            tags:
+                - users
+            summary: "Supprime une couleur a un utilisateur"
+            description: "Supprime une couleur liée a l'utilisateur dans la table color"
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "users/post/requests/userColor.yaml"
+            responses:
+                "200":
+                    description: "Ok"
+                "403":
+                    description: "Forbidden"
+                "401":
+                    description: "Unauthorized"
+                "500":
+                    description: "Internal serveur Error"
+
+    /datatypes/{quantity}:
+        get:
+            tags:
+                - datatypes
+            summary: "Retourne les types de données"
+            description: "Ajoute les type de données trouver dans la table data_types"
+            parameters:
+                -   in: path
+                    name: quantity
+                    required: false
+                    schema:
+                        type: integer
+                        example: 2
+            responses:
+                "200":
+                    description: "Ok"
+                    content:
+                            application/json:
+                                schema:
+                                    $ref: "dataTypes/get/responses/dataTypes.yaml"
+                "403":
+                    description: "Forbidden"
+                "401":
+                    description: "Unauthorized"
+                "500":
+                    description: "Internal serveur Error"
+
+
 components:
     securitySchemes:
         ApiKeyAuth:

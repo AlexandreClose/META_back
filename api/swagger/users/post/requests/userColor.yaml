@@ -1,0 +1,5 @@
+type: string
+description: "List des couleur mise à jour"
+example: {
+    "color_code": "#00FF3b"
+}

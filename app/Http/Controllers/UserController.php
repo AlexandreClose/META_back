@@ -222,10 +222,15 @@ class UserController extends Controller
     public function addColorToUser(Request $request)
     {
         $user = $request->get('user');
-        $color = new color();
-        $color->user_uuid = $user->uuid;
-        $color->color_code = $request->get('color_code');
-        $color->save();
+        $color = $request->get('color_code');
+
+        $data = array(
+            'user_uuid' => $user->uuid,
+            'color_code' => $color,
+            'created_at' => NOW(),
+            'updated_at' => NOW()
+        );
+        color::insert($data);
     }
 
     public function removeColorFromUser(Request $request)

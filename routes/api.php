@@ -77,13 +77,13 @@ Route::post('/user/theme', 'UserController@addUserTheme');
 Route::delete('/user/theme', 'UserController@deleteUserTheme');
 Route::get('/user/block/{uuid}', 'UserController@blockUser'); # doc Ok
 Route::get('/user/unblock/{uuid}', 'UserController@unblockUser'); # doc Ok
-Route::get('/user/color', 'UserController@getAllUserColor');
-Route::post('user/color', 'UserController@addColorToUser');
-Route::post('color/update', 'UserController@updateColorUser');
-Route::delete('user/color', 'UserController@removeColorFromUser');
+Route::get('/user/color', 'UserController@getAllUserColor'); # doc Ok
+Route::post('user/color', 'UserController@addColorToUser');  # doc OK
+Route::post('color/update', 'UserController@updateColorUser'); # doc OK
+Route::delete('user/color', 'UserController@removeColorFromUser');  # doc OK
 
 //Datatypes routes : Mysql
-Route::get('/datatypes/{quantity?}', 'DataTypesController@getAllDataTypes');
+Route::get('/datatypes/{quantity?}', 'DataTypesController@getAllDataTypes'); # doc Ok
 
 //Representation types routes : Mysql
 Route::get('/representationTypes/{quantity?}', 'RepresentationTypesController@getAllRepresentationTypes');
