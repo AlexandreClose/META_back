@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\saved_card;
 use App\analysis;
 use App\analysis_column;
+use phpDocumentor\Reflection\Types\Integer;
 
 
 class SavedCardsController extends Controller
@@ -51,10 +52,10 @@ class SavedCardsController extends Controller
         return response($card)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
     }
 
-    public function deleteCard(Request $request){
+    public function deleteCard(Request $request, $id){
         $user = $request->get('user');
 
-        $card = saved_card::where('uuid', $user->uuid);
+        $card = saved_card::where('uuid', $user->uuid)->where('id',$id);
         $card->delete();
     }
 }

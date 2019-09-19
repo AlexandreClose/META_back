@@ -1,0 +1,8 @@
+type: object
+description: "Body de création d'une saved_cards"
+example:
+    {
+        "id": "19",
+        "displayed": 1,
+        "size": 3
+    }

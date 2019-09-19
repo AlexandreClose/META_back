@@ -1175,16 +1175,95 @@ paths:
                 "500":
                     description: "Internal serveur Error"
 
+    /saved_card:
+        get:
+            tags:
+                - saved_card
+            summary: "Affiche les saved_cards"
+            description: "Affiche les saved_cards trouver dans la table saved_cards de la base MySql"
+            responses:
+                "200":
+                    description: "Ok"
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "saved_card/get/responses/saved_card.yaml"
+                "403":
+                    description: "Forbidden"
+                "401":
+                    description: "Unauthorized"
+                "500":
+                    description: "Internal serveur Error"
+        post:
+            tags:
+                - saved_card
+            summary: "Crée une saved_card"
+            description: "Ajoute une saved_card dans la base MySql"
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "saved_card/post/requests/saved_card.yaml"
+            responses:
+                "200":
+                    description: "Ok"
+                "403":
+                    description: "Forbidden"
+                "401":
+                    description: "Unauthorized"
+                "500":
+                    description: "Internal serveur Error"
+        put:
+            tags:
+                - saved_card
+            summary: "Renomme une saved_card"
+            description: "Renomme une saved_card dans la base MySql"
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "saved_card/put/requests/saved_card.yaml"
+            responses:
+                "200":
+                    description: "Ok"
+                "403":
+                    description: "Forbidden"
+                "401":
+                    description: "Unauthorized"
+                "500":
+                    description: "Internal serveur Error"
+
+    /saved_card/{id}:
+        delete:
+            tags:
+                - saved_card
+            summary: "Supprime une saved_card"
+            description: "Supprime une saved_card de la table MySql"
+            parameters:
+                -   in: path
+                    name: id
+                    required: true
+                    schema:
+                        type: string
+                        example: 19
+            responses:
+                "200":
+                    description: "Ok"
+                "403":
+                    description: "Forbidden"
+                "401":
+                    description: "Unauthorized"
+                "500":
+                    description: "Internal serveur Error"
+
 components:
     securitySchemes:
         ApiKeyAuth:
             type: apiKey
             in: header
             name: "Authorization"
-
-    schemas:
-        Request_Column_Stats:
-            $ref: "index/post/requests/columnStats.yaml"
 
 security:
     -   ApiKeyAuth: []
