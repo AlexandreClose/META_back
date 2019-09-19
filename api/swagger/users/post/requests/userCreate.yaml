@@ -1,0 +1,13 @@
+type: object
+description: "Body de création d'un utilisateur"
+example:
+    {
+        "tid": 789,
+        "role": "Utilisateur",
+        "firstname": "Loulou",
+        "lastname": "Duck",
+        "service": "child",
+        "direction": "123",
+        "mail": "loulou.duck@toulouse.fr",
+        "phone": "0123456789"
+    }

@@ -31,8 +31,8 @@ Route::get('/index/fields/{name}', 'IndexController@getAllFieldsFromIndexByName'
 Route::get('/index/accessiblefields/{name}', 'IndexController@getAllAccessibleFieldsFromIndexByName');
 
 Route::get('/index/get/{name}/{quantity?}/{offset?}/{date_col?}/{start_date?}/{end_date?}', 'IndexController@getIndexByName'); #TODO doc
-//Route::get('/index/file/{name}', 'IndexController@getIndexFile'); #TODO doc
-//Route::post('/index/geo', 'IndexController@getIndexFromCoordinatesInShape'); #TODO doc
+//Route::get('/index/file/{name}', 'IndexController@getIndexFile');
+//Route::post('/index/geo', 'IndexController@getIndexFromCoordinatesInShape');
 Route::post('/liteIndex', 'IndexController@getLiteIndex');
 
 //Index routes: Elasticsearch and InfluxDB
@@ -70,9 +70,9 @@ Route::get('/datasets/size/{type?}', "DatasetController@getDatasetsSize");
 Route::get('/user', 'UserController@getAllUsers');
 Route::get('self', 'UserController@getConnectedUserData');
 Route::get('/users/name/{quantity?}', 'UserController@getUsersName');
-Route::post('/user/create', 'UserController@addUser'); #TODO doc
-Route::post('/user/theme', 'UserController@addUserTheme'); #TODO doc
-Route::delete('/user/theme', 'UserController@deleteUserTheme'); #TODO doc
+Route::post('/user/create', 'UserController@addUser');
+Route::post('/user/theme', 'UserController@addUserTheme');
+Route::delete('/user/theme', 'UserController@deleteUserTheme');
 Route::get('/user/block/{uuid}', 'UserController@blockUser');
 Route::get('/user/unblock/{uuid}', 'UserController@unblockUser');
 Route::get('/user/color', 'UserController@getAllUserColor');
@@ -121,5 +121,5 @@ Route::put('/saved_card', 'SavedCardsController@updateCard');
 Route::delete('/saved_card/{id}', 'SavedCardsController@deleteCard');
 
 //Routes de test
-//Route::get('/user/add/{uuid}','UserController@createUserIfDontExist'); #TODO doc
+//Route::get('/user/add/{uuid}','UserController@createUserIfDontExist');
 Route::post('/user/update/', 'UserController@updateUserWithData');

@@ -15,25 +15,337 @@ servers:
 
 paths:
 
-    /column/stats:
-        post:
+    /theme:
+        get:
             tags:
-                - column
-            summary: "Statistique sur un jeu de données"
-            description: "Cette route a pour fonction de faire des statistique sur des colonne du jeu de donnée spécifier."
-            requestBody:
-                required: true
-                content:
-                    application/json:
-                        schema:
-                            $ref: "index/post/requests/columnStats.yaml"
+                - theme
+            summary: "Retourne la liste des themes"
+            description: "Retourne les theme trouver dans la table themes de la base MySql"
             responses:
                 "200":
                     description: "Ok"
                     content:
                         application/json:
                             schema:
-                                $ref: "index/post/responses/columnStats.yaml"
+                                $ref: "theme/get/responses/theme.yaml"
+                "403":
+                    description: "Forbidden"
+                "401":
+                    description: "Unauthorized"
+                "500":
+                    description: "Internal serveur Error"
+        post:
+            tags:
+                - theme
+            summary: "Crée un theme"
+            description: "Ajoute un theme dans la base MySql"
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "theme/post/requests/theme.yaml"
+            responses:
+                "200":
+                    description: "Ok"
+                "403":
+                    description: "Forbidden"
+                "401":
+                    description: "Unauthorized"
+                "500":
+                    description: "Internal serveur Error"
+        put:
+            tags:
+                - theme
+            summary: "Renomme un theme"
+            description: "Ajoute un theme dans la base MySql"
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "theme/put/requests/theme.yaml"
+            responses:
+                "200":
+                    description: "Ok"
+                "403":
+                    description: "Forbidden"
+                "401":
+                    description: "Unauthorized"
+                "500":
+                    description: "Internal serveur Error"
+
+    /theme/{name}/{newName}:
+        delete:
+            tags:
+                - theme
+            summary: "Supprime un theme"
+            description: "Supprime un theme et le remplace par un theme existant"
+            parameters:
+                -   in: path
+                    name: name
+                    required: true
+                    schema:
+                        type: string
+                        example: "Nom"
+                -   in: path
+                    name: newName
+                    required: true
+                    schema:
+                        type: string
+                        example: "nouveauNom"
+            responses:
+                "200":
+                    description: "Ok"
+                "403":
+                    description: "Forbidden"
+                "401":
+                    description: "Unauthorized"
+                "500":
+                    description: "Internal serveur Error"
+
+    /direction:
+        get:
+            tags:
+                - direction
+            summary: "Affiche les directions"
+            description: "Affiche les directions trouver dans la table directions de la base MySql"
+            responses:
+                "200":
+                    description: "Ok"
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "direction/get/responses/direction.yaml"
+                "403":
+                    description: "Forbidden"
+                "401":
+                    description: "Unauthorized"
+                "500":
+                    description: "Internal serveur Error"
+        post:
+            tags:
+                - direction
+            summary: "Crée une direction"
+            description: "Ajoute une direction dans la base MySql"
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "direction/post/requests/direction.yaml"
+            responses:
+                "200":
+                    description: "Ok"
+                "403":
+                    description: "Forbidden"
+                "401":
+                    description: "Unauthorized"
+                "500":
+                    description: "Internal serveur Error"
+        put:
+            tags:
+                - direction
+            summary: "Renomme une direction"
+            description: "Renomme une direction dans la base MySql"
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "direction/put/requests/direction.yaml"
+            responses:
+                "200":
+                    description: "Ok"
+                "403":
+                    description: "Forbidden"
+                "401":
+                    description: "Unauthorized"
+                "500":
+                    description: "Internal serveur Error"
+
+    /direction/{name}:
+        delete:
+            tags:
+                - direction
+            summary: "Supprime une direction"
+            description: "Supprime une direction de la table MySql"
+            parameters:
+                -   in: path
+                    name: name
+                    required: true
+                    schema:
+                        type: string
+                        example: Name
+            responses:
+                "200":
+                    description: "Ok"
+                "403":
+                    description: "Forbidden"
+                "401":
+                    description: "Unauthorized"
+                "500":
+                    description: "Internal serveur Error"
+
+    /service:
+        get:
+            tags:
+                - service
+            summary: "Affiche les services"
+            description: "Affiche les services trouver dans la table services de la base MySql"
+            responses:
+                "200":
+                    description: "Ok"
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "service/get/responses/service.yaml"
+                "403":
+                    description: "Forbidden"
+                "401":
+                    description: "Unauthorized"
+                "500":
+                    description: "Internal serveur Error"
+        post:
+            tags:
+                - service
+            summary: "Crée une service"
+            description: "Ajoute une service dans la base MySql"
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "service/post/requests/service.yaml"
+            responses:
+                "200":
+                    description: "Ok"
+                "403":
+                    description: "Forbidden"
+                "401":
+                    description: "Unauthorized"
+                "500":
+                    description: "Internal serveur Error"
+        put:
+            tags:
+                - service
+            summary: "Renomme une service"
+            description: "Renomme une service dans la base MySql"
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "service/put/requests/service.yaml"
+            responses:
+                "200":
+                    description: "Ok"
+                "403":
+                    description: "Forbidden"
+                "401":
+                    description: "Unauthorized"
+                "500":
+                    description: "Internal serveur Error"
+
+    /service/{name}:
+        delete:
+            tags:
+                - service
+            summary: "Supprime un service"
+            description: "Supprime un service de la table MySql"
+            parameters:
+                -   in: path
+                    name: name
+                    required: true
+                    schema:
+                        type: string
+                        example: Name
+            responses:
+                "200":
+                    description: "Ok"
+                "403":
+                    description: "Forbidden"
+                "401":
+                    description: "Unauthorized"
+                "500":
+                    description: "Internal serveur Error"
+
+    /saved_card:
+        get:
+            tags:
+                - saved_card
+            summary: "Affiche les saved_cards"
+            description: "Affiche les saved_cards trouver dans la table saved_cards de la base MySql"
+            responses:
+                "200":
+                    description: "Ok"
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "saved_card/get/responses/saved_card.yaml"
+                "403":
+                    description: "Forbidden"
+                "401":
+                    description: "Unauthorized"
+                "500":
+                    description: "Internal serveur Error"
+        post:
+            tags:
+                - saved_card
+            summary: "Crée une saved_card"
+            description: "Ajoute une saved_card dans la base MySql"
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "saved_card/post/requests/saved_card.yaml"
+            responses:
+                "200":
+                    description: "Ok"
+                "403":
+                    description: "Forbidden"
+                "401":
+                    description: "Unauthorized"
+                "500":
+                    description: "Internal serveur Error"
+        put:
+            tags:
+                - saved_card
+            summary: "Renomme une saved_card"
+            description: "Renomme une saved_card dans la base MySql"
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "saved_card/put/requests/saved_card.yaml"
+            responses:
+                "200":
+                    description: "Ok"
+                "403":
+                    description: "Forbidden"
+                "401":
+                    description: "Unauthorized"
+                "500":
+                    description: "Internal serveur Error"
+
+    /saved_card/{id}:
+        delete:
+            tags:
+                - saved_card
+            summary: "Supprime une saved_card"
+            description: "Supprime une saved_card de la table MySql"
+            parameters:
+                -   in: path
+                    name: id
+                    required: true
+                    schema:
+                        type: string
+                        example: 19
+            responses:
+                "200":
+                    description: "Ok"
                 "403":
                     description: "Forbidden"
                 "401":
@@ -252,46 +564,6 @@ paths:
                         application/json:
                             schema:
                                 $ref: "index/post/responses/fromPolygon.yaml"
-                "403":
-                    description: "Forbidden"
-                "401":
-                    description: "Unauthorized"
-                "500":
-                    description: "Internal serveur Error"
-
-    /analyse/all:
-        get:
-            tags:
-                - analyse
-            summary: "Retourne les info des analyses"
-            description: "Retourne toutes les info des analyses auquel l'utlisateur courant a access"
-            responses:
-                "200":
-                    description: "Ok"
-                    content:
-                        application/json:
-                            schema:
-                                $ref: "analyse/get/responses/analyseAll.yaml"
-                "403":
-                    description: "Forbidden"
-                "401":
-                    description: "Unauthorized"
-                "500":
-                    description: "Internal serveur Error"
-
-    /analyse/saved:
-        get:
-            tags:
-                - analyse
-            summary: "Retourne les info des analyses sauvegarder"
-            description: "Retourne toutes les info des analyses sauvegarder auquel l'utlisateur courant a access"
-            responses:
-                "200":
-                    description: "Ok"
-                    content:
-                        application/json:
-                            schema:
-                                $ref: "analyse/get/responses/analyseSaved.yaml"
                 "403":
                     description: "Forbidden"
                 "401":
@@ -642,6 +914,50 @@ paths:
                 "500":
                     description: "Internal serveur Error"
 
+    /user/create:
+        post:
+            tags:
+                - users
+            summary: "Créé un utilisateur"
+            description: "Ajoute un utilisateur dans la table user de la base MySql"
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "users/post/requests/userCreate.yaml"
+            responses:
+                "200":
+                    description: "Ok"
+                "403":
+                    description: "Forbidden"
+                "401":
+                    description: "Unauthorized"
+                "500":
+                    description: "Internal serveur Error"
+
+    /user/theme:
+        post:
+            tags:
+                - users
+            summary: "Associe un utilisateur à un theme"
+            description: "Lie un utilisateur à un theme dans la table user_theme de la base MySql"
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "users/post/requests/userTheme.yaml"
+            responses:
+                "200":
+                    description: "Ok"
+                "403":
+                    description: "Forbidden"
+                "401":
+                    description: "Unauthorized"
+                "500":
+                    description: "Internal serveur Error"
+
     /self:
         get:
             tags:
@@ -819,6 +1135,72 @@ paths:
                 "500":
                     description: "Internal serveur Error"
 
+    /analyse/all:
+        get:
+            tags:
+                - analyse
+            summary: "Retourne les info des analyses"
+            description: "Retourne toutes les info des analyses auquel l'utlisateur courant a access"
+            responses:
+                "200":
+                    description: "Ok"
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "analyse/get/responses/analyseAll.yaml"
+                "403":
+                    description: "Forbidden"
+                "401":
+                    description: "Unauthorized"
+                "500":
+                    description: "Internal serveur Error"
+
+    /analyse/saved:
+            get:
+                tags:
+                    - analyse
+                summary: "Retourne les info des analyses sauvegarder"
+                description: "Retourne toutes les info des analyses sauvegarder auquel l'utlisateur courant a access"
+                responses:
+                    "200":
+                        description: "Ok"
+                        content:
+                            application/json:
+                                schema:
+                                    $ref: "analyse/get/responses/analyseSaved.yaml"
+                    "403":
+                        description: "Forbidden"
+                    "401":
+                        description: "Unauthorized"
+                    "500":
+                        description: "Internal serveur Error"
+
+    /column/stats:
+        post:
+            tags:
+                - column
+            summary: "Statistique sur un jeu de données"
+            description: "Cette route a pour fonction de faire des statistique sur des colonne du jeu de donnée spécifier."
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "index/post/requests/columnStats.yaml"
+            responses:
+                "200":
+                    description: "Ok"
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "index/post/responses/columnStats.yaml"
+                "403":
+                    description: "Forbidden"
+                "401":
+                    description: "Unauthorized"
+                "500":
+                    description: "Internal serveur Error"
+
     /datatypes/{quantity}:
         get:
             tags:
@@ -873,95 +1255,6 @@ paths:
                 "500":
                     description: "Internal serveur Error"
 
-    /theme:
-        get:
-            tags:
-                - theme
-            summary: "Retourne la liste des themes"
-            description: "Retourne les theme trouver dans la table themes de la base MySql"
-            responses:
-                "200":
-                    description: "Ok"
-                    content:
-                        application/json:
-                            schema:
-                                $ref: "theme/get/responses/theme.yaml"
-                "403":
-                    description: "Forbidden"
-                "401":
-                    description: "Unauthorized"
-                "500":
-                    description: "Internal serveur Error"
-        post:
-            tags:
-                - theme
-            summary: "Crée un theme"
-            description: "Ajoute un theme dans la base MySql"
-            requestBody:
-                required: true
-                content:
-                    application/json:
-                        schema:
-                            $ref: "theme/post/requests/theme.yaml"
-            responses:
-                "200":
-                    description: "Ok"
-                "403":
-                    description: "Forbidden"
-                "401":
-                    description: "Unauthorized"
-                "500":
-                    description: "Internal serveur Error"
-        put:
-            tags:
-                - theme
-            summary: "Renomme un theme"
-            description: "Ajoute un theme dans la base MySql"
-            requestBody:
-                required: true
-                content:
-                    application/json:
-                        schema:
-                            $ref: "theme/put/requests/theme.yaml"
-            responses:
-                "200":
-                    description: "Ok"
-                "403":
-                    description: "Forbidden"
-                "401":
-                    description: "Unauthorized"
-                "500":
-                    description: "Internal serveur Error"
-
-    /theme/{name}/{newName}:
-        delete:
-            tags:
-                - theme
-            summary: "Supprime un theme"
-            description: "Supprime un theme et le remplace par un theme existant"
-            parameters:
-                -   in: path
-                    name: name
-                    required: true
-                    schema:
-                        type: string
-                        example: "Nom"
-                -   in: path
-                    name: newName
-                    required: true
-                    schema:
-                        type: string
-                        example: "nouveauNom"
-            responses:
-                "200":
-                    description: "Ok"
-                "403":
-                    description: "Forbidden"
-                "401":
-                    description: "Unauthorized"
-                "500":
-                    description: "Internal serveur Error"
-
     /role:
         get:
             tags:
@@ -1002,255 +1295,6 @@ paths:
                         application/json:
                             schema:
                                 $ref: "role/get/responses/role.yaml"
-                "403":
-                    description: "Forbidden"
-                "401":
-                    description: "Unauthorized"
-                "500":
-                    description: "Internal serveur Error"
-
-    /direction:
-        get:
-            tags:
-                - direction
-            summary: "Affiche les directions"
-            description: "Affiche les directions trouver dans la table directions de la base MySql"
-            responses:
-                "200":
-                    description: "Ok"
-                    content:
-                        application/json:
-                            schema:
-                                $ref: "direction/get/responses/direction.yaml"
-                "403":
-                    description: "Forbidden"
-                "401":
-                    description: "Unauthorized"
-                "500":
-                    description: "Internal serveur Error"
-        post:
-            tags:
-                - direction
-            summary: "Crée une direction"
-            description: "Ajoute une direction dans la base MySql"
-            requestBody:
-                required: true
-                content:
-                    application/json:
-                        schema:
-                            $ref: "direction/post/requests/direction.yaml"
-            responses:
-                "200":
-                    description: "Ok"
-                "403":
-                    description: "Forbidden"
-                "401":
-                    description: "Unauthorized"
-                "500":
-                    description: "Internal serveur Error"
-        put:
-            tags:
-                - direction
-            summary: "Renomme une direction"
-            description: "Renomme une direction dans la base MySql"
-            requestBody:
-                required: true
-                content:
-                    application/json:
-                        schema:
-                            $ref: "direction/put/requests/direction.yaml"
-            responses:
-                "200":
-                    description: "Ok"
-                "403":
-                    description: "Forbidden"
-                "401":
-                    description: "Unauthorized"
-                "500":
-                    description: "Internal serveur Error"
-
-    /direction/{name}:
-        delete:
-            tags:
-                - direction
-            summary: "Supprime une direction"
-            description: "Supprime une direction de la table MySql"
-            parameters:
-                -   in: path
-                    name: name
-                    required: true
-                    schema:
-                        type: string
-                        example: Name
-            responses:
-                "200":
-                    description: "Ok"
-                "403":
-                    description: "Forbidden"
-                "401":
-                    description: "Unauthorized"
-                "500":
-                    description: "Internal serveur Error"
-
-    /service:
-        get:
-            tags:
-                - service
-            summary: "Affiche les services"
-            description: "Affiche les services trouver dans la table services de la base MySql"
-            responses:
-                "200":
-                    description: "Ok"
-                    content:
-                        application/json:
-                            schema:
-                                $ref: "service/get/responses/service.yaml"
-                "403":
-                    description: "Forbidden"
-                "401":
-                    description: "Unauthorized"
-                "500":
-                    description: "Internal serveur Error"
-        post:
-            tags:
-                - service
-            summary: "Crée une service"
-            description: "Ajoute une service dans la base MySql"
-            requestBody:
-                required: true
-                content:
-                    application/json:
-                        schema:
-                            $ref: "service/post/requests/service.yaml"
-            responses:
-                "200":
-                    description: "Ok"
-                "403":
-                    description: "Forbidden"
-                "401":
-                    description: "Unauthorized"
-                "500":
-                    description: "Internal serveur Error"
-        put:
-            tags:
-                - service
-            summary: "Renomme une service"
-            description: "Renomme une service dans la base MySql"
-            requestBody:
-                required: true
-                content:
-                    application/json:
-                        schema:
-                            $ref: "service/put/requests/service.yaml"
-            responses:
-                "200":
-                    description: "Ok"
-                "403":
-                    description: "Forbidden"
-                "401":
-                    description: "Unauthorized"
-                "500":
-                    description: "Internal serveur Error"
-
-    /service/{name}:
-        delete:
-            tags:
-                - service
-            summary: "Supprime un service"
-            description: "Supprime un service de la table MySql"
-            parameters:
-                -   in: path
-                    name: name
-                    required: true
-                    schema:
-                        type: string
-                        example: Name
-            responses:
-                "200":
-                    description: "Ok"
-                "403":
-                    description: "Forbidden"
-                "401":
-                    description: "Unauthorized"
-                "500":
-                    description: "Internal serveur Error"
-
-    /saved_card:
-        get:
-            tags:
-                - saved_card
-            summary: "Affiche les saved_cards"
-            description: "Affiche les saved_cards trouver dans la table saved_cards de la base MySql"
-            responses:
-                "200":
-                    description: "Ok"
-                    content:
-                        application/json:
-                            schema:
-                                $ref: "saved_card/get/responses/saved_card.yaml"
-                "403":
-                    description: "Forbidden"
-                "401":
-                    description: "Unauthorized"
-                "500":
-                    description: "Internal serveur Error"
-        post:
-            tags:
-                - saved_card
-            summary: "Crée une saved_card"
-            description: "Ajoute une saved_card dans la base MySql"
-            requestBody:
-                required: true
-                content:
-                    application/json:
-                        schema:
-                            $ref: "saved_card/post/requests/saved_card.yaml"
-            responses:
-                "200":
-                    description: "Ok"
-                "403":
-                    description: "Forbidden"
-                "401":
-                    description: "Unauthorized"
-                "500":
-                    description: "Internal serveur Error"
-        put:
-            tags:
-                - saved_card
-            summary: "Renomme une saved_card"
-            description: "Renomme une saved_card dans la base MySql"
-            requestBody:
-                required: true
-                content:
-                    application/json:
-                        schema:
-                            $ref: "saved_card/put/requests/saved_card.yaml"
-            responses:
-                "200":
-                    description: "Ok"
-                "403":
-                    description: "Forbidden"
-                "401":
-                    description: "Unauthorized"
-                "500":
-                    description: "Internal serveur Error"
-
-    /saved_card/{id}:
-        delete:
-            tags:
-                - saved_card
-            summary: "Supprime une saved_card"
-            description: "Supprime une saved_card de la table MySql"
-            parameters:
-                -   in: path
-                    name: id
-                    required: true
-                    schema:
-                        type: string
-                        example: 19
-            responses:
-                "200":
-                    description: "Ok"
                 "403":
                     description: "Forbidden"
                 "401":

@@ -1,0 +1,7 @@
+type: object
+description: "Body de création de lien entre un utilisateur et un theme"
+example:
+    {
+        "name": "Default",
+        "uuid": "2be8c158-29a7-42b3-a9fb-de9ec266e196"
+    }
