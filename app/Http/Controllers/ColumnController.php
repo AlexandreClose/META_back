@@ -95,7 +95,6 @@ class ColumnController extends Controller
                     $auth_users->uuid = $auth_user->uuid;
                     $auth_users->save();
                 }
-
             }
 
             $fields = IndexController::getFieldsAndType($request, $dataset->databaseName);

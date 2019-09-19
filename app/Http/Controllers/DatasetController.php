@@ -75,14 +75,28 @@ class DatasetController extends Controller
             });
 
         if ($count) {
-            return $datasets->get()->count();
+            $datasets = $datasets->get()->count();
         } else {
             if ($size != null) {
-                return $datasets->offset($offset)->limit($size)->get();
+                $datasets = $datasets->offset($offset)->limit($size)->get();
             } else {
-                return $datasets->offset($offset)->limit(10000000)->get();
+                $datasets = $datasets->offset($offset)->limit(10000000)->get();
             }
         }
+
+        foreach ($datasets as $dataset) {
+            $id = $dataset["id"];
+            $value = user_saved_dataset::where('id', $id)->where("uuid", $user["uuid"])->get('favorite')->first()["favorite"];
+            if ($value !== null) {
+                $dataset["favorite"] = $value;
+                $dataset["saved"] = (integer)!$value;
+            } else {
+                $dataset["favorite"] = 0;
+                $dataset["saved"] = 0;
+            }
+        }
+
+        return $datasets;
     }
 
     private static function objectLiteToArray($array, string $key = "name")
