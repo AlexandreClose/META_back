@@ -1,0 +1,20 @@
+type: object
+description: "List des themes"
+example:
+    [
+    {
+        "name": "Mobilité",
+        "description": "Metier de la mobilité dans Toulouse",
+        "user_count": 1
+    },
+    {
+        "name": "Transport",
+        "description": "Metier de le transport dans Toulouse",
+        "user_count": 1
+    },
+    {
+        "name": "Default",
+        "description": "N/A",
+        "user_count": 0
+    }
+    ]

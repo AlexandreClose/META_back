@@ -822,7 +822,7 @@ paths:
     /datatypes/{quantity}:
         get:
             tags:
-                - datatypes
+                - dataTypes
             summary: "Retourne les types de données"
             description: "Ajoute les type de données trouver dans la table data_types"
             parameters:
@@ -836,9 +836,9 @@ paths:
                 "200":
                     description: "Ok"
                     content:
-                            application/json:
-                                schema:
-                                    $ref: "dataTypes/get/responses/dataTypes.yaml"
+                        application/json:
+                            schema:
+                                $ref: "dataTypes/get/responses/dataTypes.yaml"
                 "403":
                     description: "Forbidden"
                 "401":
@@ -846,6 +846,121 @@ paths:
                 "500":
                     description: "Internal serveur Error"
 
+    /representationTypes/{quantity}:
+        get:
+            tags:
+                - representationTypes
+            summary: "Retourne les types de représentation"
+            description: "Retourne les type de représentation trouver dans la table data_types"
+            parameters:
+                -   in: path
+                    name: quantity
+                    required: false
+                    schema:
+                        type: integer
+                        example: 2
+            responses:
+                "200":
+                    description: "Ok"
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "representationTypes/get/responses/representationTypes.yaml"
+                "403":
+                    description: "Forbidden"
+                "401":
+                    description: "Unauthorized"
+                "500":
+                    description: "Internal serveur Error"
+
+    /theme:
+        get:
+            tags:
+                - theme
+            summary: "Retourne la liste des themes"
+            description: "Retourne les theme trouver dans la table themes de la base MySql"
+            responses:
+                "200":
+                    description: "Ok"
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "theme/get/responses/theme.yaml"
+                "403":
+                    description: "Forbidden"
+                "401":
+                    description: "Unauthorized"
+                "500":
+                    description: "Internal serveur Error"
+        post:
+            tags:
+                - theme
+            summary: "Crée un theme"
+            description: "Ajoute un theme dans la base MySql"
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "theme/post/requests/theme.yaml"
+            responses:
+                "200":
+                    description: "Ok"
+                "403":
+                    description: "Forbidden"
+                "401":
+                    description: "Unauthorized"
+                "500":
+                    description: "Internal serveur Error"
+        put:
+            tags:
+                - theme
+            summary: "Renomme un theme"
+            description: "Ajoute un theme dans la base MySql"
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "theme/put/requests/theme.yaml"
+            responses:
+                "200":
+                    description: "Ok"
+                "403":
+                    description: "Forbidden"
+                "401":
+                    description: "Unauthorized"
+                "500":
+                    description: "Internal serveur Error"
+
+    /theme/{name}/{newName}:
+        delete:
+            tags:
+                - theme
+            summary: "Supprime un theme"
+            description: "Supprime un theme et le remplace par un theme existant"
+            parameters:
+                -   in: path
+                    name: name
+                    required: true
+                    schema:
+                        type: string
+                        example: "Nom"
+                -   in: path
+                    name: newName
+                    required: true
+                    schema:
+                        type: string
+                        example: "nouveauNom"
+            responses:
+                "200":
+                    description: "Ok"
+                "403":
+                    description: "Forbidden"
+                "401":
+                    description: "Unauthorized"
+                "500":
+                    description: "Internal serveur Error"
 
 components:
     securitySchemes:

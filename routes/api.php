@@ -86,17 +86,17 @@ Route::delete('user/color', 'UserController@removeColorFromUser');  # doc OK
 Route::get('/datatypes/{quantity?}', 'DataTypesController@getAllDataTypes'); # doc Ok
 
 //Representation types routes : Mysql
-Route::get('/representationTypes/{quantity?}', 'RepresentationTypesController@getAllRepresentationTypes');
+Route::get('/representationTypes/{quantity?}', 'RepresentationTypesController@getAllRepresentationTypes'); # doc Ok
 
 //Columns routes : Mysql
 Route::post('/column/create', 'ColumnController@createColumn');
-Route::post('/column/stats', 'ColumnController@getStats');
+Route::post('/column/stats', 'ColumnController@getStats'); # doc Ok
 
 //themes routes : Mysql
-Route::get('/theme', 'ThemeController@getAllThemes');
-Route::post('/theme', 'ThemeController@addTheme');
-Route::delete('/theme/{name}/{newName}', 'ThemeController@deleteTheme');
-Route::put('/theme', 'ThemeController@updateTheme');
+Route::get('/theme', 'ThemeController@getAllThemes'); # doc Ok
+Route::post('/theme', 'ThemeController@addTheme'); # doc Ok
+Route::delete('/theme/{name}/{newName}', 'ThemeController@deleteTheme'); # doc Ok
+Route::put('/theme', 'ThemeController@updateTheme'); # doc Ok
 
 //Roles routes : Mysql
 Route::get('/role', 'RolesController@getAllRoles');
