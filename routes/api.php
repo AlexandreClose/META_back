@@ -99,22 +99,22 @@ Route::delete('/theme/{name}/{newName}', 'ThemeController@deleteTheme'); # doc O
 Route::put('/theme', 'ThemeController@updateTheme'); # doc Ok
 
 //Roles routes : Mysql
-Route::get('/role', 'RolesController@getAllRoles');
+Route::get('/role', 'RolesController@getAllRoles'); # doc Ok
 
 //Tags routes : Mysql
-Route::get('/tag/{quantity?}', 'TagsController@getAllTags');
+Route::get('/tag/{quantity?}', 'TagsController@getAllTags'); # doc Ok
 
 //Directions routes : Mysql
-Route::post('/direction', 'DirectionController@addDirection');
-Route::delete('/direction/{name}', 'DirectionController@delDirection');
-Route::put('/direction', 'DirectionController@updateDirection');
-Route::get('/direction', 'DirectionController@getAllDirections');
+Route::post('/direction', 'DirectionController@addDirection'); # doc Ok
+Route::delete('/direction/{name}', 'DirectionController@delDirection'); # doc Ok
+Route::put('/direction', 'DirectionController@updateDirection'); # doc Ok
+Route::get('/direction', 'DirectionController@getAllDirections'); # doc Ok
 
 //Services routes : Mysql
-Route::post('/service', 'ServiceController@addService');
-Route::delete('/service/{name}', 'ServiceController@delService');
-Route::put('/service', 'ServiceController@updateService');
-Route::get('/service', 'ServiceController@getAllServices');
+Route::post('/service', 'ServiceController@addService'); # doc Ok
+Route::delete('/service/{name}', 'ServiceController@delService'); # doc Ok
+Route::put('/service', 'ServiceController@updateService'); # doc Ok
+Route::get('/service', 'ServiceController@getAllServices'); # doc Ok
 
 //Saved cards routes : Mysql
 Route::get('/saved_cards', 'SavedCardsController@getAllSavedCards');

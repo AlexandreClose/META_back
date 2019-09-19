@@ -1,0 +1,8 @@
+type: object
+description: "Body de modification d'une direction"
+example:
+    {
+        "direction": "Name",
+        "newName": "newName",
+        "desc": "description"
+    }

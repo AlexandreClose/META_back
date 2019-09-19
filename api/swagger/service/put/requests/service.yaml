@@ -1,0 +1,8 @@
+type: object
+description: "Body de modification d'un service"
+example:
+    {
+        "service": "Name",
+        "newName": "newName",
+        "desc": "description"
+    }
