@@ -18,8 +18,7 @@
       "tray-labs/laravel-influxdb": "*",
     "laravel/framework": "5.8.*",
     "laravel/telescope": "^2.0",
-    "laravel/tinker": "^1.0",
-      "ext-pthreads": "*"
+    "laravel/tinker": "^1.0"
   },
   "require-dev": {
     "beyondcode/laravel-dump-server": "^1.0",
