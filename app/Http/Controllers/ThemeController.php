@@ -49,14 +49,13 @@ class ThemeController extends Controller
             abort(403);
         }
 
-        $theme = theme::where('name','=', urldecode($name));
-        return $theme->delete();
-
-        user_theme::where('name', '=', $theme->name)->update(['name' => $newName]);
-        dataset::where('themeName', '=', $theme->name)->update(['themeName' => $newName]);
-        column::where('themeName', '=', $theme->name)->update(['themeName' => $newName]);
-        analysis::where('theme_name', '=', $theme->name)->update(['theme_name' => $newName]);
+        $theme = theme::where('name', '=', urldecode($name));
         $theme->delete();
+
+        user_theme::where('name', '=', $name)->update(['name' => $newName]);
+        dataset::where('themeName', '=', $name)->update(['themeName' => $newName]);
+        column::where('themeName', '=', $name)->update(['themeName' => $newName]);
+        analysis::where('theme_name', '=', $name)->update(['theme_name' => $newName]);
 
         return response('', 200);
     }
