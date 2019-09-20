@@ -72,17 +72,10 @@ class AnalyseController extends Controller
 
     public function getAnalysisById(Request $request, $id)
     {
-        $user = $request->get('user');
-        $datasets = DatasetController::getAllAccessibleDatasets($request, $user, false);
-        $canAccess = false;
 
-        $analysis = analysis::with('fields')->where('id', $id)->first();
-        foreach ($analysis->fields as $field) {
-            if (array_search(dataset::where('databaseName', $field->databaseName), $datasets) == null) {
-                abort(403);
-            }
-        }
-        return response($analysis)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
+        $result = AnalyseController::getAllAccessibleAnalysis($request, false, $id);
+
+        return response($result)->header('Content-Type', 'application/json')->header('charset', 'utf-8');
     }
 
     public function deleteAnalysis(Request $request, $id)
@@ -107,7 +100,7 @@ class AnalyseController extends Controller
         return $result;
     }
 
-    public function getAllAccessibleAnalysis(Request $request, bool $saved = false)
+    public function getAllAccessibleAnalysis(Request $request, bool $saved = false, $id = null)
     {
         $user = $request->get('user');
         $analysis = analysis::with('analysis_columns')->where(function ($query) use ($user) {
@@ -129,9 +122,12 @@ class AnalyseController extends Controller
                             });
                     });
             }
-        })->where(function ($query) use ($user, $saved) {
+        })->where(function ($query) use ($user, $saved, $id) {
             if ($saved) {
                 $query->whereIn("id", $this->objectLiteToArray(saved_card::where("uuid", $user["uuid"])->get("id"), "id"));
+            }
+            if ($id != null) {
+                $query->where("id", $id);
             }
         })->get();
 
