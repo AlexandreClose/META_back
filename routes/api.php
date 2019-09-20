@@ -30,7 +30,7 @@ Route::get('/index/date/{name}', 'IndexController@getAllDateFieldsFromAnIndexFro
 Route::get('/index/fields/{name}', 'IndexController@getAllFieldsFromIndexByName');
 Route::get('/index/accessiblefields/{name}', 'IndexController@getAllAccessibleFieldsFromIndexByName');
 
-//Route::get('/index/get/{name}/{quantity?}/{offset?}/{date_col?}/{start_date?}/{end_date?}', 'IndexController@getIndexByName');
+Route::get('/index/get/{name}/{quantity?}/{offset?}/{date_col?}/{start_date?}/{end_date?}', 'IndexController@getIndexByName');
 //Route::get('/index/file/{name}', 'IndexController@getIndexFile');
 //Route::post('/index/geo', 'IndexController@getIndexFromCoordinatesInShape');
 Route::post('/liteIndex', 'IndexController@getLiteIndex');
