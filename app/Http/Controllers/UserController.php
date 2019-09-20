@@ -133,6 +133,9 @@ class UserController extends Controller
         $user->tid = $request->get("tid");
         $user->save();
 
+        $request["name"] = $request->get("theme");
+        $this->addUserTheme($request);
+
         return response("", 200);
     }
 
