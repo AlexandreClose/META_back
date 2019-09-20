@@ -46,7 +46,12 @@ class ThemeController extends Controller
     {
         $role = $request->get('user')->role;
         if ($role != "Administrateur") {
-            abort(403);
+            abort(403,"Unauthorized");
+        }
+
+
+        if (theme::where('name', urldecode($name))->get() == '[]' or theme::where('name', urldecode($newName))->get() == '[]') {
+            abort(400,"Bad request");
         }
 
         $theme = theme::where('name', '=', urldecode($name));
