@@ -49,7 +49,7 @@ class ThemeController extends Controller
             abort(403);
         }
 
-        $theme = theme::where('name', urldecode($name))->first();
+        $theme = theme::where('name','=', urldecode($name))->get();
         return $theme->delete();
 
         user_theme::where('name', '=', $theme->name)->update(['name' => $newName]);
