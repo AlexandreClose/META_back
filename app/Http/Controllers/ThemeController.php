@@ -50,7 +50,7 @@ class ThemeController extends Controller
         }
 
         $theme = theme::where('name', urldecode($name))->first();
-        return $theme;
+        return $theme->delete();
 
         user_theme::where('name', '=', $theme->name)->update(['name' => $newName]);
         dataset::where('themeName', '=', $theme->name)->update(['themeName' => $newName]);
