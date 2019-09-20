@@ -1,5 +1,5 @@
 type: object
-description: "List des themes"
+description: "Liste des thèmes"
 example:
     [
     {

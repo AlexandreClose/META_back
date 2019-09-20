@@ -1,5 +1,5 @@
 type: object
-description: "List des jeux de donnée validée et accessible"
+description: "Liste des jeux de données validés et accessibles"
 example:
     [
     {

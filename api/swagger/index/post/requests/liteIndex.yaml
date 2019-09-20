@@ -5,7 +5,7 @@ required:
 properties:
     name:
         type: string
-        description: "Nom du dataset à récupéré"
+        description: "Nom du dataset à récupérés"
         example: "candelabre_park_status"
     columns:
         type: string
@@ -13,11 +13,11 @@ properties:
             - "id"
             - "status"
             - "place"
-        description: "List des columns du datasets à récupéré"
+        description: "List des colonnes du datasets à récupérés"
     size:
         type: integer
         example: 1000
-        description: "Overwrite le nombre d'élément a récupéré par default"
+        description: "Overwrite le nombre d'élément à récupérés par default"
     groupby:
         type: string
         example: "Code horo"
@@ -48,7 +48,7 @@ properties:
             - 1
             - 2
             - 5
-        description: "List des jour de la semaine a récupéré"
+        description: "List des jour de la semaine à récupéré"
     start_minute:
         type: integer
         example: 0

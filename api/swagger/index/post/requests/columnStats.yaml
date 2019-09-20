@@ -44,7 +44,7 @@ properties:
         example:
             - 1
             - 2
-        description: "List des jour de la semaine a récupéré"
+        description: "Liste des jours de la semaine à récupéré"
     start_minute:
         type: integer
         example: 0

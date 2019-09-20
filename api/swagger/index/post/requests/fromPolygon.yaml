@@ -11,10 +11,10 @@ properties:
     size:
         type: integer
         example: 2000
-        description: "Overwrite la valuer par default des base de données"
+        description: "Overwrite la valeur par default des base de données"
     columns:
         type: string
-        description: "Colonne a récupéré dans le jeu trié"
+        description: "Colonne à récupéré dans le jeu trié"
         example: [
             "properties.num_machine",
             "properties.nb_places"
@@ -22,14 +22,14 @@ properties:
     targetColumn:
         type: string
         example: geometry.coordinates
-        description: "Colonne  contenant les point à regrouper en fonction du filtre"
+        description: "Colonne contenant les points à regroupés en fonction du filtre"
     filterColumn:
         type: string
         example: geometry.coordinates
-        description: "Colonne contenant les polygone permettant de regrouper les point de la colonnes target "
+        description: "Colonne contenant les polygone permettant de regroupés les point de la colonnes target "
     join:
         type: object
-        description: "Block contant les paramètres de lka jointure "
+        description: "Block contant les paramètres de la jointure "
         properties:
             do_join:
                 type: boolean
@@ -52,10 +52,10 @@ properties:
                                 type: array
                                 items:
                                     type: string
-                                    description: "List des column du datasets à récupéré"
+                                    description: "List des column du datasets à récupérés"
                             size:
                                 type: integer
-                                description: "Overwrite de la valeur par default des base de donnée"
+                                description: "Overwrite de la valeur par default des bases de données"
                             date_col:
                                 type: string
                                 description: "Colonne contenant une date au format ISO 8601. Sert au filtre"

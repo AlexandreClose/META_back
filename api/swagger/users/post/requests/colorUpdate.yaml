@@ -1,5 +1,5 @@
 type: string
-description: "List des couleur mise à jour"
+description: "Liste des couleurs mise à jour"
 example: {
     "colors":[
         "#00eb3b",

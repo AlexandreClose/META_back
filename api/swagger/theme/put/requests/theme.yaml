@@ -1,5 +1,5 @@
 type: object
-description: "Body pour modifier un theme"
+description: "Body pour modifier un thème"
 example:
     {
         "name": "Name",

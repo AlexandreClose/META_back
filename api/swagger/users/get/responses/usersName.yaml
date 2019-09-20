@@ -1,5 +1,5 @@
 type: string
-description: "List des nom et prénom trouver"
+description: "Liste des noms et prénoms trouvés"
 example:
     [
     {

@@ -1,5 +1,5 @@
 type: object
-description: "List des types de donnée"
+description: "Liste des types de données"
 example:
     [
     {

@@ -19,8 +19,8 @@ paths:
         get:
             tags:
                 - theme
-            summary: "Retourne la liste des themes"
-            description: "Retourne les theme trouver dans la table themes de la base MySql"
+            summary: "Retourne la liste des thèmes"
+            description: "Retourne les thèmes trouvés dans la table themes de la base MySql"
             responses:
                 "200":
                     description: "Ok"
@@ -37,8 +37,8 @@ paths:
         post:
             tags:
                 - theme
-            summary: "Crée un theme"
-            description: "Ajoute un theme dans la base MySql"
+            summary: "Crée un thèmes"
+            description: "Ajoute un thèmes dans la base MySql"
             requestBody:
                 required: true
                 content:
@@ -57,8 +57,8 @@ paths:
         put:
             tags:
                 - theme
-            summary: "Renomme un theme"
-            description: "Ajoute un theme dans la base MySql"
+            summary: "Renomme un thèmes"
+            description: "Ajoute un thèmes dans la base MySql"
             requestBody:
                 required: true
                 content:
@@ -79,8 +79,8 @@ paths:
         delete:
             tags:
                 - theme
-            summary: "Supprime un theme"
-            description: "Supprime un theme et le remplace par un theme existant"
+            summary: "Supprime un thèmes"
+            description: "Supprime un thèmes et le remplace par un thèmes existant"
             parameters:
                 -   in: path
                     name: name
@@ -109,7 +109,7 @@ paths:
             tags:
                 - direction
             summary: "Affiche les directions"
-            description: "Affiche les directions trouver dans la table directions de la base MySql"
+            description: "Affiche les directions trouvées dans la table directions de la base MySql"
             responses:
                 "200":
                     description: "Ok"
@@ -192,7 +192,7 @@ paths:
             tags:
                 - service
             summary: "Affiche les services"
-            description: "Affiche les services trouver dans la table services de la base MySql"
+            description: "Affiche les services trouvés dans la table services de la base MySql"
             responses:
                 "200":
                     description: "Ok"
@@ -209,8 +209,8 @@ paths:
         post:
             tags:
                 - service
-            summary: "Crée une service"
-            description: "Ajoute une service dans la base MySql"
+            summary: "Crée un service"
+            description: "Ajoute un service dans la base MySql"
             requestBody:
                 required: true
                 content:
@@ -229,8 +229,8 @@ paths:
         put:
             tags:
                 - service
-            summary: "Renomme une service"
-            description: "Renomme une service dans la base MySql"
+            summary: "Renomme un service"
+            description: "Renomme un service dans la base MySql"
             requestBody:
                 required: true
                 content:
@@ -357,7 +357,7 @@ paths:
         get:
             tags:
                 - index
-            summary: "Retourne les information BDD sur les jeux de données"
+            summary: "Retourne les informations BDD sur les jeux de données"
             description: "Va chercher directement dans les BDD les information de chaque jeux de donnés"
             responses:
                 "200":
@@ -378,7 +378,7 @@ paths:
             tags:
                 - index
             summary: "Retourne les colonnes date d'un Jeu de données"
-            description: "Va retourner sous forme de liste le nom de toute les colonne date d'un jeux de données"
+            description: "Va retourner sous forme de liste le nom de toute les colonnes date d'un jeu de données"
             parameters:
                 -   in: path
                     name: name
@@ -393,7 +393,7 @@ paths:
                         application/json:
                             schema:
                                 type: array
-                                description: "List des colonnes date trouvé"
+                                description: "List des colonnes date trouvés"
                                 items:
                                     type: string
                                     example: "@timestamp"
@@ -408,8 +408,8 @@ paths:
         get:
             tags:
                 - index
-            summary: "Retourne les info d'un jeu de donné non validé"
-            description: "Va retourner le nom de chaque colonne présente dans le jeu de données non validée,
+            summary: "Retourne les info d'un jeu de données non validé"
+            description: "Va retournés le nom de chaque colonne présente dans le jeu de données non validée,
                             ainsi que le nombre de donnée dans la base"
             parameters:
                 -   in: path
@@ -438,7 +438,7 @@ paths:
         get:
             tags:
                 - index
-            summary: "Retourne les infos des colonnes accessible d'un jeu de donné"
+            summary: "Retourne les infos des colonnes accessible d'un jeu de donnés"
             description: "Va retourner le nom, le type ainsi que s'il s'agi d'une colonne pivot, pour
                             chaque colonne accessible"
             parameters:
@@ -495,7 +495,7 @@ paths:
             tags:
                 - index
             summary: "Retourne les dernière entré d'un jeux de donnée"
-            description: "Va récupéré les dernière entré de chaque occurrence distinguer par
+            description: "Va récupéré les dernière entré de chaque occurrence distingués par
                                 une ou plusieurs colonne pivot. Cette route est faite pour fonctionné
                                 sur les jeux de donnée marquer 'realtime' en BDD"
             requestBody:
@@ -523,7 +523,7 @@ paths:
             tags:
                 - index
             summary: "Permet la jointure et les statistique sur plusieurs jeux de données"
-            description: "Permet de recouper des jeux de donnée afin de les fusionné ou de faire des statistique"
+            description: "Permet de recouper des jeux de données afin de les fusionné ou de faire des statistiques"
             requestBody:
                 required: true
                 content:
@@ -575,8 +575,8 @@ paths:
         get:
             tags:
                 - datasets
-            summary: "Retourne les info des jeux de données non validé"
-            description: "Retourne les colonnes de la table MySql de tout les jeux de données non validée"
+            summary: "Retourne les info des jeux de données non validés"
+            description: "Retourne les colonnes de la table MySql de tout les jeux de données non validés"
             responses:
                 "200":
                     description: "Ok"
@@ -595,7 +595,7 @@ paths:
         get:
             tags:
                 - datasets
-            summary: "Retourne les info des jeux de données validé"
+            summary: "Retourne les info des jeux de données validées"
             description: "Retourne les colonnes de la table MySql de tout les jeux de données validée
                 auquel l'utilisateur a accès"
             parameters:
@@ -629,8 +629,8 @@ paths:
         get:
             tags:
                 - datasets
-            summary: "Retourne les info des jeux de données sauvegarder"
-            description: "Retourne les colonnes de la table MySql de tout les jeux de données sauvegarder
+            summary: "Retourne les info des jeux de données sauvegardés"
+            description: "Retourne les colonnes de la table MySql de tout les jeux de données sauvegardés
                 auquel l'utilisateur a accès"
             parameters:
                 -   in: path
@@ -698,7 +698,7 @@ paths:
             tags:
                 - datasets
             summary: "Retourne un dataset"
-            description: "Retourne les colonnes d'un jeux de donnée"
+            description: "Retourne les colonnes d'un jeux de données"
             parameters:
                 -   in: path
                     name: id
@@ -725,7 +725,7 @@ paths:
             tags:
                 - datasets
             summary: "Retourne les représentations d'un datasets"
-            description: "Retourne les colonnes de représentation MySql d'un jeux de donnée"
+            description: "Retourne les colonnes de représentation MySql d'un jeu de données"
             parameters:
                 -   in: path
                     name: id
@@ -751,8 +751,8 @@ paths:
         get:
             tags:
                 - datasets
-            summary: "Retourne les columns d'un dataset"
-            description: "Retourne les données de la table MySql columns corespondent a un jeux de donnée"
+            summary: "Retourne les colonnes d'un dataset"
+            description: "Retourne les données de la table MySql columns corespondent à un jeu de données"
             parameters:
                 -   in: path
                     name: id
@@ -778,8 +778,8 @@ paths:
         get:
             tags:
                 - datasets
-            summary: "Ajoute un jeux au favoris"
-            description: "Sauvegarde le jeux sélectionnée en favoris "
+            summary: "Ajoute un jeu au favoris"
+            description: "Sauvegarde le jeu sélectionné en favoris "
             parameters:
                 -   in: path
                     name: id
@@ -801,8 +801,8 @@ paths:
         get:
             tags:
                 - datasets
-            summary: "Ajoute un jeux au jeux sauvegarder"
-            description: "Sauvegarde le jeux sélectionnée comme sauvegarder pour l'utilisateur"
+            summary: "Ajoute un jeu au jeux sauvegardés"
+            description: "Sauvegarde le jeux sélectionnées comme sauvegarder pour l'utilisateur"
             parameters:
                 -   in: path
                     name: id
@@ -824,8 +824,8 @@ paths:
         get:
             tags:
                 - datasets
-            summary: "Supprime un jeux au jeux sauvegarder"
-            description: "Supprime le jeux sélectionnée comme sauvegarder pour l'utilisateur"
+            summary: "Supprime un jeux au jeu sauvegardés"
+            description: "Supprime le jeux sélectionnée comme sauvegardés pour l'utilisateur"
             parameters:
                 -   in: path
                     name: id
@@ -847,8 +847,8 @@ paths:
         get:
             tags:
                 - datasets
-            summary: "Supprime un jeux au jeux sauvegarder"
-            description: "Supprime le jeux sélectionnée comme sauvegarder pour l'utilisateur"
+            summary: "Supprime un jeux des jeux favoris"
+            description: "Supprime le jeux sélectionnée des favoris de l'utilisateur"
             parameters:
                 -   in: path
                     name: id
@@ -870,8 +870,8 @@ paths:
         get:
             tags:
                 - datasets
-            summary: "Retourne le nombre de jeux de donnée"
-            description: "Retourne le nombre de jeux de donnée accessible. Tous, les favoris ou les sauvegarder"
+            summary: "Retourne le nombre de jeux de données"
+            description: "Retourne le nombre de jeux de données accessible. Tous, les favoris ou les sauvegarder"
             parameters:
                 -   in: path
                     name: type
@@ -894,12 +894,33 @@ paths:
                 "500":
                     description: "Internal serveur Error"
 
+    /datasets/upload:
+        post:
+            tags:
+                - datasets
+            summary: "Upload un jeux de donnés"
+            description: "Envoie le fichier dans la stack"
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "users/post/requests/userCreate.yaml"
+            responses:
+                "200":
+                    description: "Ok"
+                "403":
+                    description: "Forbidden"
+                "401":
+                    description: "Unauthorized"
+                "500":
+                    description: "Internal serveur Error"
     /user:
         get:
             tags:
                 - users
             summary: "Retourne la liste des utilisateurs"
-            description: "Retourne toutes les info de la table utilisateur du mysql"
+            description: "Retourne toutes les info de la table utilisateur du MySql"
             responses:
                 "200":
                     description: "Ok"
@@ -940,8 +961,8 @@ paths:
         post:
             tags:
                 - users
-            summary: "Associe un utilisateur à un theme"
-            description: "Lie un utilisateur à un theme dans la table user_theme de la base MySql"
+            summary: "Associe un utilisateur à un thème"
+            description: "Lie un utilisateur à un thème dans la table user_theme de la base MySql"
             requestBody:
                 required: true
                 content:
@@ -963,7 +984,7 @@ paths:
             tags:
                 - users
             summary: "Retourne l'utilisateur courant'"
-            description: "Retourne toutes les info de l'utilisateur courant"
+            description: "Retourne toutes les infos de l'utilisateur courant"
             responses:
                 "200":
                     description: "Ok"
@@ -982,8 +1003,8 @@ paths:
         get:
             tags:
                 - users
-            summary: "Retourne l'utilisateur courant'"
-            description: "Retourne toutes les info de l'utilisateur courant"
+            summary: "Retourne les infos de l'utilisateur souhaiter'"
+            description: "Retourne toutes les infos de l'utilisateur souhaiter"
             parameters:
                 -   in: path
                     name: quantity
@@ -1055,8 +1076,8 @@ paths:
         get:
             tags:
                 - users
-            summary: "Retourne les couleur d'un utilisateur"
-            description: "Retourne tout les couleur de l'utilisateur"
+            summary: "Retourne les couleurs d'un utilisateur"
+            description: "Retourne tout les couleurs de l'utilisateur"
             responses:
                 "200":
                     description: "Ok"
@@ -1075,8 +1096,8 @@ paths:
         post:
             tags:
                 - users
-            summary: "Mise a jour des couleur d'un utilisateur"
-            description: "Supprimes les ancienne couleur d'un utilisateur pour les remplacer par des nouvelle"
+            summary: "Mise à jour des couleurs d'un utilisateur"
+            description: "Supprimes les ancienne couleurs d'un utilisateur pour les remplacer par des nouvelles"
             requestBody:
                 required: true
                 content:
@@ -1097,8 +1118,8 @@ paths:
         post:
             tags:
                 - users
-            summary: "Ajoute une couleur a un utilisateur"
-            description: "Ajoute une couleur liée a l'utilisateur dans la table color"
+            summary: "Ajoute une couleur à un utilisateur"
+            description: "Ajoute une couleur liée à l'utilisateur dans la table color"
             requestBody:
                 required: true
                 content:
@@ -1117,8 +1138,8 @@ paths:
         delete:
             tags:
                 - users
-            summary: "Supprime une couleur a un utilisateur"
-            description: "Supprime une couleur liée a l'utilisateur dans la table color"
+            summary: "Supprime une couleur à un utilisateur"
+            description: "Supprime une couleur liée à l'utilisateur dans la table color"
             requestBody:
                 required: true
                 content:
@@ -1128,6 +1149,33 @@ paths:
             responses:
                 "200":
                     description: "Ok"
+                "403":
+                    description: "Forbidden"
+                "401":
+                    description: "Unauthorized"
+                "500":
+                    description: "Internal serveur Error"
+
+    /analyse/get/{id}:
+        get:
+            tags:
+                - analyse
+            summary: "Retourne une analyse"
+            description: "Retourne toutes les infos d'une analyse à laquelle l'utilisateur courant a access"
+            parameters:
+                -   in: path
+                    name: id
+                    required: true
+                    schema:
+                        type: Integer
+                        example: 18
+            responses:
+                "200":
+                    description: "Ok"
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "analyse/get/responses/analyseGet.yaml"
                 "403":
                     description: "Forbidden"
                 "401":
@@ -1159,8 +1207,8 @@ paths:
             get:
                 tags:
                     - analyse
-                summary: "Retourne les info des analyses sauvegarder"
-                description: "Retourne toutes les info des analyses sauvegarder auquel l'utlisateur courant a access"
+                summary: "Retourne les info des analyses sauvegardés"
+                description: "Retourne toutes les info des analyses sauvegardés auquel l'utlisateur courant a access"
                 responses:
                     "200":
                         description: "Ok"
@@ -1175,12 +1223,82 @@ paths:
                     "500":
                         description: "Internal serveur Error"
 
+    /analyse/save:
+        post:
+            tags:
+                - analyse
+            summary: "Créé une analyse"
+            description: "Ajoute une entrée dans la table analyses de la base MySql"
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "users/post/requests/userColor.yaml"
+            responses:
+                "200":
+                    description: "Ok"
+                "403":
+                    description: "Forbidden"
+                "401":
+                    description: "Unauthorized"
+                "500":
+                    description: "Internal serveur Error"
+    /analyse/{id}:
+        delete:
+            tags:
+                - analyse
+            summary: "Supprime une analyse"
+            description: "Supprime une entrée dans la table analyses de la base MySql"
+            parameters:
+                -   in: path
+                    name: id
+                    required: true
+                    schema:
+                        type: Integer
+                        example: 2
+            responses:
+                "200":
+                    description: "Ok"
+                "403":
+                    description: "Forbidden"
+                "401":
+                    description: "Unauthorized"
+                "500":
+                    description: "Internal serveur Error"
+
     /column/stats:
         post:
             tags:
                 - column
             summary: "Statistique sur un jeu de données"
-            description: "Cette route a pour fonction de faire des statistique sur des colonne du jeu de donnée spécifier."
+            description: "Cette route a pour fonction de faire des statistiques sur des colonne d'un jeu de donnée spécifier."
+            requestBody:
+                required: true
+                content:
+                    application/json:
+                        schema:
+                            $ref: "index/post/requests/columnStats.yaml"
+            responses:
+                "200":
+                    description: "Ok"
+                    content:
+                        application/json:
+                            schema:
+                                $ref: "index/post/responses/columnStats.yaml"
+                "403":
+                    description: "Forbidden"
+                "401":
+                    description: "Unauthorized"
+                "500":
+                    description: "Internal serveur Error"
+
+    /column/create:
+        post:
+            tags:
+                - column
+            summary: "Sauvegarde la définition d'une colonne"
+            description: "Ajoute une entré dans la table columns de la table MySql"
             requestBody:
                 required: true
                 content:
@@ -1206,7 +1324,7 @@ paths:
             tags:
                 - dataTypes
             summary: "Retourne les types de données"
-            description: "Ajoute les type de données trouver dans la table data_types"
+            description: "Ajoute les types de données trouvés dans la table data_types"
             parameters:
                 -   in: path
                     name: quantity
@@ -1233,7 +1351,7 @@ paths:
             tags:
                 - representationTypes
             summary: "Retourne les types de représentation"
-            description: "Retourne les type de représentation trouver dans la table data_types"
+            description: "Retourne les types de représentation trouvés dans la table data_types"
             parameters:
                 -   in: path
                     name: quantity
@@ -1260,7 +1378,7 @@ paths:
             tags:
                 - role
             summary: "Affiche les roles"
-            description: "Affiche les roles trouver dans la table role de la base MySql"
+            description: "Affiche les roles trouvés dans la table role de la base MySql"
             responses:
                 "200":
                     description: "Ok"
@@ -1280,7 +1398,7 @@ paths:
             tags:
                 - tag
             summary: "Affiche les tags"
-            description: "Affiche les tags trouver dans la table tags de la base MySql"
+            description: "Affiche les tags trouvés dans la table tags de la base MySql"
             parameters:
                 -   in: path
                     name: quantity

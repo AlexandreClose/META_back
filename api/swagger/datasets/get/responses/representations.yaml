@@ -1,5 +1,5 @@
 type: object
-description: "List des représentation"
+description: "Liste des représentations"
 example:
     [
     {

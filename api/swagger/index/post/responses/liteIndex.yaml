@@ -6,7 +6,7 @@ properties:
         properties:
             total:
                 type: integer
-                description: "Nombre d'occurence trouvé"
+                description: "Nombre d'occurence trouvées"
                 example: 1
             hits:
                 type: array

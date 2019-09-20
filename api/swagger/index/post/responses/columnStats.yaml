@@ -54,7 +54,7 @@ properties:
                         description: "Donnée elasticsearch"
                     buckets:
                         type: array
-                        description: "Contient la list des aggregations"
+                        description: "Contient la liste des aggregations"
                         items:
                             type: object
                             properties:
@@ -65,7 +65,7 @@ properties:
                                 doc_count:
                                     type: integer
                                     example: 225
-                                    description: "Nombre d'occurence"
+                                    description: "Nombre d'occurences"
                                 Date Horo:
                                     type: object
                                     description: "Contient les stats d'une colonne par sa clef"

@@ -14,10 +14,10 @@ properties:
                 type: array
                 items:
                     type: string
-                    description: "List des column du datasets à récupéré"
+                    description: "List des colonnes du datasets à récupérés"
             size:
                 type: integer
-                description: "Overwrite de la valeur par default des base de donnée"
+                description: "Overwrite de la valeur par default des bases de données"
             offset:
                 type: integer
         example:
@@ -38,7 +38,7 @@ properties:
                 offset: 0
     joining:
         type: string
-        description: "Block contenant une list associant les jeux précédant par des colonnes."
+        description: "Block contenant une liste associant les jeux précédant par des colonnes."
         example: [
         ["properties.num_machine",
          "Code horo" ]
@@ -68,7 +68,7 @@ properties:
                         description: "Permet un sous-groupby pour les stats"
                     data:
                         type: string
-                        description: "Contient la list des colonne ou faire des stats"
+                        description: "Contient la liste des colonnes ou faire des stats"
                 example:
                     isDate: true
                     pivot: "Date Horo"

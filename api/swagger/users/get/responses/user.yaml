@@ -1,5 +1,5 @@
 type: string
-description: "Liste des utilisateurs trouver"
+description: "Liste des utilisateurs trouvés"
 example:
     [
     {

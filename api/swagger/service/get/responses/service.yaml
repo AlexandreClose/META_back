@@ -1,5 +1,5 @@
 type: object
-description: "List des services"
+description: "Liste des services"
 example:
     [
     {

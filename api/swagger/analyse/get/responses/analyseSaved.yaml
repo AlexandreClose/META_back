@@ -1,5 +1,5 @@
 type: object
-description: Détaille de l'analyse
+description: "Détail de l'analyse"
 properties:
     id:
         type: integer

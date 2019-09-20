@@ -2,11 +2,11 @@ type: object
 properties:
     name:
         type: string
-        description: "Nom du jeux de donnée"
+        description: "Nom du jeu de données"
         example: "candelabre_park_status"
     columns:
         type: string
-        description: "List des colonne à récupéré"
+        description: "List des colonne à récupérés"
         example:
             - "status"
             - "id"

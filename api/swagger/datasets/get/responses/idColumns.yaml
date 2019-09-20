@@ -1,5 +1,5 @@
 type: object
-description: "List des columns trouver dans la table columns"
+description: "Liste des colonnes trouvées dans la table columns"
 example:
     [
     {

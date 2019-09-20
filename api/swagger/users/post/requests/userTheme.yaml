@@ -1,5 +1,5 @@
 type: object
-description: "Body de création de lien entre un utilisateur et un theme"
+description: "Body de création de lien entre un utilisateur et un thèmes"
 example:
     {
         "name": "Default",

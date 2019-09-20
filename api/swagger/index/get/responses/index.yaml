@@ -1,5 +1,5 @@
 type: object
-description: "List des informations des base de données sur les jeux de données"
+description: "Liste des informations des base de données sur les jeux de données"
 example:  {
     "horodateurs3": {
         "uuid": "nuta5aMSRyaUORBKGHlyFA",

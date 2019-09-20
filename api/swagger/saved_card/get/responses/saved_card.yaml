@@ -1,5 +1,5 @@
 type: object
-description: "List des saved_cards"
+description: "Liste des saved_cards"
 example:
     [
     {

@@ -1,5 +1,5 @@
 type: object
-description: "Contient la list des résulta pas forme géométrique trouver"
+description: "Contient la list des résultats pas forme géométrique trouvés"
 properties:
     14:
         type: object
@@ -24,7 +24,7 @@ properties:
                 properties:
                     coordinates:
                         type: integer
-                        description: "La définition de la forme ou on étai trouver les résultat"
+                        description: "La définition de la forme ou on étai trouvés les résultat"
                         example:
                             [
                             [

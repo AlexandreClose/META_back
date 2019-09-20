@@ -1,5 +1,5 @@
 type: object
-description: "Retourne le jeux de donnée trouver"
+description: "Retourne le jeu de données trouvés"
 example:
     [
     {

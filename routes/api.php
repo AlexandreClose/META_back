@@ -30,7 +30,7 @@ Route::get('/index/date/{name}', 'IndexController@getAllDateFieldsFromAnIndexFro
 Route::get('/index/fields/{name}', 'IndexController@getAllFieldsFromIndexByName');
 Route::get('/index/accessiblefields/{name}', 'IndexController@getAllAccessibleFieldsFromIndexByName');
 
-Route::get('/index/get/{name}/{quantity?}/{offset?}/{date_col?}/{start_date?}/{end_date?}', 'IndexController@getIndexByName'); #TODO doc
+//Route::get('/index/get/{name}/{quantity?}/{offset?}/{date_col?}/{start_date?}/{end_date?}', 'IndexController@getIndexByName');
 //Route::get('/index/file/{name}', 'IndexController@getIndexFile');
 //Route::post('/index/geo', 'IndexController@getIndexFromCoordinatesInShape');
 Route::post('/liteIndex', 'IndexController@getLiteIndex');
@@ -44,18 +44,18 @@ Route::post('/index/last', 'IndexController@getLast');
 
 
 //Analyse routes : Mysql
-Route::post('/analyse/save', 'AnalyseController@saveAnalyse'); #TODO doc
-Route::get('/analyse/get/{id}', 'AnalyseController@getAnalysisById'); #todo review
+Route::post('/analyse/save', 'AnalyseController@saveAnalyse'); #TODO post
+Route::get('/analyse/get/{id}', 'AnalyseController@getAnalysisById');
 Route::get('/analyse/all', 'AnalyseController@getAllAccessibleAnalysis');
 Route::get('/analyse/saved', 'AnalyseController@getAllSavedAnalysis');
-Route::delete('/analyse/{id}', 'AnalyseController@deleteAnalysis'); #TODO doc
+Route::delete('/analyse/{id}', 'AnalyseController@deleteAnalysis'); #TODO post
 //Datasets routes : Mysql
 Route::get('/datasets/data/validate', 'DatasetController@getDatasetsToValidate');
 Route::get('/datasets/all/', 'DatasetController@getAllDatasets');
 Route::get('/datasets/representations/{id}', 'DatasetController@getRepresentationsOfDataset');
 Route::get('/dataset/{id}', "DatasetController@getDatasetById");
 Route::post('/datasets/update', "DatasetController@updateDataset");
-Route::post('/datasets/upload', 'DatasetController@uploadDataset'); #TODO doc
+Route::post('/datasets/upload', 'DatasetController@uploadDataset'); #TODO post
 Route::get('/dataset/{id}/columns', "DatasetController@getAllColumnFromDataset");
 Route::get('/dataset/{id}/save', "DatasetController@saveDataset");
 Route::get('/dataset/{id}/favorite', "DatasetController@favoriteDataset");
@@ -87,7 +87,7 @@ Route::get('/datatypes/{quantity?}', 'DataTypesController@getAllDataTypes');
 Route::get('/representationTypes/{quantity?}', 'RepresentationTypesController@getAllRepresentationTypes');
 
 //Columns routes : Mysql
-Route::post('/column/create', 'ColumnController@createColumn'); #TODO doc
+Route::post('/column/create', 'ColumnController@createColumn'); #TODO post
 Route::post('/column/stats', 'ColumnController@getStats');
 
 //themes routes : Mysql
