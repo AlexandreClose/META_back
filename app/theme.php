@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Validator;
  */
 class theme extends Model
 {
+    protected $table = 'themes';
     protected $primaryKey = 'name';
     public $incrementing = false;
     protected $keyType = 'string';
