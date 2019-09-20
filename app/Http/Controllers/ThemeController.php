@@ -49,7 +49,10 @@ class ThemeController extends Controller
             abort(403,"Unauthorized");
         }
 
-
+        if($name == $newName){
+            abort(400,"Bad request");
+        }
+        
         if (theme::where('name', urldecode($name))->get() == '[]' or theme::where('name', urldecode($newName))->get() == '[]') {
             abort(400,"Bad request");
         }
