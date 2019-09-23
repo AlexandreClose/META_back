@@ -599,13 +599,13 @@ paths:
             description: "Retourne les colonnes de la table MySql de tout les jeux de données validée
                 auquel l'utilisateur a accès"
             parameters:
-                -   in: path
+                -   in: query
                     name: offset
                     required: false
                     schema:
                         type: integer
                         example: 0
-                -   in: path
+                -   in: query
                     name: size
                     required: false
                     schema:
@@ -633,13 +633,13 @@ paths:
             description: "Retourne les colonnes de la table MySql de tout les jeux de données sauvegardés
                 auquel l'utilisateur a accès"
             parameters:
-                -   in: path
+                -   in: query
                     name: offset
                     required: false
                     schema:
                         type: integer
                         example: 0
-                -   in: path
+                -   in: query
                     name: size
                     required: false
                     schema:
@@ -667,13 +667,13 @@ paths:
             description: "Retourne les colonnes de la table MySql de tout les jeux de données favoris
                 auquel l'utilisateur a accès"
             parameters:
-                -   in: path
+                -   in: query
                     name: offset
                     required: false
                     schema:
                         type: integer
                         example: 0
-                -   in: path
+                -   in: query
                     name: size
                     required: false
                     schema:
@@ -886,7 +886,10 @@ paths:
             responses:
                 "200":
                     description: "Ok"
-                    example: 2
+                    content:
+                        application/json:
+                            schema:
+                                example: 2
                 "403":
                     description: "Forbidden"
                 "401":
@@ -999,19 +1002,12 @@ paths:
                 "500":
                     description: "Internal serveur Error"
 
-    /users/name/{quantity}:
+    /users/name/:
         get:
             tags:
                 - users
             summary: "Retourne les infos de l'utilisateur souhaiter'"
             description: "Retourne toutes les infos de l'utilisateur souhaiter"
-            parameters:
-                -   in: path
-                    name: quantity
-                    required: false
-                    schema:
-                        type: integer
-                        example: 2
             responses:
                 "200":
                     description: "Ok"
@@ -1034,7 +1030,7 @@ paths:
             description: "Change le role d'un utilisateur à déactiver afin de l'archiver"
             parameters:
                 -   in: path
-                    name: quantity
+                    name: uuid
                     required: true
                     schema:
                         type: string
@@ -1057,7 +1053,7 @@ paths:
             description: "Change le role d'un utilisateur à réactiver"
             parameters:
                 -   in: path
-                    name: quantity
+                    name: uuid
                     required: true
                     schema:
                         type: string
@@ -1140,12 +1136,6 @@ paths:
                 - users
             summary: "Supprime une couleur à un utilisateur"
             description: "Supprime une couleur liée à l'utilisateur dans la table color"
-            requestBody:
-                required: true
-                content:
-                    application/json:
-                        schema:
-                            $ref: "users/post/requests/userColor.yaml"
             responses:
                 "200":
                     description: "Ok"
@@ -1167,7 +1157,7 @@ paths:
                     name: id
                     required: true
                     schema:
-                        type: Integer
+                        type: integer
                         example: 18
             responses:
                 "200":
@@ -1255,7 +1245,7 @@ paths:
                     name: id
                     required: true
                     schema:
-                        type: Integer
+                        type: integer
                         example: 2
             responses:
                 "200":
@@ -1319,19 +1309,12 @@ paths:
                 "500":
                     description: "Internal serveur Error"
 
-    /datatypes/{quantity}:
+    /datatypes:
         get:
             tags:
                 - dataTypes
             summary: "Retourne les types de données"
             description: "Ajoute les types de données trouvés dans la table data_types"
-            parameters:
-                -   in: path
-                    name: quantity
-                    required: false
-                    schema:
-                        type: integer
-                        example: 2
             responses:
                 "200":
                     description: "Ok"
@@ -1346,19 +1329,12 @@ paths:
                 "500":
                     description: "Internal serveur Error"
 
-    /representationTypes/{quantity}:
+    /representationTypes:
         get:
             tags:
                 - representationTypes
             summary: "Retourne les types de représentation"
             description: "Retourne les types de représentation trouvés dans la table data_types"
-            parameters:
-                -   in: path
-                    name: quantity
-                    required: false
-                    schema:
-                        type: integer
-                        example: 2
             responses:
                 "200":
                     description: "Ok"
@@ -1393,19 +1369,12 @@ paths:
                 "500":
                     description: "Internal serveur Error"
 
-    /tag/{quantity}:
+    /tag:
         get:
             tags:
                 - tag
             summary: "Affiche les tags"
             description: "Affiche les tags trouvés dans la table tags de la base MySql"
-            parameters:
-                -   in: path
-                    name: quantity
-                    required: false
-                    schema:
-                        type: integer
-                        example: 2
             responses:
                 "200":
                     description: "Ok"
