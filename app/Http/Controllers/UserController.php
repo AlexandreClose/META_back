@@ -132,10 +132,7 @@ class UserController extends Controller
         $user->phone = $request->get("phone");
         $user->tid = $request->get("tid");
         $user->save();
-
-        $request["name"] = $request->get("theme");
-        $this->addUserTheme($request);
-
+        
         return response("", 200);
     }
 
