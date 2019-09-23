@@ -149,7 +149,7 @@ class UserController extends Controller
             abort(400);
         }
 
-        if (!(user::where('uuid', '=', $postBody["uuid"])->get("uuid") == '[]' and theme::where('name', '=', $postBody["name"]) == '[]')) {
+        if (user::where('uuid', '=', $postBody["uuid"])->get("uuid") !== '[]' or theme::where('name', '=', $postBody["name"]) !== '[]') {
             abort(404);
         }
 
