@@ -132,7 +132,7 @@ class UserController extends Controller
         $user->phone = $request->get("phone");
         $user->tid = $request->get("tid");
         $user->save();
-        
+
         return response("", 200);
     }
 
@@ -148,8 +148,8 @@ class UserController extends Controller
         if (!$userTheme->validate($postBody)) {
             abort(400);
         }
-
-        if (!(user::find($request->get("uuid")) and theme::find($request->get("name")))) {
+        return "test";
+        if (!(user::where('uuid', '=', $postBody["uuid"])->get("name") == '[]' and theme::where('name', '=', $postBody["name"]) == '[]')) {
             abort(404);
         }
 
