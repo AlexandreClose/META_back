@@ -12,6 +12,7 @@ servers:
                     - "8000"
                 default: "8000"
     -   url: https://api-iadata.applis.toulouse-metropole.fr/api/
+    -   url: https://51.38.174.31
 
 paths:
 
