@@ -27,7 +27,7 @@ class UserAuth
             abort(401);
         }
 
-        $user = user::where('token',$token,'token_expirate'< Carbon::now())->first();
+        $user = user::where('token',$token,'token_expirate'> Carbon::now())->first();
         if($user == null){
             $client = new Client();
             $headers = [
