@@ -27,7 +27,7 @@ class UserAuth
             abort(401);
         }
 
-        $user = user::where('token',$token,'token_expirate'< Carbon::now())->first();
+        $user = user::where('token',$token,'token_expirate'> Carbon::now())->first();
         if($user == null){
             $client = new Client();
             $headers = [
@@ -39,19 +39,19 @@ class UserAuth
             $data = json_decode($res->getBody(),true);
             $value = $data["sub"];
             if(!isset($value)){
-                abort(403);
+                abort(403, "SSO bad request");
             }
 
             $user = user::where('tid',$value)->first();
             if($user == null){
-                abort(403);
+                abort(403, "User not found");
             }
             $user->token = $token;
             $user->token_expirate = Carbon::now()->addHours(8);
             $user->save();
         }
         if($user->role == "Désactivé"){
-            abort(403);
+            abort(403, "account deactivated");
         }
         $request->merge(['user' => $user]);
         return $next($request);
