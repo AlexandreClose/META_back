@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 use App\user;
+use Carbon\Carbon;
 use GuzzleHttp\Client;
 
 use Closure;
@@ -26,13 +27,7 @@ class UserAuth
             abort(401);
         }
 
-        if($token == "Juiploetdjtozvelnjzkfpofn"){
-            $user = user::where('uuid',"2be8c158-29a7-42b3-a9fb-de9ec266e196")->first();
-            $request->merge(['user' => $user]);
-            return $next($request);
-        }
-
-        $user = user::where('token',$token)->first();
+        $user = user::where('token',$token,'token_expirate'< Carbon::now())->first();
         if($user == null){
             $client = new Client();
             $headers = [
@@ -51,15 +46,14 @@ class UserAuth
             if($user == null){
                 abort(403);
             }
+            $user->token = $token;
+            $user->token_expirate = Carbon::now()->addHours(8);
+            $user->save();
         }
         if($user->role == "Désactivé"){
             abort(403);
         }
         $request->merge(['user' => $user]);
-        return $next($request);
-
-        
-
         return $next($request);
     }
 }
