@@ -26,8 +26,8 @@ class user extends Model
 
     private $rules = array(
         'role' => 'required|min:3',
-        'firstname'  => 'required|min:3',
-        'lastname' => 'required|min:3',
+        'firstname'  => 'required|min:1',
+        'lastname' => 'required|min:1',
         'service' => 'required|min:3',
         'direction' => 'required|min:3',
         'mail' =>'required|email',
