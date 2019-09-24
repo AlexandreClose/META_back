@@ -1,0 +1,26 @@
+type: object
+description: "Liste des directions"
+example:
+    [
+    {
+        "direction": "Numérique",
+        "description": "Direction du numérique",
+        "user_count": 1
+    },
+    {
+        "direction": "direct",
+        "description": "didi",
+        "user_count": 0
+    },
+    {
+        "direction": "eruyi",
+        "description": "poiytryiuopiutr",
+        "user_count": 0
+    },
+    {
+        "direction": "Mobilites Gestion Reseaux",
+        "description": "Direction Mobilites Gestion Reseaux",
+        "user_count": 0
+    }
+    ]
+

@@ -1,0 +1,46 @@
+type: object
+description: "Liste des types de représentation"
+example:
+    [
+
+    {
+        "name": "Carte",
+        "srcBegin": "assets/images/account/settings/statistics-map-",
+        "img": "assets/images/account/settings/statistics-map-light.svg",
+        "description": "Carte",
+        "created_at": "2019-08-07 14:00:09",
+        "updated_at": "2019-08-07 14:00:09"
+    },
+    {
+        "name": "Graphique en anneau",
+        "srcBegin": "assets/images/account/settings/statistics-donut-",
+        "img": "assets/images/account/settings/statistics-donut-light.svg",
+        "description": "Graphique en anneau",
+        "created_at": "2019-08-07 14:00:10",
+        "updated_at": "2019-08-07 14:00:10"
+    },
+    {
+        "name": "Graphique en barres",
+        "srcBegin": "assets/images/account/settings/statistics-bar-chart-",
+        "img": "assets/images/account/settings/statistics-bar-chart-light.svg",
+        "description": "Graphique en barres",
+        "created_at": "2019-08-07 14:00:09",
+        "updated_at": "2019-08-07 14:00:09"
+    },
+    {
+        "name": "Graphique en colonnes",
+        "srcBegin": "assets/images/account/settings/statistics-column-",
+        "img": "assets/images/account/settings/statistics-column-light.svg",
+        "description": "Graphique en colonnes",
+        "created_at": "2019-08-07 14:00:09",
+        "updated_at": "2019-08-07 14:00:09"
+    },
+    {
+        "name": "Graphique en courbes",
+        "srcBegin": "assets/images/account/settings/statistics-line-",
+        "img": "assets/images/account/settings/statistics-line-light.svg",
+        "description": "Graphique en courbes",
+        "created_at": "2019-08-07 14:00:09",
+        "updated_at": "2019-08-07 14:00:09"
+    }
+    ]

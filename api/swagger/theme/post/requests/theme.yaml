@@ -1,0 +1,7 @@
+type: object
+description: "Body de la création d'un thème"
+example:
+    {
+        "name": "Nom",
+        "description": "Description"
+    }

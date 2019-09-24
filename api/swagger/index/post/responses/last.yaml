@@ -1,0 +1,35 @@
+type: object
+properties:
+    time:
+        type: string
+    last:
+        type: string
+    last_1:
+        type: string
+    last_2:
+        type: string
+    id:
+        type: string
+    place:
+        type: string
+example:
+    -   time: "1970-01-01T00:00:00Z"
+        last: "1"
+        last_1: null,
+        last_2: null,
+        id: "5d0215de737fc01dd90ebc93"
+        place: "1"
+
+    -   time: "1970-01-01T00:00:00Z"
+        last: "1"
+        last_1: null,
+        last_2: null,
+        id: "5d0215de737fc01dd90ebc93"
+        place: "2"
+
+    -   time: "1970-01-01T00:00:00"
+        last: "1"
+        last_1: null,
+        last_2: null,
+        id: "5d0215fc737fc01dd90ebc94"
+        place: "1"

@@ -14,7 +14,7 @@ class CreateColorsTable extends Migration
     public function up()
     {
         Schema::create('colors', function (Blueprint $table) {
-            $table->string('color_code',6);
+            $table->string('color_code',7);
             $table->uuid('user_uuid');
             $table->primary(['color_code','user_uuid']);
             $table->timestamps();

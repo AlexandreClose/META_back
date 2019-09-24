@@ -1,0 +1,9 @@
+type: string
+description: "Liste des couleurs mise à jour"
+example: {
+    "colors":[
+        "#00eb3b",
+        "#c62800",
+        "#f00800"
+    ]
+}

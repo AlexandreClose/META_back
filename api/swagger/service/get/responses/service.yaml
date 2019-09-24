@@ -1,0 +1,20 @@
+type: object
+description: "Liste des services"
+example:
+    [
+    {
+        "service": "N/A",
+        "description": "N/A",
+        "user_count": 3
+    },
+    {
+        "service": "Voirie",
+        "description": "Service voirie de Toulouse",
+        "user_count": 1
+    },
+    {
+        "service": "Finance",
+        "description": "Service finance de Toulouse",
+        "user_count": 0
+    }
+    ]

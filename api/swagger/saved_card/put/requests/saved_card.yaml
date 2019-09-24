@@ -1,0 +1,9 @@
+type: object
+description: "Body de modification d'une saved_cards"
+example:
+    {
+        "id": "19",
+        "displayed": 1,
+        "position":0,
+        "size": 4
+    }

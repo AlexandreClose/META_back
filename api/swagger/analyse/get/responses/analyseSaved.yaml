@@ -1,0 +1,101 @@
+type: object
+description: "Détail de l'analyse"
+properties:
+    id:
+        type: integer
+        example: 45
+    uuid:
+        type: string
+        example: "2be8c158-29a7-42b3-a9fb-de9ec266e196"
+    displayed:
+        type: integer
+        example: 0
+    position:
+        type: integer
+        example: 0
+    size:
+        type: integer
+        example: 0
+    created_at:
+        type: string
+        example: "2019-08-30 10:28:04"
+    updated_at:
+        type: string
+        example: "2019-08-30 10:28:07"
+    analysis:
+        type: object
+        properties:
+            id:
+                type: integer
+            name:
+                type: string
+            representation_type:
+                type: string
+            shared:
+                type: integer
+            owner_id:
+                type: string
+            description:
+                type: string
+            visibility:
+                type: string
+            body:
+                type: string
+            theme_name:
+                type: string
+            created_at:
+                type: string
+            updated_at:
+                type: string
+            isStats:
+                type: integer
+            usage:
+                type: string
+            analysis_columns:
+                type: object
+                description: "Paramètres des colonnes de l'analyse"
+                properties:
+                    field:
+                        type: string
+                    analysis_id:
+                        type: integer
+                    databaseName:
+                        type: string
+                    color_code:
+                        type: string
+                    usage:
+                        type: string
+                    created_at:
+                        type: string
+                    updated_at:
+                        type: string
+                example:
+                    -   field: "properties.nb_places"
+                        analysis_id: 45,
+                        databaseName: "horodateurs"
+                        color_code: "#ab47bc"
+                        usage: "{\"axis\":\"y\",\"statType\":[\"sum\"]}"
+                        created_at: "2019-08-27 14:16:52"
+                        updated_at: "2019-08-27 14:16:52"
+
+                    -   field: "properties.num_quartier_residant"
+                        analysis_id: 45
+                        databaseName: "horodateurs"
+                        color_code: ""
+                        usage: "{\"axis\":\"x\"}"
+                        created_at: "2019-08-27 14:16:52"
+                        updated_at: "2019-08-27 14:16:52"
+        example:
+            -   id": 45
+                name: "Places/Horodateurs/Quartiers"
+                representation_type: "Graphique en colonnes"
+                shared: 0
+                owner_id: "2be8c158-29a7-42b3-a9fb-de9ec266e196"
+                description: "Nombre de place pris en charge par les horodateurs par quartiers"
+                visibility: "all"
+                body: "{\"stats\":{\"do_stats\":true\"columns\":{\"pivot\":\"properties.num_quartier_residant\"\"isDate\":true\"data\":[\"properties.num_quartier_residant\"\"properties.nb_places\"]}}\"datasets\":[{\"name\":\"horodateurs\"\"columns\":[\"properties.num_quartier_residant\"\"properties.nb_places\"]\"size\":10000\"offset\":0}]\"joining\":[]}"
+                theme_name: "Transport"
+                created_at: "2019-08-27 14:16:52"
+                updated_at: "2019-08-27 14:16:52"
+                isStats: 1
+                usage": null

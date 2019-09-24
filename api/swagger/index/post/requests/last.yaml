@@ -1,0 +1,17 @@
+type: object
+properties:
+    name:
+        type: string
+        description: "Nom du jeu de données"
+        example: "candelabre_park_status"
+    columns:
+        type: string
+        description: "List des colonne à récupérés"
+        example:
+            - "status"
+            - "id"
+            - "place"
+    groupby:
+        type: string
+        description: "Paramètre de jointure, noter le + pour faire un groupby sur deux colonnes"
+        example: "id+place"

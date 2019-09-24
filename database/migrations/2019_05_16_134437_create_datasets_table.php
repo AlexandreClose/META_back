@@ -15,7 +15,8 @@ class CreateDatasetsTable extends Migration
     {
         Schema::create('datasets', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('name',45)->unique();
+            $table->string('name')->unique();
+            $table->string('databaseName', 48)->unique();
             $table->boolean('validated');
             $table->longText('description');
             $table->string('creator',45);
@@ -27,9 +28,14 @@ class CreateDatasetsTable extends Migration
             $table->boolean('conf_ready')->default(false);
             $table->boolean('upload_ready')->default(false);
             $table->boolean('open_data')->default(false);
-            $table->enum('visibility',['admin_only','job_referent','worker','all']);
+            $table->string('visibility');
             $table->string('user',45);
+            $table->boolean('JSON')->default(false);
+            $table->boolean('GEOJSON')->default(false);
+            //$table->boolean('util')->default(false);
             $table->string('producer',45);
+            $table->string('themeName');
+            $table->string('update_frequency')->default("Jamais");
             $table->timestamps();
         });
     }

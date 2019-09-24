@@ -1,0 +1,7 @@
+type: object
+description: "Body de l'ajout d'un service"
+example:
+    {
+        "service": "Name",
+        "desc": "Description"
+    }

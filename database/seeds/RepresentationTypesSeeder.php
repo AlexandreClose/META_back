@@ -85,10 +85,10 @@ class RepresentationTypesSeeder extends Seeder
             'updated_at' => Carbon::now()->format('Y-m-d H:i:s')
         ]);
         DB::table('representation_types')->insert([
-            'name'=>"Graphique en radar polaire",
+            'name'=>"Graphique polaire",
             'srcBegin'=>"assets/images/account/settings/statistics-radar-polaire-",
             "img"=>"assets/images/account/settings/statistics-radar-polaire-light.svg",
-            "description"=>"Graphique en secteur",
+            "description"=>"Graphique polaire",
             'created_at' => Carbon::now()->format('Y-m-d H:i:s'),
             'updated_at' => Carbon::now()->format('Y-m-d H:i:s')
         ]);

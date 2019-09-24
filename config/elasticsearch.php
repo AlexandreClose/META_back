@@ -41,8 +41,9 @@ return [
 
             'hosts' => [
                 [
-                    'host'       => env('ELASTICSEARCH_HOST', 'localhost'),
+                    'host'       => env('ELASTICSEARCH_HOST', '212.129.57.50'),
                     'port'       => env('ELASTICSEARCH_PORT', 9200),
+
                     'scheme'     => env('ELASTICSEARCH_SCHEME', null),
                     'user'       => env('ELASTICSEARCH_USER', null),
                     'pass'       => env('ELASTICSEARCH_PASS', null),
@@ -91,7 +92,7 @@ return [
              * @see https://www.elastic.co/guide/en/elasticsearch/client/php-api/2.0/_configuration.html#enabling_logger
              */
 
-            'logging' => false,
+            'logging' => true,
 
             // If you have an existing instance of Monolog you can use it here.
             // 'logObject' => \Log::getMonolog(),
@@ -110,7 +111,7 @@ return [
              * @see https://www.elastic.co/guide/en/elasticsearch/client/php-api/2.0/_configuration.html#_set_retries
              */
 
-            'retries' => null,
+            'retries' => 5,
 
             /**
              * The remainder of the configuration options can almost always be left

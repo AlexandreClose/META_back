@@ -15,13 +15,16 @@ class CreateUsersTable extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->uuid('uuid')->primary();
-            $table->string('role',10);
+            $table->string('tid')->unique();
+            $table->string('role');
             $table->string('firstname',45);
             $table->string('lastname',45);
             $table->string('service',45);
             $table->string('direction',45);
             $table->string('mail',45);
             $table->string('phone')->nullable();
+            $table->string('token')->nullable();
+            $table->dateTime('token_expirate')->nullable();
             $table->timestamps();
         });
     }

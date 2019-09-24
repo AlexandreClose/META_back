@@ -1,0 +1,10 @@
+type: object
+description: "Liste des tags"
+example:
+    [
+    {
+        "name": "Candélabres",
+        "created_at": "2019-08-07 14:00:11",
+        "updated_at": "2019-08-07 14:00:11"
+    }
+    ]

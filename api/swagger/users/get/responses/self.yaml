@@ -1,0 +1,18 @@
+type: string
+description: "Info de l'utilisateur courant"
+example:
+    {
+        "uuid": "aedftrz456r4z5r4z653",
+        "tid": "1",
+        "role": "Administrateur",
+        "firstname": "Riri",
+        "lastname": "duck",
+        "service": "N/A",
+        "direction": "Direction du numérique",
+        "mail": "Riri.duck@toulouse-metropole.fr",
+        "phone": null,
+        "token": null,
+        "token_expirate": null,
+        "created_at": "1990-08-07 14:00:08",
+        "updated_at": "1990-08-07 14:00:08"
+    }

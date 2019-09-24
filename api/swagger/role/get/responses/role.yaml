@@ -1,0 +1,30 @@
+type: object
+description: "List des thèmes"
+example:
+    [
+    {
+        "role": "Administrateur",
+        "description": "Utilisateur d'administration de la plateforme",
+        "created_at": "2019-08-07 14:00:05",
+        "updated_at": "2019-08-07 14:00:05"
+    },
+    {
+        "role": "Désactivé",
+        "description": "Utilisateur désactivé de la plateforme",
+        "created_at": "2019-08-07 14:00:06",
+        "updated_at": "2019-08-07 14:00:06"
+    },
+    {
+        "role": "Référent-Métier",
+        "description": "Utilisateur metier de la plateforme",
+        "created_at": "2019-08-07 14:00:05",
+        "updated_at": "2019-08-07 14:00:05"
+    },
+    {
+        "role": "Utilisateur",
+        "description": "Utilisateur de la plateforme",
+        "created_at": "2019-08-07 14:00:06",
+        "updated_at": "2019-08-07 14:00:06"
+    }
+    ]
+

@@ -1,0 +1,17 @@
+type: string
+description: "Liste des couleur trouvés"
+example:
+    [
+    {
+        "color_code": "#00eb3b",
+        "user_uuid": "2be8c158-29a7-42b3-a9fb-de9ec266e196",
+        "created_at": "2019-09-17 14:18:05",
+        "updated_at": "2019-09-17 14:18:05"
+    },
+    {
+        "color_code": "#c62800",
+        "user_uuid": "2be8c158-29a7-42b3-a9fb-de9ec266e196",
+        "created_at": "2019-09-17 14:18:05",
+        "updated_at": "2019-09-17 14:18:05"
+    }
+    ]

@@ -1,0 +1,104 @@
+type: object
+description: "Liste des saved_cards"
+example:
+    [
+    {
+        "id": 18,
+        "uuid": "2be8c158-29a7-42b3-a9fb-de9ec266e196",
+        "displayed": 1,
+        "position": 1,
+        "size": 3,
+        "created_at": "2019-09-02 09:33:49",
+        "updated_at": "2019-09-16 09:46:48",
+        "analysis": {
+            "id": 18,
+            "name": "Test",
+            "representation_type": "Graphique en colonnes",
+            "shared": 1,
+            "owner_id": "2be8c158-29a7-42b3-a9fb-de9ec266e196",
+            "description": "Test",
+            "visibility": "all",
+            "theme_name": "Transport",
+            "created_at": "2019-08-31 15:12:24",
+            "updated_at": "2019-08-31 15:12:24",
+            "isStats": 1,
+            "body": "{\"stats\":{\"do_stats\":true,\"columns\":{\"pivot\":\"properties.quartier_residant\",\"isDate\":false,\"data\":[\"properties.quartier_residant\",\"properties.nb_places\",\"properties.x\"]}},\"datasets\":[{\"name\":\"horodateurs\",\"columns\":[\"properties.quartier_residant\",\"properties.nb_places\",\"properties.x\"],\"size\":10000,\"offset\":0}],\"joining\":[]}",
+            "usage": "{}",
+            "isMap": null,
+            "analysis_column": [
+            {
+                "analysis_id": 18,
+                "color_code": "#26a69a",
+                "usage": "{\"axis\":\"y\",\"statType\":[\"sum\"]}",
+                "created_at": "2019-08-31 15:12:25",
+                "updated_at": "2019-08-31 15:12:25",
+                "field": "properties.nb_places",
+                "databaseName": "horodateurs"
+            },
+            {
+                "analysis_id": 18,
+                "color_code": "",
+                "usage": "{\"axis\":\"x\"}",
+                "created_at": "2019-08-31 15:12:25",
+                "updated_at": "2019-08-31 15:12:25",
+                "field": "properties.quartier_residant",
+                "databaseName": "horodateurs"
+            },
+            {
+                "analysis_id": 18,
+                "color_code": "#5c6bc0",
+                "usage": "{\"axis\":\"y\",\"statType\":[\"count\"]}",
+                "created_at": "2019-08-31 15:12:25",
+                "updated_at": "2019-08-31 15:12:25",
+                "field": "properties.x",
+                "databaseName": "horodateurs"
+            }
+            ]
+        }
+    },
+    {
+        "id": 20,
+        "uuid": "2be8c158-29a7-42b3-a9fb-de9ec266e196",
+        "displayed": 1,
+        "position": 0,
+        "size": 4,
+        "created_at": "2019-09-02 10:25:40",
+        "updated_at": "2019-09-16 09:46:48",
+        "analysis": {
+            "id": 20,
+            "name": "Carte",
+            "representation_type": "Carte",
+            "shared": 1,
+            "owner_id": "2be8c158-29a7-42b3-a9fb-de9ec266e196",
+            "description": "Carte",
+            "visibility": "all",
+            "theme_name": "Transport",
+            "created_at": "2019-08-31 15:26:20",
+            "updated_at": "2019-08-31 15:26:20",
+            "isStats": 0,
+            "body": "{\"stats\":{\"do_stats\":false},\"datasets\":[{\"name\":\"horodateurs\",\"columns\":[\"geometry\",\"properties.Code_Insee\"],\"size\":10000,\"offset\":0}],\"joining\":[]}",
+            "usage": "{}",
+            "isMap": 1,
+            "analysis_column": [
+            {
+                "analysis_id": 20,
+                "color_code": "",
+                "usage": "{}",
+                "created_at": "2019-08-31 15:26:20",
+                "updated_at": "2019-08-31 15:26:20",
+                "field": "geometry",
+                "databaseName": "horodateurs"
+            },
+            {
+                "analysis_id": 20,
+                "color_code": "",
+                "usage": "{}",
+                "created_at": "2019-08-31 15:26:20",
+                "updated_at": "2019-08-31 15:26:20",
+                "field": "properties.Code_Insee",
+                "databaseName": "horodateurs"
+            }
+            ]
+        }
+    }
+    ]
