@@ -118,9 +118,6 @@ class UserController extends Controller
 
         $user = new user();
         $postBody = $request->all();
-        if (!$user->validate($postBody)) {
-            abort(400);
-        }
 
         $user->uuid = $request->get("tid");
         $user->role = $request->get("role");
@@ -131,6 +128,10 @@ class UserController extends Controller
         $user->mail = $request->get("mail");
         $user->phone = $request->get("phone");
         $user->tid = $request->get("tid");
+
+        if (!$user->validate($postBody)) {
+            abort(400);
+        }
         $user->save();
 
         return response("", 200);
