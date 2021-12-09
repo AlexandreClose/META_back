@@ -24,6 +24,6 @@
     },
     "dependencies": {
         "swagger": "^0.7.5",
-        "swagger-ui": "^3.23.7"
+        "swagger-ui": "^4.1.2"
     }
 }
